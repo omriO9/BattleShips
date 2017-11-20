@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">BatlleShip</string>
+    <string name="play_button">Play Now!</string>
+    <string name="rules_button">Rules</string>
+</resources>
