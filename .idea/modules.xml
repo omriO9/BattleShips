@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/BatlleShip.iml" filepath="$PROJECT_DIR$/BatlleShip.iml" />
+      <module fileurl="file://C:\AndroidDev\BattleShips\BatlleShip.iml" filepath="C:\AndroidDev\BattleShips\BatlleShip.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BattleShips.iml" filepath="$PROJECT_DIR$/BattleShips.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://C:\AndroidDev\BattleShips\app\app.iml" filepath="C:\AndroidDev\BattleShips\app\app.iml" />
     </modules>
   </component>
 </project>
