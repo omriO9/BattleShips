@@ -6,4 +6,5 @@
     <dimen name="rules_button_width">130dp</dimen>
     <dimen name="rules_button_height">40dp</dimen>
     <dimen name="rules_button_textsize">18sp</dimen>
+    <dimen name="boardDimen">260dp</dimen>
 </resources>

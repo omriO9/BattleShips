@@ -1,12 +1,9 @@
 package com.example.omri.batlleship;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.GridLayout;
 
@@ -31,33 +28,49 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
         //display.getSize(size);
         //int screenWidth = size.x;
         //int screenHeight = size.y;
+        initGridLayout();
+
+    }
+
+    public void initGridLayout(){
         gridLayout = (GridLayout) findViewById(R.id.gridLayout);
+//        int cellSize = gridLayoutWidth / gridLayout.getColumnCount(); // 910
+//        Log.d(TAG, "onResume: gridLayoutWidth="+gridLayoutWidth);
+//        cellSize -= 3;
+        int squaresCount = gridLayout.getColumnCount() * gridLayout.getRowCount();
+        for (int i = 0; i < squaresCount; i++) {
+            GridButton gridButton= new GridButton(this);
+            gridButton.setOnClickListener(this);
+            gridLayout.addView(gridButton);
+        }
         gridLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 gridLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 gridLayoutWidth=gridLayout.getWidth(); //height is ready
-                Log.d(TAG, "onResume: inside -gridLayoutWidth="+gridLayoutWidth);
+                int cellSize = gridLayoutWidth / gridLayout.getColumnCount(); // 910
+                Log.d(TAG, "onResume: gridLayoutWidth="+gridLayoutWidth);
+                cellSize -= 3;
+               // int squaresCount = gridLayout.getColumnCount() * gridLayout.getRowCount();
+                for (int i = 0; i < gridLayout.getChildCount(); i++) {
+                    GridButton btn = (GridButton) gridLayout.getChildAt(i);
+                    btn.setPositionX(i % gridLayout.getColumnCount());
+                    btn.setPositionY(i / gridLayout.getColumnCount());
+                    //Drawable border = ContextCompat.getDrawable(this, R.drawable.cell_border);
+                    //btn.setOnClickListener(this);
+                    Log.d(TAG, "onGlobalLayout: height+size="+cellSize);
+                    btn.setBackgroundResource(R.drawable.cell_border);
+                    //btn.setHeight(cellSize);
+                   // btn.setWidth(cellSize);
+                    //btn.setLayoutParams(btn.getLayoutParams());
+                    btn.getLayoutParams().height=cellSize;
+                    btn.getLayoutParams().width=cellSize;
+                   // btn.setLayoutParams(new ViewGroup.LayoutParams(cellSize, cellSize));
+                }
+                gridLayout.invalidate();
+                gridLayout.requestLayout();
             }
         });
-        Log.d(TAG, "onResume: gridLayoutWidth="+gridLayoutWidth);
-        int cellSize = 910 / gridLayout.getColumnCount();
-        cellSize -= 3;
-        int squaresCount = gridLayout.getColumnCount() * gridLayout.getRowCount();
-        for (int i = 0; i < squaresCount; i++) {
-            GridButton gridButton= new GridButton(this);
-            gridButton.setPositionX(i % gridLayout.getColumnCount());
-            gridButton.setPositionY(i / gridLayout.getColumnCount());
-            //gridButton.setText(gridButton.getPositionX() + ", " + gridButton.getPositionY());
-            gridButton.setOnClickListener(this);
-            Drawable border = ContextCompat.getDrawable(this, R.drawable.cell_border);
-            gridButton.setBackgroundDrawable(border);
-            gridButton.setLayoutParams(new ViewGroup.LayoutParams(cellSize, cellSize));
-            //gridButton.setHeight(cellSize);
-            //gridButton.setWidth(cellSize);
-            //gridLayout.setBackgroundColor(Color.YELLOW);
-            gridLayout.addView(gridButton);
-        }
 
     }
 
