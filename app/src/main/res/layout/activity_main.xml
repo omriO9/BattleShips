@@ -12,7 +12,7 @@
         android:layout_width="@dimen/play_button_width"
         android:layout_height="@dimen/play_button_height"
         android:layout_centerInParent="true"
-        android:onClick="arrangeBattleFieldActivity"
+        android:onClick="ArrangeBattleFieldActivity"
         android:text="@string/play_button"
         android:textSize="@dimen/play_button_textsize" />
 
@@ -36,7 +36,7 @@
         android:layout_marginEnd="11dp"
         android:layout_marginTop="12dp"
         android:checked="true"
-        android:text="Sound"></Switch>
+        android:text="@string/sound" />
 
 
 </RelativeLayout>

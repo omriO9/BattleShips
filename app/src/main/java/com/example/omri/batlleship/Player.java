@@ -9,8 +9,8 @@ import java.util.List;
 public abstract class Player implements PlayerIF {
     public final int numOfShips = 5;
     String playerName; // me/computer
-    boolean[][] attemptedShots;
-    boolean[][] hitShots;
+    boolean[][] myShipsLocation; // 0 - there is no ship here , 1 - there is.
+    int[][] hitShots; // possibly change to enum with - {not shot,hit,miss} . - this mat of where i shot.
     List<BattleShip> battleShips;
 
 //    public void addBattleShip(BattleShip s){
@@ -37,19 +37,19 @@ public abstract class Player implements PlayerIF {
         this.playerName = playerName;
     }
 
-    public boolean[][] getAttemptedShots() {
-        return attemptedShots;
+    public boolean[][] getMyShipsLocation() {
+        return myShipsLocation;
     }
 
-    public void setAttemptedShots(boolean[][] attemptedShots) {
-        this.attemptedShots = attemptedShots;
+    public void setMyShipsLocation(boolean[][] attemptedShots) {
+        this.myShipsLocation = attemptedShots;
     }
 
-    public boolean[][] getHitShots() {
+    public int[][] getHitShots() {
         return hitShots;
     }
 
-    public void setHitShots(boolean[][] hitShots) {
+    public void setHitShots(int[][] hitShots) {
         this.hitShots = hitShots;
     }
 }

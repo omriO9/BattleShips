@@ -2,5 +2,8 @@
     <string name="app_name">BatlleShip</string>
     <string name="play_button">Play Now!</string>
     <string name="rules_button">Rules</string>
-    <string name="back">Back</string>
+    <string name="sound">Sound</string>
+    <string name="backButton">Back</string>
+    <string name="fightButton">Fight!</string>
+    <string name="quit">Quit</string>
 </resources>

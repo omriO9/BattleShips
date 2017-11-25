@@ -9,10 +9,17 @@ public class HumanPlayer extends Player {
 
     public HumanPlayer(String name){
         this.playerName=name;
-        for (int i=0;i<numOfShips;i++){
-            battleShips.add(new BattleShip(5,true,new Coordinate(-1,-1)));
-        }
+        initShipList();
     }
+
+    private void initShipList() {
+        battleShips.add(new BattleShip("ship5",5,true,new Coordinate(-1,-1)));
+        battleShips.add(new BattleShip("ship4",4,true,new Coordinate(-1,-1)));
+        battleShips.add(new BattleShip("ship3",3,true,new Coordinate(-1,-1)));
+        battleShips.add(new BattleShip("ship3_2",3,true,new Coordinate(-1,-1)));
+        battleShips.add(new BattleShip("ship2",2,true,new Coordinate(-1,-1)));
+    }
+
     @Override
     public void placeBattleShips(Coordinate position) {
 

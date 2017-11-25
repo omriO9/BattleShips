@@ -5,13 +5,15 @@ package com.example.omri.batlleship;
  */
 
 public class BattleShip {
+    String name; // for identification towards XML id.
     int length;
     boolean isSunk;
     boolean orientation; // true = vertical , false = horizontal
     Coordinate position; // the back of the ship - starting point.
     int numberOfHits;
 
-    public BattleShip(int size,boolean orientation,Coordinate pos){
+    public BattleShip(String name,int size,boolean orientation,Coordinate pos){
+        this.name=name;
         length=size;
         isSunk=false;
         this.orientation=orientation;

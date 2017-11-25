@@ -15,8 +15,8 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:text="@string/back"
+        android:layout_marginTop="8dp"
+        android:text="@string/backButton"
         android:textSize="16sp" />
 
     <GridLayout
@@ -88,10 +88,9 @@
         android:id="@+id/ship2"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_toLeftOf="@id/ship3_2"
-        android:layout_marginLeft="20dp"
-        android:layout_alignTop="@id/ship3_2"
 
+        android:layout_alignTop="@+id/ship3_2"
+        android:layout_toStartOf="@+id/ship3_2"
         android:background="@drawable/battleship"
         android:scaleType="fitXY" />
 

@@ -1,5 +1,7 @@
 package com.example.omri.batlleship;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,8 +21,15 @@ public class MainActivity extends AppCompatActivity {
         startActivity(openRulesActivity);
     }
 
-    public void arrangeBattleFieldActivity(View view) {
-        Intent arrangeBattleFieldActivity = new Intent(this,arrangeBattleFieldActivity.class);
-        startActivity(arrangeBattleFieldActivity);
+    public void ArrangeBattleFieldActivity(View view) {
+        Intent ArrangeBattleFieldActivity = new Intent(this,ArrangeBattleFieldActivity.class);
+        startActivity(ArrangeBattleFieldActivity);
     }
+
+    @Override
+    public void onBackPressed() {
+        finishAffinity();
+    }
+
 }
+
