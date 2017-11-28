@@ -5,6 +5,8 @@ package com.example.omri.batlleship;
  */
 
 public class BattleShip {
+
+
     String name; // for identification towards XML id.
     int length;
     boolean isSunk;
@@ -21,6 +23,12 @@ public class BattleShip {
         numberOfHits=0;
     }
 
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
     public int getLength() {
         return length;
     }
@@ -50,5 +58,9 @@ public class BattleShip {
     }
     public void setNumberOfHits(int numberOfHits) {
         this.numberOfHits = numberOfHits;
+    }
+    public void checkIfShipIsSunk(){
+        if (numberOfHits==length)
+            setSunk(true);
     }
 }

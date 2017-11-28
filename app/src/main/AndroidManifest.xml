@@ -22,7 +22,7 @@
             android:name=".RulesActivity"
             android:screenOrientation="landscape"></activity>
         <activity
-            android:name=".ArrangeBattleFieldActivity"
+            android:name=".arrangeBattleFieldActivity"
             android:screenOrientation="landscape"></activity>
         <activity
             android:name=".GameActivity"

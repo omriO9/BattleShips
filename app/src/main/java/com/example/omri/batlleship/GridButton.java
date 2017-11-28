@@ -10,8 +10,12 @@ public class GridButton extends android.support.v7.widget.AppCompatButton {
     private int positionX;
     private int positionY;
 
+
+    private boolean isAvailable; // false - can click on it to finish placing a ship. true - can click on it to begin placing a ship.
+
     public GridButton(Context context) {
         super(context);
+        isAvailable=true;
     }
 
     public int getPositionY() {
@@ -29,4 +33,15 @@ public class GridButton extends android.support.v7.widget.AppCompatButton {
     public void setPositionX(int positionX) {
         this.positionX = positionX;
     }
+    public boolean isAvailable() {
+        return isAvailable;
+    }
+
+    public void toggleAvailable() {
+        if (isAvailable)
+            isAvailable=false;
+        else
+            isAvailable=true;
+    }
+
 }

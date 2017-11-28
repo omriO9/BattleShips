@@ -38,5 +38,26 @@
         android:checked="true"
         android:text="@string/sound" />
 
+    <Button
+        android:id="@+id/nameBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/switch1"
+        android:layout_centerHorizontal="true"
+        android:onClick="saveUserName"
+        android:text="V"
+        android:textSize="10sp" />
+
+    <EditText
+        android:id="@+id/userNameEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/nameBtn"
+        android:layout_alignBottom="@+id/nameBtn"
+        android:layout_toStartOf="@+id/rules_button"
+        android:ems="10"
+        android:hint="Your name..."
+        android:inputType="textPersonName" />
+
 
 </RelativeLayout>

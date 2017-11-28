@@ -1,15 +1,22 @@
 package com.example.omri.batlleship;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+
 /**
  * Created by Mark on 24/11/2017.
  */
 
-public class HumanPlayer extends Player {
+public class HumanPlayer extends Player implements Serializable{
 
+
+    private int amountOfLogins;
 
     public HumanPlayer(String name){
         this.playerName=name;
-        initShipList();
+        amountOfLogins=0;
+        battleShips = new ArrayList<>();
+       initShipList();
     }
 
     private void initShipList() {
@@ -38,5 +45,13 @@ public class HumanPlayer extends Player {
     @Override
     public String getName() {
         return null;
+    }
+
+    public int getAmountOfLogins() {
+        return amountOfLogins;
+    }
+
+    public void setAmountOfLogins(int amountOfLogins) {
+        this.amountOfLogins = amountOfLogins;
     }
 }
