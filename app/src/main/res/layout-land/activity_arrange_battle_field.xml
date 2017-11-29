@@ -15,6 +15,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginStart="10dp"
         android:layout_marginTop="8dp"
+        android:onClick="onBackBtnPressed"
         android:text="@string/backButton"
         android:textSize="16sp" />
 
@@ -92,5 +93,15 @@
         android:layout_toStartOf="@+id/ship3_2"
         android:background="@drawable/battleship"
         android:scaleType="fitXY" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="17dp"
+        android:layout_marginEnd="9dp"
+        android:onClick="showGameActivity"
+        android:text="@string/fightButton" />
 
 </RelativeLayout>
