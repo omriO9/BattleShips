@@ -6,7 +6,7 @@ package com.example.omri.batlleship;
 
 interface PlayerIF {
     public void attack();
-    public boolean hasBeenDefeated();
+    //public boolean hasBeenDefeated();
     public boolean receiveFire();
     public String getName();
 }

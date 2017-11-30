@@ -9,10 +9,8 @@ import android.content.Context;
 public class GridButton extends android.support.v7.widget.AppCompatButton {
     private int positionX;
     private int positionY;
-
-
-
     private boolean isAvailable; // false - can click on it to finish placing a ship. true - can click on it to begin placing a ship.
+    // isAvailable - possibly needs to be eNum = {ship,empty,option to place ship}
 
     public GridButton(Context context) {
         super(context);
@@ -45,7 +43,7 @@ public class GridButton extends android.support.v7.widget.AppCompatButton {
             isAvailable=true;
     }
 
-    public void removePossiblePositionMarks(){
+    public void setDefaultDrawable(){
         this.setBackgroundResource(R.drawable.cell_border);
     }
 }

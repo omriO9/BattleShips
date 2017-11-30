@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
     public void saveUserName(View view) {
 
         String userName= userNameEditText.getText().toString();
-        playerH = new HumanPlayer(userName);
+        playerH = new HumanPlayer(userName,10);
         SharedPreferences.Editor editor = sharedPref.edit();
         Gson gson = new Gson();
         String json = gson.toJson(playerH);

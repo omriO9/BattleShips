@@ -22,41 +22,28 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
     Coordinate shipPos;
     List<ImageButton> shipList;
     ImageButton ship5, ship4, ship3, ship3_2, ship2;
-    //private enum btlShip{ship5,ship4,ship3,ship3_2,ship2};
     ImageButton oldImageBattleShip;
     HumanPlayer human;
-    int selectedShip = 0;  // 0-nothing chosen,1-ship5,2-ship4,3-ship3,4-ship3_2,5-ship2
-    int selectedBattleID = 0;
+    //int selectedShip = 0;  // 0-nothing chosen,1-ship5,2-ship4,3-ship3,4-ship3_2,5-ship2
+    int selectedBattleID = 0; // the ID is from the resource file.
+
+    List<Coordinate> possibleCords;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_arrange_battle_field);
     }
-
     @Override
     protected void onResume() {
         super.onResume();
-        //Display display = getWindowManager().getDefaultDisplay();
-        //Point size = new Point();
-        //display.getSize(size);
-        //int screenWidth = size.x;
-        //int screenHeight = size.y;
-
-        human = new HumanPlayer("Mark");
-
+        // we need to receive from mainActivity the size of map (level 1/2/3);
+        human = new HumanPlayer("Mark",10);
         initGridLayout();
-
         initFleet();
     }
 
     private void initFleet() {
-
-//        shipList.add((ImageButton)findViewById(R.id.ship5));
-//        shipList.add((ImageButton)findViewById(R.id.ship4));
-//        shipList.add((ImageButton)findViewById(R.id.ship3));
-//        shipList.add((ImageButton)findViewById(R.id.ship3_2));
-//        shipList.add((ImageButton)findViewById(R.id.ship2));
 
         ship5 = (ImageButton) findViewById(R.id.ship5);
         ship4 = (ImageButton) findViewById(R.id.ship4);
@@ -68,56 +55,45 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
         ship3.setOnClickListener(this);
         ship3_2.setOnClickListener(this);
         ship2.setOnClickListener(this);
-//        shipList.add(ship5);
-//        shipList.add(ship4);
-//        shipList.add(ship3);
-//        shipList.add(ship3_2);
-//        shipList.add(ship2);
-//        for (ImageButton ib : shipList)
-//            ib.setOnClickListener(this);
+
 
     }
 
     public void initGridLayout() {
         gridLayout = (GridLayout) findViewById(R.id.gridLayout);
-//        int cellSize = gridLayoutWidth / gridLayout.getColumnCount(); // 910
-//        Log.d(TAG, "onResume: gridLayoutWidth="+gridLayoutWidth);
-//        cellSize -= 3;
-        int squaresCount = gridLayout.getColumnCount() * gridLayout.getRowCount();
-        for (int i = 0; i < squaresCount; i++) {
-            GridButton gridButton = new GridButton(this);
-            gridButton.setOnClickListener(this);
-            gridLayout.addView(gridButton);
-        }
+
+        initGridLayoutButtons();
+
         gridLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 gridLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 gridLayoutWidth = gridLayout.getWidth(); //width is ready
-                int cellSize = gridLayoutWidth / gridLayout.getColumnCount(); // 910
-                //Log.d(TAG, "onResume: gridLayoutWidth="+gridLayoutWidth);
+                int cellSize = gridLayoutWidth / gridLayout.getColumnCount();
                 cellSize -= 3;
-                // int squaresCount = gridLayout.getColumnCount() * gridLayout.getRowCount();
                 for (int i = 0; i < gridLayout.getChildCount(); i++) {
                     GridButton btn = (GridButton) gridLayout.getChildAt(i);
                     btn.setPositionX(i % gridLayout.getColumnCount());
                     btn.setPositionY(i / gridLayout.getColumnCount());
-                    //Drawable border = ContextCompat.getDrawable(this, R.drawable.cell_border);
-                    //btn.setOnClickListener(this);
-                    //Log.d(TAG, "onGlobalLayout: height+size="+cellSize);
                     btn.setBackgroundResource(R.drawable.cell_border);
-                    //btn.setHeight(cellSize);
-                    // btn.setWidth(cellSize);
-                    //btn.setLayoutParams(btn.getLayoutParams());
                     btn.getLayoutParams().height = cellSize;
                     btn.getLayoutParams().width = cellSize;
-                    // btn.setLayoutParams(new ViewGroup.LayoutParams(cellSize, cellSize));
                 }
                 gridLayout.invalidate();
                 gridLayout.requestLayout();
             }
         });
 
+    }
+
+    private void initGridLayoutButtons() {
+
+        int squaresCount = gridLayout.getColumnCount() * gridLayout.getRowCount();
+        for (int i = 0; i < squaresCount; i++) {
+            GridButton gridButton = new GridButton(this);
+            gridButton.setOnClickListener(this);
+            gridLayout.addView(gridButton);
+        }
     }
 
     @Override
@@ -127,56 +103,36 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
             Coordinate pos = new Coordinate(((GridButton) v).getPositionX(), ((GridButton) v).getPositionY());
             Toast.makeText(this, ""+pos.toString(), Toast.LENGTH_SHORT).show();
             if (selectedBattleID != 0) { // there's a ship selected!
-                // add code to placeBattleShip() later
                 String name = getResources().getResourceEntryName(selectedBattleID);
                 Toast.makeText(this, "shipName="+name, Toast.LENGTH_SHORT).show();
-//                if (gridButton.isAvailable())
-//                Log.d(TAG, "onClick: gridButton is Available");
-//                else
-//                    Log.d(TAG, "onClick: gridButton is *NOT* Available");
-                if (gridButton.isAvailable()) {
-                    shipPos = pos;
-                    Log.d(TAG, "onClick: inside the if");
-                    showPossiblePosition(pos, name); // shows placeAble positions for current ship.
-                }
-                else {//gridButton is notAvailable
-                    Log.d(TAG, "onClick: i'm doing something else");
-                    if (pos.getX()==gridButton.getPositionX()) { // we have same X - same column
-                        if(shipPos.getY()< gridButton.getPositionY()) { // fill it down
-                            for (int i = 0; i < (gridButton.getPositionY()-shipPos.getY() ); i++) {
-                                gridLayout.getChildAt(shipPos.getY() * 10 + shipPos.getX() + i*10).setBackgroundResource(R.drawable.hit);
-                            }
-                        }
-                        else if(shipPos.getY()> gridButton.getPositionY()){ //fill it up
-                            for (int i = 0; i < (shipPos.getY() - gridButton.getPositionY()  ); i++) {
-                                gridLayout.getChildAt(shipPos.getY() * 10 + shipPos.getX() - i*10).setBackgroundResource(R.drawable.hit);
-                            }
-                        }
-                    }
-                    if(pos.getY()==gridButton.getPositionY()){
-                        if(shipPos.getX()< gridButton.getPositionX()) { // fill it right
-                            for (int i = 0; i < (gridButton.getPositionX()-shipPos.getX() ); i++) {
-                                gridLayout.getChildAt(shipPos.getY()* 10 + shipPos.getX() +i).setBackgroundResource(R.drawable.hit);
-                            }
-                        }
-                        else if(shipPos.getX()> gridButton.getPositionX()){ //fill it left
-                            for (int i = 0; i < (shipPos.getX() - gridButton.getPositionX()); i++) {
-                                gridLayout.getChildAt(shipPos.getY() * 10 + shipPos.getX() - i).setBackgroundResource(R.drawable.hit);
-                            }
-                        }
-                    }
-                    //put in a function
-                    int squareCount = gridLayout.getColumnCount() * gridLayout.getRowCount();
-                    GridButton btn;
-                    for(int i = 0 ; i< squareCount;i++){
-                        btn = (GridButton) gridLayout.getChildAt(i);
-                        if(btn.isAvailable()== false){
-                            btn.toggleAvailable();
-                            btn.removePossiblePositionMarks();
-                        }
-                    }
-                }
 
+                if (gridButton.isAvailable()) {
+
+                    if (possibleCords!=null) {
+                        for (int i=0;i<possibleCords.size();i++){
+                    }
+                        removePossibleCords(possibleCords); // deletes old gray cells
+                        ((GridButton)gridLayout.getChildAt(shipPos.getX()+shipPos.getY()*10)).setDefaultDrawable();
+                    }
+                    shipPos = pos;
+                    possibleCords=human.myField.showPossiblePositions(pos, name); // shows placeAble positions for current ship.
+                    paintLayout(possibleCords,"@drawable/cell_border_available");
+                }
+                else {//gridButton is notAvailable - means we place a ship
+                    List<Coordinate> list2Paint =human.myField.placeShip(shipPos,pos,name);
+                    human.myField.printMat();
+
+                    paintLayout(list2Paint,"@drawable/hit");
+                    boolean test=possibleCords.remove(pos);
+                    Log.d(TAG, "onClick3: test="+test);
+                    removePossibleCords(possibleCords);
+                    possibleCords =null;
+
+                    // Restarting the selection - cannot choose that battleShip again
+                    selectedBattleID=0;
+                    oldImageBattleShip.setClickable(false);
+                    oldImageBattleShip.setBackgroundResource(R.drawable.miss);
+                }
                 gridButton.setBackgroundResource(R.drawable.hit);
                // human.placeBattleShips(pos); // only OK after logic check!!!
 //                v.animate().scaleY(2).scaleX(2).setDuration(200).withEndAction(new Runnable() {
@@ -188,75 +144,46 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
 //                    }
 //                }).start();
             }
+            else{ // didn't choose a ship / already placed one.
+                Toast.makeText(this, "Please select a ship first", Toast.LENGTH_SHORT).show();
+            }
         }
         if (v instanceof ImageButton) { // means i clicked on a BattleShip image
             final ImageButton selectedImageButton = (ImageButton) v;
             if (selectedBattleID == 0) {
-//                selectedBattleID = selectedImageButton.getId();
-
                 selectedImageButton.setBackgroundResource(R.drawable.selected_battleship);
-
-
             } else if (selectedBattleID != selectedImageButton.getId()) {
                 oldImageBattleShip.setBackgroundResource(R.drawable.battleship);
                 selectedImageButton.setBackgroundResource(R.drawable.selected_battleship);
-                // oldImageBattleShip = selectedImageButton;
             }
             v.animate().rotationXBy(360).setDuration(1500).start();
             selectedBattleID = selectedImageButton.getId();
             oldImageBattleShip = selectedImageButton;
-
-//            switch(selectedImageButton.resour){
-//                case()
-//            }
         }
     }
 
-    private void showPossiblePosition(Coordinate pos, String name) {
-        // A method that gets a clicked location + ship's name and sets on the gridLayout
-        // the possible movements to place the ship.
-        //Toast.makeText(this, "name="+name, Toast.LENGTH_SHORT).show();
-        Log.d(TAG, "showPossiblePosition: pos={" + pos.getX() + "," + pos.getY() + "}");
-        // Log.d(TAG, "showPossiblePosition: buttonIndex="+gridLayout.getChildAt(pos.getX()*10+pos.getY()).toString());
-        int positionOnGrid = pos.getY() * 10 + pos.getX();
+    private void removePossibleCords(List<Coordinate> possibleCords) {
+        // func that receives a list of "old" possible cords - not relevant anymore since
+        // ship was placed - and removes them = sets button Drawable to correct one.
+        for(Coordinate c : possibleCords){
+            GridButton btn = (GridButton) gridLayout.getChildAt(c.getX()+c.getY()*10);
+                btn.toggleAvailable();
+                btn.setDefaultDrawable();
+        }
+    }
+
+    private void paintLayout(List<Coordinate> list2Paint, String uri) {
+        // uri = the image resource id
+        // paint List of Coordinates according to URI given
         GridButton btn;
-        for (BattleShip bs : human.getBattleShips()) {
-            //  Toast.makeText(this, "bs[name]="+bs.getName(), Toast.LENGTH_SHORT).show();
-            //running over player's BS and checking which ship i'm trying to position
-
-            if (bs.getName().equals(name)) { // bs is my battleship.
-                // to the right
-                if (pos.getX() + bs.getLength() <= gridLayout.getColumnCount()) {
-                    btn = (GridButton) gridLayout.getChildAt(positionOnGrid + bs.getLength() - 1);
-                    btn.setBackgroundResource(R.drawable.cell_border_available);
-                    btn.toggleAvailable();
-                }
-                // to the left
-                if (pos.getX() - bs.getLength() + 1 >= 0) {
-                    btn = (GridButton) gridLayout.getChildAt(positionOnGrid - bs.getLength() + 1);
-                    btn.setBackgroundResource(R.drawable.cell_border_available);
-                    btn.toggleAvailable();
-                }
-                // to the down
-                if (pos.getY() + bs.getLength() <= gridLayout.getRowCount()) {
-                    btn = (GridButton) gridLayout.getChildAt(positionOnGrid + 10 * (bs.getLength() - 1));
-                    btn.setBackgroundResource(R.drawable.cell_border_available);
-                    btn.toggleAvailable();
-                }
-                // to the up
-                if (pos.getY() - bs.getLength()+1 >= 0) {
-                    btn = (GridButton) gridLayout.getChildAt(positionOnGrid - 10 * (bs.getLength() -1));
-                    btn.setBackgroundResource(R.drawable.cell_border_available);
-                    btn.toggleAvailable();
-
-                }
-            }
+        int imageResource = getResources().getIdentifier(uri, null, getPackageName());
+        for (Coordinate c : list2Paint){
+            int positionOnGrid = c.getY() * 10 + c.getX();
+            btn = (GridButton) gridLayout.getChildAt(positionOnGrid);
+            btn.setBackgroundResource(imageResource);
+            btn.toggleAvailable();
         }
     }
-
-
-
-//Coordinate pos = new Coordinate(((GridButton) v).getPositionX(), ((GridButton) v).getPositionY());
 
     public void showGameActivity(View view) {
         Intent GameActivity = new Intent(this, GameActivity.class);
@@ -276,7 +203,6 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
                 })
                 .setNegativeButton("No", null)
                 .show();
-
     }
 }
 
