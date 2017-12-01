@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Mark on 30/11/2017.
@@ -14,9 +15,6 @@ import java.util.List;
 public class BattleField implements Serializable {
 
     private static final String TAG = BattleField.class.getSimpleName();
-
-
-
     protected String[][] myShipsLocation;
     protected HashMap<String,BattleShip> shipMap;
 
@@ -164,6 +162,33 @@ public BattleField(int size){
         }
     public String[][] getMyShipsLocation() {
         return myShipsLocation;
+    }
+    public HashMap<String, BattleShip> getShipMap() {
+        return shipMap;
+    }
+
+    public boolean shipWasHit(String name){
+        // receives a ship's name that was hit - updates it's number of hits +1 , if it was sunk then return
+        // true , else just updates and returns false.
+        BattleShip b= shipMap.get(name);
+        //Log.d(TAG, "shipWasHit: setting to ship="+b.getName()+" new hit number = "+b.getNumberOfHits()+1);
+        int newNumOfHits = b.getNumberOfHits()+1;
+        Log.d(TAG, "shipWasHit: newNumOfHits="+newNumOfHits);
+        b.setNumberOfHits(newNumOfHits);
+        Log.d(TAG, "shipWasHit: b has numOfhits="+b.getNumberOfHits());
+        if (b.getNumberOfHits()==b.getLength()){
+            b.setSunk(true);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isAllShipsSunk(){
+        for(Map.Entry<String,BattleShip> entry : shipMap.entrySet()){
+            if (!entry.getValue().isSunk())
+                return false; // there's still atleast 1 ship not sunk.
+        }
+        return true;
     }
 }
 

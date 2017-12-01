@@ -1,5 +1,7 @@
 package com.example.omri.batlleship;
 
+import android.util.Log;
+
 import java.io.Serializable;
 
 /**
@@ -7,31 +9,34 @@ import java.io.Serializable;
  */
 
 public abstract class Player implements PlayerIF , Serializable {
-    public final int numOfShips = 5;
+
+    private static final String TAG = Player.class.getSimpleName();
+    public int numOfShips = 5;
     protected String playerName; // me/computer
-
-
-
+    //protected int battleFieldSize;
     protected BattleField myField; // 0 - there is no ship here , 1 - there is.
     protected int[][] hitShots; // possibly change to enum with - {not shot,hit,miss} . - this mat of where i shot.
     //protected List<BattleShip> battleShips;
+    private int numOfSunkShips;
+    private boolean hasBeenDefeated;
 
+    public Player(String name,int sizeOfMap,int numOfShips){
+        this.playerName=name;
+        this.numOfShips=numOfShips;
+        numOfSunkShips=0;
+        //battleFieldSize=sizeOfMap;
+        this.myField=new BattleField(sizeOfMap);
+        hasBeenDefeated=false;
+    }
 //    public void addBattleShip(BattleShip s){
 //        battleShips.add(s);
 //    }
     public abstract void placeBattleShips(Coordinate position);
-//    public boolean hasBeenDefeated(){
-//        for (BattleShip b : myField.shipMap){
-//            if (!b.isSunk())
-//                return false;
-//        }
-//        return true;
-//    }
-    public boolean receiveFire(Coordinate pos){
 
-
-        return true;
+    public boolean hasBeenDefeated(){
+        return hasBeenDefeated;
     }
+
     public String getPlayerName() {
         return playerName;
     }
@@ -60,5 +65,23 @@ public abstract class Player implements PlayerIF , Serializable {
 
     public BattleField getMyField() {
         return myField;
+    }
+
+    @Override
+    public boolean receiveFire(Coordinate target) {
+        if (myField.myShipsLocation[target.getX()][target.getY()]!=null) { // i got hit!
+            String shipHitName = myField.myShipsLocation[target.getX()][target.getY()];
+            if(myField.shipWasHit(shipHitName)) { // true = hit and sunk.
+                Log.d(TAG, "receiveFire: inside if,numOfSunkShips="+numOfSunkShips+", numOfShips="+numOfShips);
+                numOfSunkShips++;
+                Log.d(TAG, "receiveFire: ship sunk ("+numOfShips+")");
+                if (numOfSunkShips==numOfShips) {
+                    hasBeenDefeated = true;
+                    Log.d(TAG, "receiveFire: player "+this.getPlayerName()+" has been defeated!!!");
+                }
+            }
+            return true;
+        }
+        return false;
     }
 }

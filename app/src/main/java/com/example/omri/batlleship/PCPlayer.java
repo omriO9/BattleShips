@@ -2,9 +2,7 @@ package com.example.omri.batlleship;
 
 import android.util.Log;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -16,15 +14,26 @@ import java.util.Random;
 public class PCPlayer extends Player  {
     private static final String TAG = PCPlayer.class.getSimpleName();
 
-    private int battleFieldSize;
+   private List<Integer> listOfPossibleShots; // possible locations to randomize a shot that are left.
 
-    public PCPlayer(int size){
-        this.playerName="BlueGene";
-        this.battleFieldSize = size;
-        this.myField=new BattleField(battleFieldSize);
+
+    public PCPlayer(String name,int size,int numOfShips){
+        super(name,size,numOfShips);
+        //this.playerName="BlueGene";
+        //this.battleFieldSize = size;
+        //this.myField=new BattleField(battleFieldSize);
         initBattleShipsRandomly();
-        myField.printMat();
+        listOfPossibleShots=new ArrayList<>();
+        initListOfPossibleShots();
+        //myField.printMat();
 
+    }
+
+    private void initListOfPossibleShots() {
+        int id = 0;
+        for (int i=0;i<getMyField().myShipsLocation.length*2;i++){
+            listOfPossibleShots.add(i);
+        }
     }
 
     public void initBattleShipsRandomly() {
@@ -33,7 +42,7 @@ public class PCPlayer extends Player  {
         Map<String,BattleShip> map = myField.shipMap;
        for(Map.Entry<String,BattleShip> entry : map.entrySet()){
             Log.d(TAG, "initBattleShipsRandomly: inside "+ entry.getKey());
-            Coordinate randomShipCord = generateRandomCoordinate(battleFieldSize);
+            Coordinate randomShipCord = generateRandomCoordinate(getMyField().myShipsLocation.length);
             listOfPossibilities = myField.showPossiblePositions(randomShipCord, entry.getKey());//check what if listOfPossibilities is empty
             int randomIndex = generateRandomIndex(listOfPossibilities.size());
             myField.placeShip(randomShipCord,listOfPossibilities.get(randomIndex),entry.getKey());
@@ -48,23 +57,24 @@ public class PCPlayer extends Player  {
     private Coordinate generateRandomCoordinate(int battleFieldSize ) {
         int x ,y;
         Random r = new Random();
-
         do {
             x = r.nextInt(battleFieldSize-0);
             y = r.nextInt(battleFieldSize-0);
         }while(!myField.isShipInXY(x,y));
-
         return new Coordinate(x,y);
     }
 
     @Override
-    public void attack() {
-
-    }
-
-    @Override
-    public boolean receiveFire() {
-        return false;
+    public Coordinate attack() {
+        // has an ArrayList of 0-99 possible positions to atk , remove after each attack.
+        // randomize index 0-list.size();
+        Random r = new Random();
+        Log.d(TAG, "attack: listOfPossibleShots.size="+listOfPossibleShots.size());
+        int randomIndex = r.nextInt(listOfPossibleShots.size());
+        Coordinate shotTarget = new Coordinate(randomIndex/10,randomIndex%10);
+        Log.d(TAG, "attack: PCAttacks="+shotTarget.toString());
+        // shotTarget - PC requested atk target.
+        return shotTarget;
     }
 
     @Override

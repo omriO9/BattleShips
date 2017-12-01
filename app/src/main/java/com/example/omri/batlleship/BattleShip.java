@@ -12,7 +12,7 @@ public class BattleShip implements Serializable {
 
     String name; // for identification towards XML id.
     int length;
-    boolean isSunk;
+    private boolean isSunk;
     boolean orientation; // true = vertical , false = horizontal
     Coordinate position; // the back of the ship - starting point.
     int numberOfHits;

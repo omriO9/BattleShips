@@ -5,8 +5,8 @@ package com.example.omri.batlleship;
  */
 
 interface PlayerIF {
-    public void attack();
+    public Coordinate attack();
     //public boolean hasBeenDefeated();
-    public boolean receiveFire();
+    public boolean receiveFire(Coordinate target);
     public String getName();
 }

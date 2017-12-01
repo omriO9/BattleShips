@@ -38,7 +38,7 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
     protected void onResume() {
         super.onResume();
         // we need to receive from mainActivity the size of map (level 1/2/3);
-        human = new HumanPlayer("Mark",10);
+        human = new HumanPlayer("Mark",10,5);
         initGridLayout();
         initFleet();
     }
@@ -101,10 +101,10 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
         if (v instanceof GridButton) {
             final GridButton gridButton = (GridButton) v;
             Coordinate pos = new Coordinate(((GridButton) v).getPositionX(), ((GridButton) v).getPositionY());
-            Toast.makeText(this, ""+pos.toString(), Toast.LENGTH_SHORT).show();
+           // Toast.makeText(this, ""+pos.toString(), Toast.LENGTH_SHORT).show();
             if (selectedBattleID != 0) { // there's a ship selected!
                 String name = getResources().getResourceEntryName(selectedBattleID);
-                Toast.makeText(this, "shipName="+name, Toast.LENGTH_SHORT).show();
+               // Toast.makeText(this, "shipName="+name, Toast.LENGTH_SHORT).show();
 
                 if (gridButton.isAvailable()) {
 
