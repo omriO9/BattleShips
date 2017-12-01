@@ -1,8 +1,13 @@
 package com.example.omri.batlleship;
 
+import java.io.Serializable;
+
+/**
+ * Created by Mark on 24/11/2017.
+ */
 
 
-public class BattleShip {
+public class BattleShip implements Serializable {
 
 
     String name; // for identification towards XML id.

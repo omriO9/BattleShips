@@ -9,6 +9,9 @@ import java.io.Serializable;
 public abstract class Player implements PlayerIF , Serializable {
     public final int numOfShips = 5;
     protected String playerName; // me/computer
+
+
+
     protected BattleField myField; // 0 - there is no ship here , 1 - there is.
     protected int[][] hitShots; // possibly change to enum with - {not shot,hit,miss} . - this mat of where i shot.
     //protected List<BattleShip> battleShips;
@@ -54,4 +57,8 @@ public abstract class Player implements PlayerIF , Serializable {
 //    public void setBattleShips(List<BattleShip> list) {
 //        this.battleShips=list;
 //    }
+
+    public BattleField getMyField() {
+        return myField;
+    }
 }

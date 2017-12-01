@@ -185,8 +185,9 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
         }
     }
 
-    public void showGameActivity(View view) {
+    public void startGameActivity(View view) {
         Intent GameActivity = new Intent(this, GameActivity.class);
+        GameActivity.putExtra("human",human);
         startActivity(GameActivity);
     }
 

@@ -3,42 +3,75 @@ package com.example.omri.batlleship;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.widget.AdapterView;
 import android.widget.GridLayout;
-import android.widget.GridView;
-import android.widget.Toast;
 
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private static final String TAG = GameActivity.class.getSimpleName();
+
     GridLayout myGridLayout;
     GridLayout enemyGridLayout;
     int myGridLayoutWidth;
     PCPlayer pcPlayer;
+    HumanPlayer human;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+        myGridLayout = (GridLayout) findViewById(R.id.myGridLayout);
+        enemyGridLayout = (GridLayout) findViewById(R.id.enemyGridLayout);
+        human = (HumanPlayer)getIntent().getSerializableExtra("human");
+        initGridLayout(myGridLayout);
+        initGridLayout(enemyGridLayout);
+       // paintMyGridLayout();
     }
 
     protected void onResume() {
         super.onResume();
-        pcPlayer = new PCPlayer(10);
         myGridLayout = (GridLayout) findViewById(R.id.myGridLayout);
         enemyGridLayout = (GridLayout) findViewById(R.id.enemyGridLayout);
+        human = (HumanPlayer)getIntent().getSerializableExtra("human");
+        pcPlayer = new PCPlayer(10);
         initGridLayout(myGridLayout);
         initGridLayout(enemyGridLayout);
+       // paintMyGridLayout();
+
+    }
+
+    private void paintMyGridLayout(GridLayout grid,Player p) {
+        Log.d(TAG, "paintMyGridLayout: starting to paint");
+        String[][] mat = p.getMyField().getMyShipsLocation();
+        for (int row=0;row<mat.length;row++){
+            for (int col=0;col<mat.length;col++) {
+                if (mat[row][col]!=null){
+                    Log.d(TAG, "paintMyGridLayout: found something to paint");
+                    View btn = (grid.getChildAt(row+col*10));
+                    Log.d(TAG, "paintMyGridLayout: Btn="+btn.toString());
+                    btn.setBackgroundResource(R.drawable.hit);
+                    Log.d(TAG, "paintMyGridLayout: supposed to be view changed!!!");
+                }
+                //Button quit = (Button)findViewById(R.id.quitButton);
+                //quit.setBackgroundColor(col*row);
+            }
+        }
+
 
 
     }
 
     public void initGridLayout(final GridLayout theGrid) {
 
-        int squaresCount = theGrid.getColumnCount() * myGridLayout.getRowCount();
+//        int cellSize = gridLayoutWidth / gridLayout.getColumnCount(); // 910
+//        Log.d(TAG, "onResume: gridLayoutWidth="+gridLayoutWidth);
+//        cellSize -= 3;
+        int squaresCount = theGrid.getColumnCount() * theGrid.getRowCount();
+        Log.d(TAG, "initGridLayout: squaresCount="+squaresCount);
         for (int i = 0; i < squaresCount; i++) {
             GridButton gridButton = new GridButton(this);
             gridButton.setOnClickListener(this);
@@ -48,14 +81,18 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onGlobalLayout() {
                 theGrid.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                myGridLayoutWidth = theGrid.getWidth();
-                int cellSize = myGridLayoutWidth / theGrid.getColumnCount();
-                cellSize -= 3;
+                myGridLayoutWidth = theGrid.getWidth(); //height is ready
+                int cellSize = myGridLayoutWidth / theGrid.getColumnCount(); // 910
+                // Log.d(TAG, "onResume: gridLayoutWidth="+gridLayoutWidth);
+                //cellSize -= 3;
+                // int squaresCount = gridLayout.getColumnCount() * gridLayout.getRowCount();
                 for (int i = 0; i < theGrid.getChildCount(); i++) {
                     GridButton btn = (GridButton) theGrid.getChildAt(i);
                     btn.setPositionX(i % theGrid.getColumnCount());
                     btn.setPositionY(i / theGrid.getColumnCount());
-
+                    //Drawable border = ContextCompat.getDrawable(this, R.drawable.cell_border);
+                    //btn.setOnClickListener(this);
+                    //   Log.d(TAG, "onGlobalLayout: height+size="+cellSize);
                     btn.setBackgroundResource(R.drawable.cell_border);
                     btn.getLayoutParams().height = cellSize;
                     btn.getLayoutParams().width = cellSize;
@@ -80,6 +117,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 //                }
 //            }).start();
         }
+
+
+
     }
 
 
@@ -97,5 +137,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 .setNegativeButton("No", null)
                 .show();
 
+    }
+
+    public void startGame(View view) {
+        paintMyGridLayout(myGridLayout,human);
+        paintMyGridLayout(enemyGridLayout,pcPlayer);
     }
 }

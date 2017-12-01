@@ -101,7 +101,7 @@
         android:layout_alignParentEnd="true"
         android:layout_marginBottom="17dp"
         android:layout_marginEnd="9dp"
-        android:onClick="showGameActivity"
+        android:onClick="startGameActivity"
         android:text="@string/fightButton" />
 
 </RelativeLayout>

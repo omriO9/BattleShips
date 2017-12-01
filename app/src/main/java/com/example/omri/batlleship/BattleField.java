@@ -2,6 +2,7 @@ package com.example.omri.batlleship;
 
 import android.util.Log;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,9 +11,11 @@ import java.util.List;
  * Created by Mark on 30/11/2017.
  */
 
-public class BattleField {
+public class BattleField implements Serializable {
 
     private static final String TAG = BattleField.class.getSimpleName();
+
+
 
     protected String[][] myShipsLocation;
     protected HashMap<String,BattleShip> shipMap;
@@ -159,6 +162,8 @@ public BattleField(int size){
             }
             return false;
         }
-
+    public String[][] getMyShipsLocation() {
+        return myShipsLocation;
+    }
 }
 
