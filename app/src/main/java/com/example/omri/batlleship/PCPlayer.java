@@ -15,7 +15,7 @@ public class PCPlayer extends Player  {
     private static final String TAG = PCPlayer.class.getSimpleName();
 
    private List<Integer> listOfPossibleShots; // possible locations to randomize a shot that are left.
-
+    private Coordinate lastShot;
 
     public PCPlayer(String name,int size,int numOfShips){
         super(name,size,numOfShips);
@@ -25,6 +25,7 @@ public class PCPlayer extends Player  {
         initBattleShipsRandomly();
         listOfPossibleShots=new ArrayList<>();
         initListOfPossibleShots();
+        lastShot=null;
         //myField.printMat();
 
     }
@@ -64,8 +65,8 @@ public class PCPlayer extends Player  {
         return new Coordinate(x,y);
     }
 
-    @Override
-    public Coordinate attack() {
+
+    public Coordinate generateShot() {
         // has an ArrayList of 0-99 possible positions to atk , remove after each attack.
         // randomize index 0-list.size();
         Random r = new Random();
@@ -74,6 +75,7 @@ public class PCPlayer extends Player  {
         Coordinate shotTarget = new Coordinate(randomIndex/10,randomIndex%10);
         Log.d(TAG, "attack: PCAttacks="+shotTarget.toString());
         // shotTarget - PC requested atk target.
+        setLastShot(shotTarget);
         return shotTarget;
     }
 
@@ -86,4 +88,12 @@ public class PCPlayer extends Player  {
     public void placeBattleShips(Coordinate position) {
 
     }
+    public Coordinate getLastShot() {
+        return lastShot;
+    }
+
+    public void setLastShot(Coordinate lastShot) {
+        this.lastShot = lastShot;
+    }
+
 }

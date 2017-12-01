@@ -23,10 +23,12 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
     List<ImageButton> shipList;
     ImageButton ship5, ship4, ship3, ship3_2, ship2;
     ImageButton oldImageBattleShip;
-    HumanPlayer human;
+    //HumanPlayer human;
     //int selectedShip = 0;  // 0-nothing chosen,1-ship5,2-ship4,3-ship3,4-ship3_2,5-ship2
     int selectedBattleID = 0; // the ID is from the resource file.
-
+    int numberOfShips; // determines the level
+    int numberOfPlacedShips=0;
+    GameManager manager;
     List<Coordinate> possibleCords;
 
     @Override
@@ -38,9 +40,12 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
     protected void onResume() {
         super.onResume();
         // we need to receive from mainActivity the size of map (level 1/2/3);
-        human = new HumanPlayer("Mark",10,5);
+        manager = new GameManager();
+        manager.createHuman("Mark",10,5);
+        //human = new HumanPlayer("Mark",10,5);
         initGridLayout();
         initFleet();
+        numberOfShips=5;
     }
 
     private void initFleet() {
@@ -115,12 +120,12 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
                         ((GridButton)gridLayout.getChildAt(shipPos.getX()+shipPos.getY()*10)).setDefaultDrawable();
                     }
                     shipPos = pos;
-                    possibleCords=human.myField.showPossiblePositions(pos, name); // shows placeAble positions for current ship.
+                    possibleCords=manager.getHumanPlayer().myField.showPossiblePositions(pos, name); // shows placeAble positions for current ship.
                     paintLayout(possibleCords,"@drawable/cell_border_available");
                 }
                 else {//gridButton is notAvailable - means we place a ship
-                    List<Coordinate> list2Paint =human.myField.placeShip(shipPos,pos,name);
-                    human.myField.printMat();
+                    List<Coordinate> list2Paint =manager.getHumanPlayer().myField.placeShip(shipPos,pos,name);
+                    manager.getHumanPlayer().myField.printMat();
 
                     paintLayout(list2Paint,"@drawable/hit");
                     boolean test=possibleCords.remove(pos);
@@ -132,6 +137,7 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
                     selectedBattleID=0;
                     oldImageBattleShip.setClickable(false);
                     oldImageBattleShip.setBackgroundResource(R.drawable.miss);
+                    numberOfPlacedShips++;
                 }
                 gridButton.setBackgroundResource(R.drawable.hit);
                // human.placeBattleShips(pos); // only OK after logic check!!!
@@ -186,9 +192,18 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
     }
 
     public void startGameActivity(View view) {
-        Intent GameActivity = new Intent(this, GameActivity.class);
-        GameActivity.putExtra("human",human);
-        startActivity(GameActivity);
+        // remove the remarks before the end - so we can put less than 5 for testing.
+        //
+        //  ! !  ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !
+        //
+//        if (numberOfPlacedShips!=numberOfShips){
+//            Toast.makeText(this, "Please place all ships before proceeding.", Toast.LENGTH_SHORT).show();
+//        }
+//        else {
+            Intent GameActivity = new Intent(this, GameActivity.class);
+            GameActivity.putExtra("GameManager", manager);
+            startActivity(GameActivity);
+//        }
     }
 
     public void onBackBtnPressed(View view) {

@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.GridLayout;
+import android.widget.Toast;
 
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -19,7 +20,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     GridLayout enemyGridLayout;
     int myGridLayoutWidth;
     PCPlayer pcPlayer;
-    HumanPlayer human;
+    GameManager manager;
     private boolean turnHumanPlayer = true;
 
     @Override
@@ -38,10 +39,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         super.onResume();
         myGridLayout = (GridLayout) findViewById(R.id.myGridLayout);
         enemyGridLayout = (GridLayout) findViewById(R.id.enemyGridLayout);
-        human = (HumanPlayer) getIntent().getSerializableExtra("human");
-        pcPlayer = new PCPlayer("BlueGene",10,5);
-        initGridLayout(myGridLayout, human);
-        initGridLayout(enemyGridLayout, pcPlayer);
+        manager = (GameManager) getIntent().getSerializableExtra("GameManager");
+        manager.createPC("BlueGene",10,5);
+        initGridLayout(myGridLayout, manager.getHumanPlayer());
+        initGridLayout(enemyGridLayout, manager.getPcPlayer());
 
 
     }
@@ -99,25 +100,37 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
+        boolean hitResult; // true = hit , false = miss.
         if (v instanceof GridButton) {
             final GridButton gridButton = (GridButton) v;
-            if (turnHumanPlayer) { // human player's turn
-                attack(v, human);
-                turnHumanPlayer = false;
-                if (pcPlayer.hasBeenDefeated())
-                    playerDefeated(pcPlayer);
+            if (manager.isHumanPlayerTurn()) { // human player's turn
+                manager.setHumanPlayerTurn(false);
+                Coordinate target = new Coordinate(gridButton.getPositionX(),gridButton.getPositionY());
+                hitResult=manager.manageGame(target);
+                paintAttack(enemyGridLayout,target,hitResult);
+                //attack(gridButton, manager.getHumanPlayer());
+                //turnHumanPlayer = false;
+                //if (pcPlayer.hasBeenDefeated())
+                //   gameOver(pcPlayer);
+                // pc's turn now!
+                //hitResult=
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        boolean hitResult=manager.manageGame(null);
+                        paintAttack(myGridLayout,manager.getPcPlayer().getLastShot(),hitResult);
+                        if (manager.getHumanPlayer().hasBeenDefeated())
+                            gameOver(manager.getHumanPlayer());
+                        //turnHumanPlayer=true;
+                    }
+                }, 1000);
+                //if (manager.isGameOver)
             }
-            // pc's turn now!
-            final Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    attack(null, pcPlayer);
-                    turnHumanPlayer=true;
-                    if (human.hasBeenDefeated())
-                        playerDefeated(human);
-                }
-            }, 500);
+            else {
+                Toast.makeText(this, "Please wait for your turn", Toast.LENGTH_SHORT).show();
+            }
+            
 
             //gridButton.setBackgroundResource(R.drawable.hit);
 //            v.animate().scaleY(2).scaleX(2).setDuration(200).withEndAction(new Runnable() {
@@ -132,7 +145,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    public void playerDefeated(Player p) {
+    public void gameOver(Player p) {
         new AlertDialog.Builder(this)
                 .setMessage(p.getPlayerName()+" has been defeated!!!")
                 .setCancelable(false)
@@ -162,19 +175,26 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    public void attack(View view, Player p) {
-        if (p instanceof PCPlayer) {
-            Coordinate target = p.attack();
-            if (human.receiveFire(target)) {
-                ((GridButton) myGridLayout.getChildAt(target.getX() + target.getY() * 10)).setBackgroundResource(R.drawable.blast);
-            } else
-                ((GridButton) myGridLayout.getChildAt(target.getX() + target.getY() * 10)).setBackgroundResource(R.drawable.miss);
-        } else {// p instance of HumanPlayer
-            Coordinate target = new Coordinate(((GridButton)view).getPositionX(),((GridButton)view).getPositionY()); //p.attack();
-            if (pcPlayer.receiveFire(target)) {
-                ((GridButton) enemyGridLayout.getChildAt(target.getX() + target.getY() * 10)).setBackgroundResource(R.drawable.blast);
-            } else
-                ((GridButton) enemyGridLayout.getChildAt(target.getX() + target.getY() * 10)).setBackgroundResource(R.drawable.miss);
-        }
+    public void paintAttack( GridLayout theGrid,Coordinate target,boolean isHit) {
+
+                if (isHit)
+                    ((GridButton) theGrid.getChildAt(target.getX() + target.getY() * 10)).setBackgroundResource(R.drawable.blast);
+                else
+                    ((GridButton) theGrid.getChildAt(target.getX() + target.getY() * 10)).setBackgroundResource(R.drawable.miss);
+//
+//                if (p instanceof PCPlayer) {
+//                    Coordinate target = p.attack();
+//                    if (manager.getHumanPlayer().receiveFire(target)) {
+//                        ((GridButton) myGridLayout.getChildAt(target.getX() + target.getY() * 10)).setBackgroundResource(R.drawable.blast);
+//                    } else
+//                        ((GridButton) myGridLayout.getChildAt(target.getX() + target.getY() * 10)).setBackgroundResource(R.drawable.miss);
+//                }
+//                else {// p instance of HumanPlayer
+//                    Coordinate target = new Coordinate(((GridButton)view).getPositionX(),((GridButton)view).getPositionY()); //p.attack();
+//                    if (pcPlayer.receiveFire(target)) {
+//                        ((GridButton) enemyGridLayout.getChildAt(target.getX() + target.getY() * 10)).setBackgroundResource(R.drawable.blast);
+//                    } else
+//                         ((GridButton) enemyGridLayout.getChildAt(target.getX() + target.getY() * 10)).setBackgroundResource(R.drawable.miss);
+//                }
     }
 }

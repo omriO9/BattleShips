@@ -20,10 +20,10 @@ public class HumanPlayer extends Player implements Serializable{
 
     }
 
-    @Override
-    public Coordinate attack() {
-        return null;
-    }
+//    @Override
+//    public Coordinate attack() {
+//        return null;
+//    }
 
 //    @Override
 //    public boolean receiveFire(Coordinate target) {
