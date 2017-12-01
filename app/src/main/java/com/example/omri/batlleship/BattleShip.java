@@ -1,8 +1,6 @@
 package com.example.omri.batlleship;
 
-/**
- * Created by Mark on 24/11/2017.
- */
+
 
 public class BattleShip {
 
@@ -62,5 +60,10 @@ public class BattleShip {
     public void checkIfShipIsSunk(){
         if (numberOfHits==length)
             setSunk(true);
+    }
+
+    @Override
+    public String toString() {
+        return this.name;
     }
 }

@@ -17,6 +17,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     GridLayout myGridLayout;
     GridLayout enemyGridLayout;
     int myGridLayoutWidth;
+    PCPlayer pcPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,18 +27,17 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     protected void onResume() {
         super.onResume();
+        pcPlayer = new PCPlayer(10);
         myGridLayout = (GridLayout) findViewById(R.id.myGridLayout);
         enemyGridLayout = (GridLayout) findViewById(R.id.enemyGridLayout);
         initGridLayout(myGridLayout);
         initGridLayout(enemyGridLayout);
 
+
     }
 
     public void initGridLayout(final GridLayout theGrid) {
 
-//        int cellSize = gridLayoutWidth / gridLayout.getColumnCount(); // 910
-//        Log.d(TAG, "onResume: gridLayoutWidth="+gridLayoutWidth);
-//        cellSize -= 3;
         int squaresCount = theGrid.getColumnCount() * myGridLayout.getRowCount();
         for (int i = 0; i < squaresCount; i++) {
             GridButton gridButton = new GridButton(this);
@@ -48,25 +48,17 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onGlobalLayout() {
                 theGrid.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                myGridLayoutWidth = theGrid.getWidth(); //height is ready
-                int cellSize = myGridLayoutWidth / theGrid.getColumnCount(); // 910
-                // Log.d(TAG, "onResume: gridLayoutWidth="+gridLayoutWidth);
+                myGridLayoutWidth = theGrid.getWidth();
+                int cellSize = myGridLayoutWidth / theGrid.getColumnCount();
                 cellSize -= 3;
-                // int squaresCount = gridLayout.getColumnCount() * gridLayout.getRowCount();
                 for (int i = 0; i < theGrid.getChildCount(); i++) {
                     GridButton btn = (GridButton) theGrid.getChildAt(i);
                     btn.setPositionX(i % theGrid.getColumnCount());
                     btn.setPositionY(i / theGrid.getColumnCount());
-                    //Drawable border = ContextCompat.getDrawable(this, R.drawable.cell_border);
-                    //btn.setOnClickListener(this);
-                    //   Log.d(TAG, "onGlobalLayout: height+size="+cellSize);
+
                     btn.setBackgroundResource(R.drawable.cell_border);
-                    //btn.setHeight(cellSize);
-                    // btn.setWidth(cellSize);
-                    //btn.setLayoutParams(btn.getLayoutParams());
                     btn.getLayoutParams().height = cellSize;
                     btn.getLayoutParams().width = cellSize;
-                    // btn.setLayoutParams(new ViewGroup.LayoutParams(cellSize, cellSize));
                 }
                 theGrid.invalidate();
                 theGrid.requestLayout();
@@ -79,14 +71,14 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         if (v instanceof GridButton) {
             final GridButton gridButton = (GridButton) v;
-            v.animate().scaleY(2).scaleX(2).setDuration(200).withEndAction(new Runnable() {
-                @Override
-                public void run() {
-                    gridButton.animate().scaleY(1).scaleX(1).setDuration(200).start();
-                    //Drawable border = ContextCompat.getDrawable(this, R.drawable.hit);
-                    gridButton.setBackgroundResource(R.drawable.hit);
-                }
-            }).start();
+            gridButton.setBackgroundResource(R.drawable.hit);
+//            v.animate().scaleY(2).scaleX(2).setDuration(200).withEndAction(new Runnable() {
+//                @Override
+//                public void run() {
+//                    gridButton.animate().scaleY(1).scaleX(1).setDuration(200).start();
+//
+//                }
+//            }).start();
         }
     }
 

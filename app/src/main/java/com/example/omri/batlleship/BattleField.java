@@ -32,6 +32,13 @@ public BattleField(int size){
         shipMap.put("ship3_2",new BattleShip("ship3_2",3,true,new Coordinate(-1,-1)));
         shipMap.put("ship2",new BattleShip("ship2",2,true,new Coordinate(-1,-1)));
     }
+    public boolean isShipInXY(int x, int y){
+
+        if(myShipsLocation[x][y]==null)
+            return true;
+        return false;
+
+    }
 
     public List<Coordinate> showPossiblePositions(Coordinate shipPos, String name) {
         // A method that gets a clicked location + ship's name and returns a list of possible positions
