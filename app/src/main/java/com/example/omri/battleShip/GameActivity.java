@@ -3,6 +3,7 @@ package com.example.omri.battleShip;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -50,7 +51,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         for (int row = 0; row < playerField.length; row++) {
             for (int col = 0; col < playerField.length; col++) {
                 View btn = (grid.getChildAt(row + col * gridSize));
-                if (playerField[row][col] != null) {
+                if (playerField[row][col] != null && (p instanceof HumanPlayer)) {
                     btn.setBackgroundResource(R.drawable.hit);
                 } else
                     btn.setBackgroundResource(R.drawable.cell_border);
@@ -112,7 +113,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     hitResult = manager.manageGame(target);
                     paintAttack(enemyGridLayout, target, hitResult);
                     if (manager.getPcPlayer().hasBeenDefeated())
-                        gameOver(manager.getPcPlayer());
+                        gameOver(manager.getHumanPlayer());
                     final Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
                         @Override
@@ -120,7 +121,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                             boolean hitResult = manager.manageGame(null);
                             paintAttack(myGridLayout, manager.getPcPlayer().getLastShot(), hitResult);
                             if (manager.getHumanPlayer().hasBeenDefeated())
-                                gameOver(manager.getHumanPlayer());
+                                gameOver(manager.getPcPlayer());
 
                         }
                     }, 1000);
@@ -133,6 +134,12 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void gameOver(Player p) {
+        MediaPlayer gameOverSound;
+        if (p instanceof HumanPlayer)
+            gameOverSound = MediaPlayer.create(this,R.raw.game_won);
+        else
+            gameOverSound = MediaPlayer.create(this,R.raw.game_lost);
+        gameOverSound.start();
         new AlertDialog.Builder(this)
                 .setMessage(p.getPlayerName()+" has been defeated!!!")
                 .setCancelable(false)

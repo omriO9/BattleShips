@@ -30,6 +30,7 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
     GameManager manager;
     List<Coordinate> possibleCords;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
