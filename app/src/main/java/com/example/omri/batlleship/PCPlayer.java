@@ -31,7 +31,7 @@ public class PCPlayer extends Player  {
 
     private void initListOfPossibleShots() {
         int id = 0;
-        for (int i=0;i<getMyField().myShipsLocation.length*2;i++){
+        for (int i=0;i<getMyField().myShipsLocation.length*getMyField().myShipsLocation.length;i++){
             listOfPossibleShots.add(i);
         }
     }
@@ -43,6 +43,7 @@ public class PCPlayer extends Player  {
        for(Map.Entry<String,BattleShip> entry : map.entrySet()){
             Log.d(TAG, "initBattleShipsRandomly: inside "+ entry.getKey());
             Coordinate randomShipCord = generateRandomCoordinate(getMyField().myShipsLocation.length);
+            //Coordinate randomShipCord = generateRandomCoordinate(battleFieldSize);
             listOfPossibilities = myField.showPossiblePositions(randomShipCord, entry.getKey());//check what if listOfPossibilities is empty
             int randomIndex = generateRandomIndex(listOfPossibilities.size());
             myField.placeShip(randomShipCord,listOfPossibilities.get(randomIndex),entry.getKey());
@@ -55,6 +56,7 @@ public class PCPlayer extends Player  {
     }
 
     private Coordinate generateRandomCoordinate(int battleFieldSize ) {
+        Log.d(TAG, "generateRandomCoordinate: "+battleFieldSize);
         int x ,y;
         Random r = new Random();
         do {
@@ -71,7 +73,9 @@ public class PCPlayer extends Player  {
         Random r = new Random();
         Log.d(TAG, "attack: listOfPossibleShots.size="+listOfPossibleShots.size());
         int randomIndex = r.nextInt(listOfPossibleShots.size());
-        Coordinate shotTarget = new Coordinate(randomIndex/10,randomIndex%10);
+        Log.d(TAG, "attack: listOfPossibleShots.size randomIndex="+randomIndex);
+        Coordinate shotTarget = new Coordinate(listOfPossibleShots.get(randomIndex)/getMyField().myShipsLocation.length,listOfPossibleShots.get(randomIndex)%getMyField().myShipsLocation.length);
+        listOfPossibleShots.remove(randomIndex);
         Log.d(TAG, "attack: PCAttacks="+shotTarget.toString());
         // shotTarget - PC requested atk target.
         return shotTarget;

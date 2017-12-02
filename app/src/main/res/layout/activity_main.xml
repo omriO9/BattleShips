@@ -59,5 +59,36 @@
         android:hint="Your name..."
         android:inputType="textPersonName" />
 
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/radioGroup"
+        android:orientation="horizontal"
+        android:layout_marginTop="14dp"
+        android:layout_below="@+id/rules_button"
+        android:layout_centerHorizontal="true">
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Easy"
+            android:checked="true"
+            android:id="@+id/easyRadio"
+            />
+
+        <RadioButton
+            android:id="@+id/mediumRadio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Medium" />
+
+        <RadioButton
+            android:id="@+id/insaneRadio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Insane" />
+    </RadioGroup>
+
+
+
 
 </RelativeLayout>

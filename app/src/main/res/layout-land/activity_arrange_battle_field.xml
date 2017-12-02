@@ -27,9 +27,7 @@
         android:layout_centerVertical="true"
         android:layout_marginBottom="20dp"
         android:layout_marginStart="35dp"
-        android:layout_marginTop="10dp"
-        android:columnCount="10"
-        android:rowCount="10">
+        android:layout_marginTop="10dp">
 
     </GridLayout>
 
@@ -44,7 +42,7 @@
         android:textSize="16sp" />
 
     <ImageButton
-        android:id="@+id/ship5"
+        android:id="@+id/ship2"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_alignStart="@+id/fleet"
@@ -53,23 +51,12 @@
         android:scaleType="fitXY" />
 
     <ImageButton
-        android:id="@+id/ship4"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_alignTop="@id/ship5"
-        android:layout_marginStart="20dp"
-        android:layout_toEndOf="@id/ship5"
-        android:background="@drawable/battleship"
-        android:scaleType="fitXY" />
-
-    <ImageButton
         android:id="@+id/ship3"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_alignTop="@+id/ship4"
+        android:layout_alignTop="@id/ship2"
         android:layout_marginStart="20dp"
-        android:layout_toEndOf="@id/ship4"
-
+        android:layout_toEndOf="@id/ship2"
         android:background="@drawable/battleship"
         android:scaleType="fitXY" />
 
@@ -77,22 +64,34 @@
         android:id="@+id/ship3_2"
         android:layout_width="60dp"
         android:layout_height="60dp"
+        android:layout_alignTop="@id/ship3"
         android:layout_marginStart="20dp"
-        android:layout_below="@id/ship5"
-        android:layout_marginTop="20dp"
-        android:layout_toEndOf="@id/ship5"
+        android:layout_toEndOf="@id/ship3"
         android:background="@drawable/battleship"
         android:scaleType="fitXY" />
 
     <ImageButton
-        android:id="@+id/ship2"
+        android:id="@+id/ship4"
         android:layout_width="60dp"
         android:layout_height="60dp"
-
-        android:layout_alignTop="@+id/ship3_2"
-        android:layout_toStartOf="@+id/ship3_2"
+        android:layout_below="@id/ship2"
+        android:layout_marginTop="20dp"
+        android:layout_toEndOf="@id/ship2"
+        android:layout_alignStart="@+id/fleet"
         android:background="@drawable/battleship"
         android:scaleType="fitXY" />
+
+    <ImageButton
+        android:id="@+id/ship5"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignTop="@id/ship4"
+        android:layout_marginStart="20dp"
+        android:layout_toEndOf="@id/ship4"
+        android:background="@drawable/battleship"
+        android:scaleType="fitXY" />
+
+
 
     <Button
         android:layout_width="wrap_content"

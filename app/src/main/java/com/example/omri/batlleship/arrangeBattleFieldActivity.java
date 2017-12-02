@@ -4,12 +4,15 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompatSideChannelService;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import java.util.List;
@@ -17,14 +20,24 @@ import java.util.List;
 public class arrangeBattleFieldActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = arrangeBattleFieldActivity.class.getSimpleName();
+    private final static int EASY_GRID_SIZE = 5;
+    private final static int MEDIUM_GRID_SIZE = 7;
+    private final static int INSANE_GRID_SIZE = 10;
+    private final static int EASY_SHIPS_AMOUNT = 3;
+    private final static int MEDIUM_SHIPS_AMOUNT = 4;
+    private final static int INSANE_SHIPS_AMOUNT = 5;
+    private final static String EASY = "Easy";
+    private final static String MEDIUM = "Medium";
+
     GridLayout gridLayout;
     int gridLayoutWidth;
     Coordinate shipPos;
+    private int numOfShips;
+    private int gridSize;
     List<ImageButton> shipList;
     ImageButton ship5, ship4, ship3, ship3_2, ship2;
     ImageButton oldImageBattleShip;
     HumanPlayer human;
-    //int selectedShip = 0;  // 0-nothing chosen,1-ship5,2-ship4,3-ship3,4-ship3_2,5-ship2
     int selectedBattleID = 0; // the ID is from the resource file.
 
     List<Coordinate> possibleCords;
@@ -38,29 +51,63 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
     protected void onResume() {
         super.onResume();
         // we need to receive from mainActivity the size of map (level 1/2/3);
-        human = new HumanPlayer("Mark",10,5);
-        initGridLayout();
-        initFleet();
+        String gameDifficulty  = (String) getIntent().getSerializableExtra("gameDifficulty");
+        Log.d(TAG, "initHuman: " + gameDifficulty);
+        int [] arr = initHuman(gameDifficulty); //gridSize and numOfShips are decided according to gameDifficulty
+        //human = new HumanPlayer("Mark",10,5);
+        gridSize = arr[0];
+        initGridLayout(gridSize);
+        numOfShips = arr[1];
+        initFleet(numOfShips);
     }
 
-    private void initFleet() {
+    private int[] initHuman (String gameDifficulty) {
 
-        ship5 = (ImageButton) findViewById(R.id.ship5);
-        ship4 = (ImageButton) findViewById(R.id.ship4);
+        Log.d(TAG, "initHuman: " + gameDifficulty);
+        if(gameDifficulty.equals(EASY)){
+            human = new HumanPlayer("Mark",EASY_GRID_SIZE,EASY_SHIPS_AMOUNT);
+            return new int []{EASY_GRID_SIZE,EASY_SHIPS_AMOUNT};
+        }
+        else if(gameDifficulty.equals(MEDIUM)){
+            human = new HumanPlayer("Mark",MEDIUM_GRID_SIZE,MEDIUM_SHIPS_AMOUNT);
+            return new int []{MEDIUM_GRID_SIZE,MEDIUM_SHIPS_AMOUNT};
+        }
+        else{
+            human = new HumanPlayer("Mark",INSANE_GRID_SIZE,INSANE_SHIPS_AMOUNT);
+            return new int []{INSANE_GRID_SIZE,INSANE_SHIPS_AMOUNT};
+        }
+    }
+
+    private void initFleet(int shipAmount) {
+
         ship3 = (ImageButton) findViewById(R.id.ship3);
         ship3_2 = (ImageButton) findViewById(R.id.ship3_2);
         ship2 = (ImageButton) findViewById(R.id.ship2);
-        ship5.setOnClickListener(this);
-        ship4.setOnClickListener(this);
         ship3.setOnClickListener(this);
         ship3_2.setOnClickListener(this);
         ship2.setOnClickListener(this);
+        ship4 = (ImageButton) findViewById(R.id.ship4);
+        ship4.setVisibility(View.INVISIBLE);
+        ship5 = (ImageButton) findViewById(R.id.ship5);
+        ship5.setVisibility(View.INVISIBLE);
 
-
+        if(shipAmount >= MEDIUM_SHIPS_AMOUNT) {
+            ship4.setVisibility(View.VISIBLE);
+            ship4.setOnClickListener(this);
+            if(shipAmount == INSANE_SHIPS_AMOUNT){
+                ship5.setVisibility(View.VISIBLE);
+                ship5.setOnClickListener(this);
+            }
+        }
     }
 
-    public void initGridLayout() {
+    public void initGridLayout(int gridSize) {
         gridLayout = (GridLayout) findViewById(R.id.gridLayout);
+
+        Log.d(TAG, "initGridLayout: "+gridSize);
+
+        gridLayout.setColumnCount(gridSize);
+        gridLayout.setRowCount(gridSize);
 
         initGridLayoutButtons();
 
@@ -112,7 +159,7 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
                         for (int i=0;i<possibleCords.size();i++){
                     }
                         removePossibleCords(possibleCords); // deletes old gray cells
-                        ((GridButton)gridLayout.getChildAt(shipPos.getX()+shipPos.getY()*10)).setDefaultDrawable();
+                        ((GridButton)gridLayout.getChildAt(shipPos.getX()+shipPos.getY()*gridSize)).setDefaultDrawable();
                     }
                     shipPos = pos;
                     possibleCords=human.myField.showPossiblePositions(pos, name); // shows placeAble positions for current ship.
@@ -166,7 +213,7 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
         // func that receives a list of "old" possible cords - not relevant anymore since
         // ship was placed - and removes them = sets button Drawable to correct one.
         for(Coordinate c : possibleCords){
-            GridButton btn = (GridButton) gridLayout.getChildAt(c.getX()+c.getY()*10);
+            GridButton btn = (GridButton) gridLayout.getChildAt(c.getX()+c.getY()*gridSize);
                 btn.toggleAvailable();
                 btn.setDefaultDrawable();
         }
@@ -178,7 +225,7 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
         GridButton btn;
         int imageResource = getResources().getIdentifier(uri, null, getPackageName());
         for (Coordinate c : list2Paint){
-            int positionOnGrid = c.getY() * 10 + c.getX();
+            int positionOnGrid = c.getY() * gridLayout.getColumnCount() + c.getX();
             btn = (GridButton) gridLayout.getChildAt(positionOnGrid);
             btn.setBackgroundResource(imageResource);
             btn.toggleAvailable();
@@ -188,6 +235,8 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
     public void startGameActivity(View view) {
         Intent GameActivity = new Intent(this, GameActivity.class);
         GameActivity.putExtra("human",human);
+        GameActivity.putExtra("gridSize",gridSize);
+        GameActivity.putExtra("numOfShips",numOfShips);
         startActivity(GameActivity);
     }
 

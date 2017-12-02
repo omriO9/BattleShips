@@ -25,7 +25,7 @@ public abstract class Player implements PlayerIF , Serializable {
         this.numOfShips=numOfShips;
         numOfSunkShips=0;
         //battleFieldSize=sizeOfMap;
-        this.myField=new BattleField(sizeOfMap);
+        this.myField=new BattleField(sizeOfMap,numOfShips);
         hasBeenDefeated=false;
     }
 //    public void addBattleShip(BattleShip s){

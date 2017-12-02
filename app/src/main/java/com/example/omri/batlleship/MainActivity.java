@@ -5,16 +5,23 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = MainActivity.class.getSimpleName();
+
     SharedPreferences sharedPref;
     HumanPlayer playerH;
+    String gameDifficulty;
+    String defaultDifficulty = "Easy";
 
     private EditText userNameEditText;
     @Override
@@ -32,7 +39,29 @@ public class MainActivity extends AppCompatActivity {
            // playerH.setAmountOfLogins(playerH.getAmountOfLogins()+1);
            // Toast.makeText(this, "you have logged in "+playerH.getAmountOfLogins()+" times!", Toast.LENGTH_SHORT).show();
         }
+        RadioGroup radGrp = (RadioGroup) findViewById(R.id.radioGroup);
+        radGrp.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            public void onCheckedChanged(RadioGroup arg0, int id) {
+                switch (id) {
+                    case R.id.easyRadio:
+                        gameDifficulty = ((RadioButton)(findViewById(R.id.easyRadio))).getText().toString();
+                        Log.v(TAG, "Listening to RG" + gameDifficulty);
+                        break;
+                    case R.id.mediumRadio:
+                        gameDifficulty = ((RadioButton)(findViewById(R.id.mediumRadio))).getText().toString();
+                        Log.v(TAG, "Listening to RG" + gameDifficulty);
+                        break;
+                    case R.id.insaneRadio:
+                        gameDifficulty = ((RadioButton)(findViewById(R.id.insaneRadio))).getText().toString();
+                        Log.v(TAG, "Listening to RG" + gameDifficulty);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
     }
+
 
 
     public void showRulesActivity(View view) {
@@ -42,6 +71,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void ArrangeBattleFieldActivity(View view) {
         Intent ArrangeBattleFieldActivity = new Intent(this,arrangeBattleFieldActivity.class);
+        if(gameDifficulty != null)
+            ArrangeBattleFieldActivity.putExtra("gameDifficulty",gameDifficulty);
+        else
+            ArrangeBattleFieldActivity.putExtra("gameDifficulty",defaultDifficulty);
         startActivity(ArrangeBattleFieldActivity);
     }
 
@@ -63,5 +96,6 @@ public class MainActivity extends AppCompatActivity {
         editor.commit();
         Toast.makeText(this, ""+userName+" saved!", Toast.LENGTH_SHORT).show();
     }
+
 }
 

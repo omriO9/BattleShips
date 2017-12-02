@@ -26,12 +26,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
-//        myGridLayout = (GridLayout) findViewById(R.id.myGridLayout);
-//        enemyGridLayout = (GridLayout) findViewById(R.id.enemyGridLayout);
-//        human = (HumanPlayer)getIntent().getSerializableExtra("human");
-//        initGridLayout(myGridLayout);
-//        initGridLayout(enemyGridLayout);
-//       // paintMyGridLayout();
     }
 
     protected void onResume() {
@@ -39,19 +33,25 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         myGridLayout = (GridLayout) findViewById(R.id.myGridLayout);
         enemyGridLayout = (GridLayout) findViewById(R.id.enemyGridLayout);
         human = (HumanPlayer) getIntent().getSerializableExtra("human");
-        pcPlayer = new PCPlayer("BlueGene",10,5);
-        initGridLayout(myGridLayout, human);
-        initGridLayout(enemyGridLayout, pcPlayer);
-
-
+        int gridSize = (Integer) getIntent().getSerializableExtra("gridSize");
+        int numOfShips = (Integer) getIntent().getSerializableExtra("numOfShips");
+        initPCPlayer(gridSize,numOfShips);
+        //pcPlayer = new PCPlayer("BlueGene",10,5);
+        initGridLayout(myGridLayout, human,gridSize);
+        initGridLayout(enemyGridLayout, pcPlayer,gridSize);
     }
 
-    private void paintGridLayout(GridLayout grid, Player p) {
+    private void initPCPlayer(int gridSize, int numOfShips) {
+
+        pcPlayer = new PCPlayer("BlueGene",gridSize,numOfShips);
+    }
+
+    private void paintGridLayout(GridLayout grid, Player p, int gridSize) {
         Log.d(TAG, "paintMyGridLayout: starting to paint");
         String[][] mat = p.getMyField().getMyShipsLocation();
         for (int row = 0; row < mat.length; row++) {
             for (int col = 0; col < mat.length; col++) {
-                View btn = (grid.getChildAt(row + col * 10));
+                View btn = (grid.getChildAt(row + col * gridSize));
                 if (mat[row][col] != null) {
                     btn.setBackgroundResource(R.drawable.hit);
                 } else
@@ -62,7 +62,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    public void initGridLayout(final GridLayout theGrid, Player p) {
+    public void initGridLayout(final GridLayout theGrid, Player p, int gridSize) {
+
+        theGrid.setColumnCount(gridSize);
+        theGrid.setRowCount(gridSize);
+
         int squaresCount = theGrid.getColumnCount() * theGrid.getRowCount();
         Log.d(TAG, "initGridLayout: squaresCount=" + squaresCount);
         for (int i = 0; i < squaresCount; i++) {
@@ -70,6 +74,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             gridButton.setOnClickListener(this);
             theGrid.addView(gridButton);
         }
+
+
+
         theGrid.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -83,10 +90,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     GridButton btn = (GridButton) theGrid.getChildAt(i);
                     btn.setPositionX(i % theGrid.getColumnCount());
                     btn.setPositionY(i / theGrid.getColumnCount());
-                    //Drawable border = ContextCompat.getDrawable(this, R.drawable.cell_border);
-                    //btn.setOnClickListener(this);
-                    //   Log.d(TAG, "onGlobalLayout: height+size="+cellSize);
-                    //btn.setBackgroundResource(R.drawable.cell_border);
                     btn.getLayoutParams().height = cellSize;
                     btn.getLayoutParams().width = cellSize;
                 }
@@ -94,7 +97,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 theGrid.requestLayout();
             }
         });
-        paintGridLayout(theGrid, p);
+        paintGridLayout(theGrid, p,gridSize);
     }
 
     @Override
@@ -128,8 +131,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 //                }
 //            }).start();
         }
-
-
     }
 
     public void playerDefeated(Player p) {
@@ -144,7 +145,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 })
                 .setNegativeButton("Back to menu", null)
                 .show();
-
     }
 
     public void onQuitPressed(View view) {
@@ -159,22 +159,22 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 })
                 .setNegativeButton("No", null)
                 .show();
-
     }
 
     public void attack(View view, Player p) {
+        int gridSize = myGridLayout.getColumnCount();
         if (p instanceof PCPlayer) {
             Coordinate target = p.attack();
             if (human.receiveFire(target)) {
-                ((GridButton) myGridLayout.getChildAt(target.getX() + target.getY() * 10)).setBackgroundResource(R.drawable.blast);
+                ((GridButton) myGridLayout.getChildAt(target.getX() + target.getY() * gridSize)).setBackgroundResource(R.drawable.blast);
             } else
-                ((GridButton) myGridLayout.getChildAt(target.getX() + target.getY() * 10)).setBackgroundResource(R.drawable.miss);
+                ((GridButton) myGridLayout.getChildAt(target.getX() + target.getY() * gridSize)).setBackgroundResource(R.drawable.miss);
         } else {// p instance of HumanPlayer
             Coordinate target = new Coordinate(((GridButton)view).getPositionX(),((GridButton)view).getPositionY()); //p.attack();
             if (pcPlayer.receiveFire(target)) {
-                ((GridButton) enemyGridLayout.getChildAt(target.getX() + target.getY() * 10)).setBackgroundResource(R.drawable.blast);
+                ((GridButton) enemyGridLayout.getChildAt(target.getX() + target.getY() * gridSize)).setBackgroundResource(R.drawable.blast);
             } else
-                ((GridButton) enemyGridLayout.getChildAt(target.getX() + target.getY() * 10)).setBackgroundResource(R.drawable.miss);
+                ((GridButton) enemyGridLayout.getChildAt(target.getX() + target.getY() * gridSize)).setBackgroundResource(R.drawable.miss);
         }
     }
 }

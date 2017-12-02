@@ -15,23 +15,30 @@ import java.util.Map;
 public class BattleField implements Serializable {
 
     private static final String TAG = BattleField.class.getSimpleName();
+    private final static int MEDIUM_SHIPS_AMOUNT = 4;
+    private final static int INSANE_SHIPS_AMOUNT = 5;
     protected String[][] myShipsLocation;
     protected HashMap<String,BattleShip> shipMap;
 
 
-public BattleField(int size){
+public BattleField(int size,int numOfShips){
     // size = number of rows/cols
     myShipsLocation= new String[size][size];
     shipMap=new HashMap<>();
-    initShipMap();
+    initShipMap(numOfShips);
 }
 
-    public void initShipMap() {
-        shipMap.put("ship5",new BattleShip("ship5",5,true,new Coordinate(-1,-1)));
-        shipMap.put("ship4",new BattleShip("ship4",4,true,new Coordinate(-1,-1)));
+    public void initShipMap(int numOfShips) {
+
+        shipMap.put("ship2",new BattleShip("ship2",2,true,new Coordinate(-1,-1)));
         shipMap.put("ship3",new BattleShip("ship3",3,true,new Coordinate(-1,-1)));
         shipMap.put("ship3_2",new BattleShip("ship3_2",3,true,new Coordinate(-1,-1)));
-        shipMap.put("ship2",new BattleShip("ship2",2,true,new Coordinate(-1,-1)));
+
+        if(numOfShips>= MEDIUM_SHIPS_AMOUNT){
+            shipMap.put("ship4",new BattleShip("ship4",4,true,new Coordinate(-1,-1)));
+            if(numOfShips ==INSANE_SHIPS_AMOUNT )
+                shipMap.put("ship5",new BattleShip("ship5",5,true,new Coordinate(-1,-1)));
+        }
     }
     public boolean isShipInXY(int x, int y){
 
