@@ -33,11 +33,14 @@ public class PCPlayer extends Player {
 
     public void initBattleShipsRandomly() {
         Map<String,BattleShip> map = myField.shipMap;
+        List<Coordinate> listOfPossibilities;
 
        for(Map.Entry<String,BattleShip> entry : map.entrySet()){
             Log.d(TAG, "initBattleShipsRandomly: shipName =  "+ entry.getKey());
             Coordinate randomShipCord = generateRandomCoordinate(getMyField().myShipsLocation.length);
-           List <Coordinate> listOfPossibilities = myField.showPossiblePositions(randomShipCord, entry.getKey());//check what if listOfPossibilities is empty
+            do {
+                listOfPossibilities  = myField.showPossiblePositions(randomShipCord, entry.getKey());//check what if listOfPossibilities is empty
+            }while(listOfPossibilities.size() ==0);
             int randomIndex = generateRandomIndex(listOfPossibilities.size());
             myField.placeShip(randomShipCord,listOfPossibilities.get(randomIndex),entry.getKey());
        }

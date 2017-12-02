@@ -46,6 +46,7 @@ public class GameManager implements Serializable {
             return new int []{INSANE_GRID_SIZE,INSANE_SHIPS_AMOUNT};
         }
 
+
     public boolean manageGame(Coordinate target){
         boolean returnFlag;
         if (humanPlayerTurn){ // a human player pressed on grid same as - if (humanPlayerTurn).
@@ -64,6 +65,9 @@ public class GameManager implements Serializable {
             humanPlayerTurn=true;
         }
         return returnFlag;
+    }
+    public String getDifficulty() {
+        return difficulty;
     }
     public HumanPlayer getHumanPlayer() {
         return humanPlayer;

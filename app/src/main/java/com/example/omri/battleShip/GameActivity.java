@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.GridLayout;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 //import com.example.omri.batlleship.GameManager;
@@ -27,6 +28,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private GridLayout enemyGridLayout;
     private GameManager manager;
     private int gridSize;
+    private ImageView img;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,7 +113,12 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     gridButton.setAvailability(GridButton.State.INUSE);
                     Coordinate target = new Coordinate(gridButton.getPositionX(), gridButton.getPositionY());
                     hitResult = manager.manageGame(target);
+                    if(hitResult) {
+                        MediaPlayer hitSound = MediaPlayer.create(this, R.raw.hit);
+                        hitSound.start();
+                    }
                     paintAttack(enemyGridLayout, target, hitResult);
+                    changeArrowImageByTurn(false);// true means its PC's turn
                     if (manager.getPcPlayer().hasBeenDefeated())
                         gameOver(manager.getHumanPlayer());
                     final Handler handler = new Handler();
@@ -122,6 +129,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                             paintAttack(myGridLayout, manager.getPcPlayer().getLastShot(), hitResult);
                             if (manager.getHumanPlayer().hasBeenDefeated())
                                 gameOver(manager.getPcPlayer());
+                            changeArrowImageByTurn(true);
 
                         }
                     }, 1000);
@@ -133,6 +141,23 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    private void changeArrowImageByTurn(boolean b) {
+
+        if(b) {
+            img = (ImageView) findViewById(R.id.enemyTurnArrow);
+            img.setVisibility(View.INVISIBLE);
+            img = (ImageView) findViewById(R.id.myTurnArrow);
+            img.setVisibility(View.VISIBLE);
+        }
+        else{
+            img = (ImageView) findViewById(R.id.myTurnArrow);
+            img.setVisibility(View.INVISIBLE);
+            img = (ImageView) findViewById(R.id.enemyTurnArrow);
+            img.setVisibility(View.VISIBLE);
+        }
+
+    }
+
     public void gameOver(Player p) {
         MediaPlayer gameOverSound;
         if (p instanceof HumanPlayer)
@@ -141,24 +166,34 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             gameOverSound = MediaPlayer.create(this,R.raw.game_lost);
         gameOverSound.start();
         new AlertDialog.Builder(this)
-                .setMessage(p.getPlayerName()+" has been defeated!!!")
+                .setMessage(p.getPlayerName()+" WON the game!!!")
                 .setCancelable(false)
                 .setPositiveButton("Rematch", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Intent intent = new Intent(GameActivity.this, arrangeBattleFieldActivity.class);
-                        startActivity(intent);
+                        Intent arrangeBattleFieldActivity = new Intent(GameActivity.this, arrangeBattleFieldActivity.class);
+                        arrangeBattleFieldActivity.putExtra("gameDifficulty", manager.getDifficulty());
+                        startActivity(arrangeBattleFieldActivity);
                     }
                 })
-                .setNegativeButton("Back to menu", null)
+                .setNegativeButton("Back to menu", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Intent MainActivity = new Intent(GameActivity.this, MainActivity.class);
+                        startActivity(MainActivity);
+                    }
+                })
                 .show();
     }
 
     public void paintAttack( GridLayout theGrid,Coordinate target,boolean isHit) {
-                if (isHit)
+                if (isHit) {
                     ((GridButton) theGrid.getChildAt(target.getX() + target.getY() * gridSize)).setBackgroundResource(R.drawable.blast);
+                }
                 else
                     ((GridButton) theGrid.getChildAt(target.getX() + target.getY() * gridSize)).setBackgroundResource(R.drawable.miss);
+
+
     }
+
 
     @Override
     public boolean onSupportNavigateUp(){
