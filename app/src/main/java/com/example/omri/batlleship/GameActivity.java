@@ -55,7 +55,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         theGrid.setColumnCount(gridSize);
         theGrid.setRowCount(gridSize);
-        initGridLayoutButtons(theGrid);
+        if (p instanceof HumanPlayer)
+            initGridLayoutButtons(theGrid,false);
+        else
+            initGridLayoutButtons(theGrid,true);
         theGrid.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -76,12 +79,13 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         paintGridLayout(theGrid, p);
     }
 
-    private void initGridLayoutButtons(GridLayout theGrid) {
+    private void initGridLayoutButtons(GridLayout theGrid,boolean isClickable) {
 
         int squaresCount = theGrid.getColumnCount() * theGrid.getRowCount();
         for (int i = 0; i < squaresCount; i++) {
             GridButton gridButton = new GridButton(this);
-            gridButton.setOnClickListener(this);
+            if (isClickable)
+                gridButton.setOnClickListener(this);
             theGrid.addView(gridButton);
         }
     }
@@ -89,28 +93,33 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         boolean hitResult; // true = hit , false = miss.
+        boolean legalShot; // true = can attack there, false = I already shot there!
         if (v instanceof GridButton) {
             final GridButton gridButton = (GridButton) v;
-            if (manager.isHumanPlayerTurn()) { // human player's tur
-                Coordinate target = new Coordinate(gridButton.getPositionX(),gridButton.getPositionY());
-                hitResult=manager.manageGame(target);
-                paintAttack(enemyGridLayout,target,hitResult);
-
-                final Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        boolean hitResult=manager.manageGame(null);
-                        paintAttack(myGridLayout,manager.getPcPlayer().getLastShot(),hitResult);
-                        if (manager.getHumanPlayer().hasBeenDefeated())
-                            gameOver(manager.getHumanPlayer());
-
-                    }
-                }, 1000);
-                //if (manager.isGameOver)
-            }
+            if (gridButton.checkAvailability()== GridButton.State.INUSE)//not available
+                Toast.makeText(this, "Why would you shoot this again?!", Toast.LENGTH_SHORT).show();
             else {
-                Toast.makeText(this, "Please wait for your turn", Toast.LENGTH_SHORT).show();
+                if (manager.isHumanPlayerTurn()) { // human player's tur
+                    gridButton.setAvailability(GridButton.State.INUSE);
+                    Coordinate target = new Coordinate(gridButton.getPositionX(), gridButton.getPositionY());
+                    hitResult = manager.manageGame(target);
+                    paintAttack(enemyGridLayout, target, hitResult);
+
+                    final Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            boolean hitResult = manager.manageGame(null);
+                            paintAttack(myGridLayout, manager.getPcPlayer().getLastShot(), hitResult);
+                            if (manager.getHumanPlayer().hasBeenDefeated())
+                                gameOver(manager.getHumanPlayer());
+
+                        }
+                    }, 1000);
+                    //if (manager.isGameOver)
+                } else {
+                    Toast.makeText(this, "Please wait for your turn", Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }

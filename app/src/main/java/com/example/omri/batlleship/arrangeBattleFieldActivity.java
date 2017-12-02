@@ -111,24 +111,32 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
     public void onClick(View v) {
         if (v instanceof GridButton) {
             final GridButton gridButton = (GridButton) v;
-            Coordinate pos = new Coordinate(((GridButton) v).getPositionX(), ((GridButton) v).getPositionY());
+            Coordinate pos;
             if (selectedBattleID != 0) { // there's a ship selected!
                 String name = getResources().getResourceEntryName(selectedBattleID);
-                if (gridButton.isAvailable()) {
+
+                if (gridButton.checkAvailability()== GridButton.State.EMPTY) {
+                    
+                    pos = new Coordinate(((GridButton) v).getPositionX(), ((GridButton) v).getPositionY());
                     if (possibleCords!=null) {
+                        Log.d(TAG, "onClick: possibleCords is not null!!!");
                         removePossibleCords(possibleCords); // delete old gray cells
                         // set old ship location to default cell view.
                         ((GridButton)gridLayout.getChildAt(shipPos.getX()+shipPos.getY()*gridSize)).setDefaultDrawable();
                     }
                     shipPos = pos;
                     possibleCords=manager.getHumanPlayer().myField.showPossiblePositions(pos, name); // shows placeAble positions for current ship.
-                    paintLayout(possibleCords,"@drawable/cell_border_available");
+                    paintLayout(possibleCords,"@drawable/cell_border_available", GridButton.State.POSSIBLE);
                 }
-                else {//gridButton is notAvailable - means we place a ship
+                else if (gridButton.checkAvailability()== GridButton.State.POSSIBLE) {//if (manager.getHumanPlayer().getBattleField().getMyShipsLocation()[pos.getX()][pos.getY()]!=null){//gridButton is notAvailable - means we place a ship
+                    //gridButton.setAvailability(GridButton.State.INUSE);
+                    pos = new Coordinate(((GridButton) v).getPositionX(), ((GridButton) v).getPositionY());
+                    //Toast.makeText(this, "bad positioning?", Toast.LENGTH_SHORT).show();
                     List<Coordinate> list2Paint =manager.getHumanPlayer().myField.placeShip(shipPos,pos,name);
-                    paintLayout(list2Paint,"@drawable/hit");
-                    possibleCords.remove(pos); // delete 1 gray - the one we chose.
+                    paintLayout(list2Paint,"@drawable/hit", GridButton.State.INUSE);
+                    //possibleCords.remove(pos); - this line doesn't remove somewhy!!!
                     removePossibleCords(possibleCords); // delete the remaining gray cells.
+                    gridButton.setAvailability(GridButton.State.INUSE);
                     possibleCords =null; // clean the list for future placing.
 
                     // Restarting the selection - cannot choose that battleShip again
@@ -137,6 +145,8 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
                     oldImageBattleShip.setBackgroundResource(R.drawable.miss);
                     numberOfPlacedShips++;
                 }
+                else
+                    Toast.makeText(this, "nothing happens", Toast.LENGTH_SHORT).show();
                 gridButton.setBackgroundResource(R.drawable.hit);
 
             }
@@ -163,11 +173,11 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
         // ship was placed - and removes them = sets button Drawable to correct one.
         for(Coordinate c : possibleCords){
             GridButton btn = (GridButton) gridLayout.getChildAt(c.getX()+c.getY()*gridSize);
-                btn.toggleAvailable();
+                btn.setAvailability(GridButton.State.EMPTY);
                 btn.setDefaultDrawable();
         }
     }
-    private void paintLayout(List<Coordinate> list2Paint, String uri) {
+    private void paintLayout(List<Coordinate> list2Paint, String uri,GridButton.State state) {
         // uri = the image resource id
         // paint List of Coordinates according to URI given
         GridButton btn;
@@ -176,7 +186,8 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
             int positionOnGrid = c.getY() * gridLayout.getColumnCount() + c.getX();
             btn = (GridButton) gridLayout.getChildAt(positionOnGrid);
             btn.setBackgroundResource(imageResource);
-            btn.toggleAvailable();
+            btn.setAvailability(state);
+            //btn.setOnClickListener(null);
         }
     }
     public void startGameActivity(View view) {

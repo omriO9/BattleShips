@@ -15,10 +15,6 @@ public class HumanPlayer extends Player implements Serializable{
         amountOfLogins=0;
     }
 
-    @Override
-    public void placeBattleShips(Coordinate position) {
-
-    }
 
 //    @Override
 //    public Coordinate attack() {
