@@ -1,9 +1,10 @@
 <resources>
-    <string name="app_name">BatlleShip</string>
+    <string name="app_name">BattleShip</string>
     <string name="play_button">Play Now!</string>
     <string name="rules_button">Rules</string>
     <string name="sound">Sound</string>
     <string name="backButton">Back</string>
     <string name="fightButton">Fight!</string>
     <string name="quit">Quit</string>
+    <string name="battleship_fleet"><u><b>BattleShip fleet:</b></u></string>
 </resources>
