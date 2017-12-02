@@ -64,8 +64,6 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
         manager = new GameManager();
         manager.createHuman("Mark",10,5);
         //human = new HumanPlayer("Mark",10,5);
-        initGridLayout();
-        initFleet();
         numberOfShips=5;
     }
 
@@ -239,10 +237,12 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
 
     public void startGameActivity(View view) {
         Intent GameActivity = new Intent(this, GameActivity.class);
-        GameActivity.putExtra("human",human);
-        GameActivity.putExtra("gridSize",gridSize);
-        GameActivity.putExtra("numOfShips",numOfShips);
+        GameActivity.putExtra("GameManager", manager);
         startActivity(GameActivity);
+//        GameActivity.putExtra("human",human);
+//        GameActivity.putExtra("gridSize",gridSize);
+//        GameActivity.putExtra("numOfShips",numOfShips);
+//        startActivity(GameActivity);
         // remove the remarks before the end - so we can put less than 5 for testing.
         //
         //  ! !  ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !
@@ -251,9 +251,7 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
 //            Toast.makeText(this, "Please place all ships before proceeding.", Toast.LENGTH_SHORT).show();
 //        }
 //        else {
-            Intent GameActivity = new Intent(this, GameActivity.class);
-            GameActivity.putExtra("GameManager", manager);
-            startActivity(GameActivity);
+
 //        }
     }
 

@@ -33,18 +33,19 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         super.onResume();
         myGridLayout = (GridLayout) findViewById(R.id.myGridLayout);
         enemyGridLayout = (GridLayout) findViewById(R.id.enemyGridLayout);
-        human = (HumanPlayer) getIntent().getSerializableExtra("human");
-        int gridSize = (Integer) getIntent().getSerializableExtra("gridSize");
-        int numOfShips = (Integer) getIntent().getSerializableExtra("numOfShips");
-        initPCPlayer(gridSize,numOfShips);
-        //pcPlayer = new PCPlayer("BlueGene",10,5);
-        initGridLayout(myGridLayout, human,gridSize);
-        initGridLayout(enemyGridLayout, pcPlayer,gridSize);
-    }
+//        human = (HumanPlayer) getIntent().getSerializableExtra("human");
+//        int gridSize = (Integer) getIntent().getSerializableExtra("gridSize");
+//        int numOfShips = (Integer) getIntent().getSerializableExtra("numOfShips");
         manager = (GameManager) getIntent().getSerializableExtra("GameManager");
         manager.createPC("BlueGene",10,5);
-        initGridLayout(myGridLayout, manager.getHumanPlayer());
-        initGridLayout(enemyGridLayout, manager.getPcPlayer());
+//        initGridLayout(myGridLayout, manager.getHumanPlayer());
+//        initGridLayout(enemyGridLayout, manager.getPcPlayer());
+//        initPCPlayer(gridSize,numOfShips);
+//        //pcPlayer = new PCPlayer("BlueGene",10,5);
+//        initGridLayout(myGridLayout, human,gridSize);
+//        initGridLayout(enemyGridLayout, pcPlayer,gridSize);
+    }
+
 
     private void initPCPlayer(int gridSize, int numOfShips) {
 
@@ -178,21 +179,22 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 .show();
     }
 
-    public void attack(View view, Player p) {
-        int gridSize = myGridLayout.getColumnCount();
-        if (p instanceof PCPlayer) {
-            Coordinate target = p.attack();
-            if (human.receiveFire(target)) {
-                ((GridButton) myGridLayout.getChildAt(target.getX() + target.getY() * gridSize)).setBackgroundResource(R.drawable.blast);
-            } else
-                ((GridButton) myGridLayout.getChildAt(target.getX() + target.getY() * gridSize)).setBackgroundResource(R.drawable.miss);
-        } else {// p instance of HumanPlayer
-            Coordinate target = new Coordinate(((GridButton)view).getPositionX(),((GridButton)view).getPositionY()); //p.attack();
-            if (pcPlayer.receiveFire(target)) {
-                ((GridButton) enemyGridLayout.getChildAt(target.getX() + target.getY() * gridSize)).setBackgroundResource(R.drawable.blast);
-            } else
-                ((GridButton) enemyGridLayout.getChildAt(target.getX() + target.getY() * gridSize)).setBackgroundResource(R.drawable.miss);
-        }
+//    public void attack(View view, Player p) {
+//        int gridSize = myGridLayout.getColumnCount();
+//        if (p instanceof PCPlayer) {
+//            Coordinate target = p.attack();
+//            if (human.receiveFire(target)) {
+//                ((GridButton) myGridLayout.getChildAt(target.getX() + target.getY() * gridSize)).setBackgroundResource(R.drawable.blast);
+//            } else
+//                ((GridButton) myGridLayout.getChildAt(target.getX() + target.getY() * gridSize)).setBackgroundResource(R.drawable.miss);
+//        } else {// p instance of HumanPlayer
+//            Coordinate target = new Coordinate(((GridButton) view).getPositionX(), ((GridButton) view).getPositionY()); //p.attack();
+//            if (pcPlayer.receiveFire(target)) {
+//                ((GridButton) enemyGridLayout.getChildAt(target.getX() + target.getY() * gridSize)).setBackgroundResource(R.drawable.blast);
+//            } else
+//                ((GridButton) enemyGridLayout.getChildAt(target.getX() + target.getY() * gridSize)).setBackgroundResource(R.drawable.miss);
+//        }
+//    }
     public void paintAttack( GridLayout theGrid,Coordinate target,boolean isHit) {
 
                 if (isHit)
