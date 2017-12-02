@@ -28,56 +28,56 @@
 
     <ImageButton
         android:id="@+id/ship2"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="@dimen/ship_width"
+        android:layout_height="@dimen/ship_height"
         android:layout_alignStart="@+id/fleet"
         android:layout_alignTop="@+id/fleet"
         android:layout_marginTop="35dp"
-        android:background="@drawable/battleship"
+        android:background="@drawable/ship2"
         android:scaleType="fitXY"
         />
 
     <ImageButton
         android:id="@+id/ship3"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="@dimen/ship_width"
+        android:layout_height="@dimen/ship_height"
         android:layout_alignTop="@id/ship2"
         android:layout_marginStart="20dp"
         android:layout_toEndOf="@id/ship2"
-        android:background="@drawable/battleship"
+        android:background="@drawable/ship3"
         android:scaleType="fitXY"
         />
 
     <ImageButton
         android:id="@+id/ship3_2"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="@dimen/ship_width"
+        android:layout_height="@dimen/ship_height"
         android:layout_alignTop="@id/ship3"
         android:layout_marginStart="20dp"
         android:layout_toEndOf="@id/ship3"
-        android:background="@drawable/battleship"
+        android:background="@drawable/ship3"
         android:scaleType="fitXY" />
 
     <ImageButton
         android:id="@+id/ship4"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="@dimen/ship_width"
+        android:layout_height="@dimen/ship_height"
         android:layout_below="@id/ship2"
         android:layout_marginTop="20dp"
         android:layout_toEndOf="@id/ship2"
         android:layout_alignStart="@+id/fleet"
-        android:background="@drawable/battleship"
+        android:background="@drawable/ship4"
         android:scaleType="fitXY"
         android:visibility="invisible"/>
 
     <ImageButton
         android:id="@+id/ship5"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="@dimen/ship_width"
+        android:layout_height="@dimen/ship_height"
         android:layout_alignTop="@id/ship4"
         android:layout_marginStart="20dp"
         android:layout_toEndOf="@id/ship4"
-        android:background="@drawable/battleship"
+        android:background="@drawable/ship5"
         android:scaleType="fitXY"
         android:visibility="invisible"/>
 

@@ -17,16 +17,25 @@ public class BattleField implements Serializable {
     private static final String TAG = BattleField.class.getSimpleName();
     private final static int MEDIUM_SHIPS_AMOUNT = 4;
     private final static int INSANE_SHIPS_AMOUNT = 5;
-    protected String[][] myShipsLocation;
+    protected CellInfo[][] myShipsLocation;
     protected HashMap<String,BattleShip> shipMap;
 
 
 public BattleField(int size,int numOfShips){
     // size = number of rows/cols
-    myShipsLocation= new String[size][size];
+    myShipsLocation= new CellInfo[size][size];
+    initmyShipsLocation();
     shipMap=new HashMap<>();
     initShipMap(numOfShips);
 }
+
+    private void initmyShipsLocation() {
+        for (int i=0;i<myShipsLocation.length;i++){
+            for (int j=0;j<myShipsLocation.length;j++){
+                myShipsLocation[i][j]=null;//new CellInfo(null,null);
+            }
+        }
+    }
 
     public void initShipMap(int numOfShips) {
 
@@ -96,12 +105,12 @@ public BattleField(int size,int numOfShips){
         if (shipStartingPos.getX()==requestedPosition.getX()) { // we have same X - same column
             if (shipStartingPos.getY() < requestedPosition.getY()) { // fill it down
                 for (int i = shipStartingPos.getY(); i <= requestedPosition.getY(); i++) {
-                    myShipsLocation[shipStartingPos.getX()][i] = shipName;
+                    myShipsLocation[shipStartingPos.getX()][i]=new CellInfo(shipName,-1);
                     CordsToPaint.add(new Coordinate(shipStartingPos.getX(),i));
                 }
             } else if (shipStartingPos.getY() > requestedPosition.getY()) { //fill it up
                 for (int i = requestedPosition.getY(); i <= shipStartingPos.getY(); i++) {
-                    myShipsLocation[shipStartingPos.getX()][i] = shipName;
+                    myShipsLocation[shipStartingPos.getX()][i]=new CellInfo(shipName,-1);
                     CordsToPaint.add(new Coordinate(shipStartingPos.getX(),i));
                 }
             }
@@ -109,13 +118,13 @@ public BattleField(int size,int numOfShips){
         else {//if(pos.getY()==gridButton.getPositionY()){
             if(shipStartingPos.getX()< requestedPosition.getX()) { // fill it right
                 for (int i = shipStartingPos.getX(); i <=requestedPosition.getX(); i++) {
-                    myShipsLocation[i][shipStartingPos.getY()] = shipName;
+                    myShipsLocation[i][shipStartingPos.getY()]=new CellInfo(shipName,-1);
                     CordsToPaint.add(new Coordinate(i,shipStartingPos.getY()));
                 }
             }
             else if(shipStartingPos.getX()> requestedPosition.getX()){ //fill it left
                 for (int i = requestedPosition.getX(); i <= shipStartingPos.getX(); i++) {
-                    myShipsLocation[i][shipStartingPos.getY()] = shipName;
+                    myShipsLocation[i][shipStartingPos.getY()]=new CellInfo(shipName,-1);
                     CordsToPaint.add(new Coordinate(i,shipStartingPos.getY()));
                 }
             }
@@ -167,7 +176,7 @@ public BattleField(int size,int numOfShips){
             }
             return false;
         }
-    public String[][] getMyShipsLocation() {
+    public CellInfo[][] getMyShipsLocation() {
         return myShipsLocation;
     }
     public HashMap<String, BattleShip> getShipMap() {

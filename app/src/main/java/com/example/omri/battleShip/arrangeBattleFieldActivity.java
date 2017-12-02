@@ -128,17 +128,18 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
                     }
                     shipPos = pos;
                     possibleCords=manager.getHumanPlayer().myField.showPossiblePositions(pos, name); // shows placeAble positions for current ship.
-                    paintLayout(possibleCords,"@drawable/cell_border_available", GridButton.State.POSSIBLE);
+                    paintLayout(possibleCords, GridButton.State.POSSIBLE);
+                    gridButton.setBackgroundResource(R.drawable.hit);
                 }
                 else if (gridButton.checkAvailability()== GridButton.State.POSSIBLE) {//if (manager.getHumanPlayer().getBattleField().getMyShipsLocation()[pos.getX()][pos.getY()]!=null){//gridButton is notAvailable - means we place a ship
                     //gridButton.setAvailability(GridButton.State.INUSE);
                     pos = new Coordinate(((GridButton) v).getPositionX(), ((GridButton) v).getPositionY());
                     //Toast.makeText(this, "bad positioning?", Toast.LENGTH_SHORT).show();
                     List<Coordinate> list2Paint =manager.getHumanPlayer().myField.placeShip(shipPos,pos,name);
-                    paintLayout(list2Paint,"@drawable/hit", GridButton.State.INUSE);
-                    //possibleCords.remove(pos); - this line doesn't remove somewhy!!!
                     removePossibleCords(possibleCords); // delete the remaining gray cells.
                     gridButton.setAvailability(GridButton.State.INUSE);
+                    paintLayout(list2Paint, GridButton.State.INUSE);
+                    //possibleCords.remove(pos); - this line doesn't remove somewhy!!!
                     possibleCords =null; // clean the list for future placing.
 
                     // Restarting the selection - cannot choose that battleShip again
@@ -149,7 +150,7 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
                 }
                 else
                     Toast.makeText(this, "nothing happens", Toast.LENGTH_SHORT).show();
-                gridButton.setBackgroundResource(R.drawable.hit);
+
 
             }
             else{ // didn't choose a ship / already placed one.
@@ -159,10 +160,10 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
         if (v instanceof ImageButton) { // means i clicked on a BattleShip image
             final ImageButton selectedImageButton = (ImageButton) v;
             if (selectedBattleID == 0) {
-                selectedImageButton.setBackgroundResource(R.drawable.selected_battleship);
+                selectedImageButton.setAlpha(0.5f);
             } else if (selectedBattleID != selectedImageButton.getId()) {
-                oldImageBattleShip.setBackgroundResource(R.drawable.battleship);
-                selectedImageButton.setBackgroundResource(R.drawable.selected_battleship);
+                oldImageBattleShip.setAlpha(1.0f);
+                selectedImageButton.setAlpha(0.5f);
             }
             v.animate().rotationXBy(360).setDuration(1500).start();
             selectedBattleID = selectedImageButton.getId();
@@ -179,18 +180,57 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
                 btn.setDefaultDrawable();
         }
     }
-    private void paintLayout(List<Coordinate> list2Paint, String uri,GridButton.State state) {
-        // uri = the image resource id
-        // paint List of Coordinates according to URI given
+    private void paintLayout(List<Coordinate> list2Paint,GridButton.State state) {
+        // the func receives a flag - true - it paints ships / false - it paints gray available cells
+        // it paints on the list of Coordinates it receives .
         GridButton btn;
-        int imageResource = getResources().getIdentifier(uri, null, getPackageName());
-        for (Coordinate c : list2Paint){
-            int positionOnGrid = c.getY() * gridLayout.getColumnCount() + c.getX();
-            btn = (GridButton) gridLayout.getChildAt(positionOnGrid);
-            btn.setBackgroundResource(imageResource);
-            btn.setAvailability(state);
-            //btn.setOnClickListener(null);
+        boolean isVertical=false;
+        int front,center,rear;
+        if (list2Paint.get(0).getX()==list2Paint.get(1).getX())
+            isVertical=true;
+        if (isVertical) {
+            front = R.drawable.front_vertical;
+            center = R.drawable.center_vertical;
+            rear = R.drawable.rear_vertical;
         }
+        else {
+            front = R.drawable.front;
+            center = R.drawable.center;
+            rear = R.drawable.rear;
+        }
+       // int imageResource = getResources().getIdentifier(uri, null, getPackageName());
+        for (int i=0;i<list2Paint.size();i++){
+            Log.d(TAG, "paintLayout: list2Paint.size="+list2Paint.size());
+            int positionOnGrid = list2Paint.get(i).getY() * gridLayout.getColumnCount() + list2Paint.get(i).getX();
+            btn = (GridButton) gridLayout.getChildAt(positionOnGrid);
+
+            if (state== GridButton.State.POSSIBLE) { // we want gray cells
+                btn.setBackgroundResource(R.drawable.cell_border_available);
+            }
+            else { // we are placing a ship!
+                if (i==0) {
+                    btn.setBackgroundResource(front);
+                   manager.getHumanPlayer().getBattleField().getMyShipsLocation()[list2Paint.get(i).getX()][list2Paint.get(i).getY()].setImgResourceID(front);
+                }
+                else if (i==list2Paint.size()-1) {
+                    btn.setBackgroundResource(rear);
+                   manager.getHumanPlayer().getBattleField().getMyShipsLocation()[list2Paint.get(i).getX()][list2Paint.get(i).getY()].setImgResourceID(rear);
+                    Log.d(TAG, "paintLayout: list2Paint inside rear?");
+                }
+                else {
+                    btn.setBackgroundResource(center);
+                   manager.getHumanPlayer().getBattleField().getMyShipsLocation()[list2Paint.get(i).getX()][list2Paint.get(i).getY()].setImgResourceID(center);
+                }
+            }
+            btn.setAvailability(state);
+        }
+//        for (Coordinate c : list2Paint){
+//            int positionOnGrid = c.getY() * gridLayout.getColumnCount() + c.getX();
+//            btn = (GridButton) gridLayout.getChildAt(positionOnGrid);
+//            btn.setBackgroundResource(imageResource);
+//            btn.setAvailability(state);
+//            //btn.setOnClickListener(null);
+//        }
     }
     public void startGameActivity(View view) {
 

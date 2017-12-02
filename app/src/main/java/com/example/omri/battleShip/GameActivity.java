@@ -49,12 +49,14 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     private void paintGridLayout(GridLayout grid, Player p) {
         Log.d(TAG, "paintMyGridLayout: starting to paint");
-        String[][] playerField = p.getMyField().getMyShipsLocation();
+        CellInfo[][] playerField = p.getMyField().getMyShipsLocation();
+
         for (int row = 0; row < playerField.length; row++) {
             for (int col = 0; col < playerField.length; col++) {
                 View btn = (grid.getChildAt(row + col * gridSize));
                 if (playerField[row][col] != null && (p instanceof HumanPlayer)) {
-                    btn.setBackgroundResource(R.drawable.hit);
+                    btn.setBackgroundResource(playerField[row][col].getImg()); // need int
+                    //playerField[row][col].getImg() - Drawable
                 } else
                     btn.setBackgroundResource(R.drawable.cell_border);
             }

@@ -66,7 +66,7 @@ public abstract class Player implements PlayerIF , Serializable {
     @Override
     public boolean receiveFire(Coordinate target) {
         if (myField.myShipsLocation[target.getX()][target.getY()]!=null) { // i got hit!
-            String shipHitName = myField.myShipsLocation[target.getX()][target.getY()];
+            String shipHitName = myField.myShipsLocation[target.getX()][target.getY()].getShipName();
             if(myField.shipWasHit(shipHitName)) { // true = hit and sunk.
                 numOfSunkShips++;
                 Log.d(TAG, "receiveFire: ship sunk ("+numOfShips+")");
