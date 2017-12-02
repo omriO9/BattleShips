@@ -28,10 +28,6 @@ public abstract class Player implements PlayerIF , Serializable {
         this.myField=new BattleField(sizeOfMap,numOfShips);
         hasBeenDefeated=false;
     }
-//    public void addBattleShip(BattleShip s){
-//        battleShips.add(s);
-//    }
-    public abstract void placeBattleShips(Coordinate position);
 
     public boolean hasBeenDefeated(){
         return hasBeenDefeated;
@@ -72,7 +68,6 @@ public abstract class Player implements PlayerIF , Serializable {
         if (myField.myShipsLocation[target.getX()][target.getY()]!=null) { // i got hit!
             String shipHitName = myField.myShipsLocation[target.getX()][target.getY()];
             if(myField.shipWasHit(shipHitName)) { // true = hit and sunk.
-                Log.d(TAG, "receiveFire: inside if,numOfSunkShips="+numOfSunkShips+", numOfShips="+numOfShips);
                 numOfSunkShips++;
                 Log.d(TAG, "receiveFire: ship sunk ("+numOfShips+")");
                 if (numOfSunkShips==numOfShips) {

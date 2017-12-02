@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -45,15 +44,12 @@ public class MainActivity extends AppCompatActivity {
                 switch (id) {
                     case R.id.easyRadio:
                         gameDifficulty = ((RadioButton)(findViewById(R.id.easyRadio))).getText().toString();
-                        Log.v(TAG, "Listening to RG" + gameDifficulty);
                         break;
                     case R.id.mediumRadio:
                         gameDifficulty = ((RadioButton)(findViewById(R.id.mediumRadio))).getText().toString();
-                        Log.v(TAG, "Listening to RG" + gameDifficulty);
                         break;
                     case R.id.insaneRadio:
                         gameDifficulty = ((RadioButton)(findViewById(R.id.insaneRadio))).getText().toString();
-                        Log.v(TAG, "Listening to RG" + gameDifficulty);
                         break;
                     default:
                         break;
@@ -62,14 +58,12 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
-
-    public void showRulesActivity(View view) {
+    public void startRulesActivity(View view) {
         Intent openRulesActivity = new Intent(this,RulesActivity.class);
         startActivity(openRulesActivity);
     }
 
-    public void ArrangeBattleFieldActivity(View view) {
+    public void startArrangeBattleFieldActivity(View view) {
         Intent ArrangeBattleFieldActivity = new Intent(this,arrangeBattleFieldActivity.class);
         if(gameDifficulty != null)
             ArrangeBattleFieldActivity.putExtra("gameDifficulty",gameDifficulty);

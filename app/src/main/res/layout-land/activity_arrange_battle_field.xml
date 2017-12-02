@@ -48,7 +48,8 @@
         android:layout_alignStart="@+id/fleet"
         android:layout_alignTop="@+id/gridLayout"
         android:background="@drawable/battleship"
-        android:scaleType="fitXY" />
+        android:scaleType="fitXY"
+        />
 
     <ImageButton
         android:id="@+id/ship3"
@@ -58,7 +59,8 @@
         android:layout_marginStart="20dp"
         android:layout_toEndOf="@id/ship2"
         android:background="@drawable/battleship"
-        android:scaleType="fitXY" />
+        android:scaleType="fitXY"
+        />
 
     <ImageButton
         android:id="@+id/ship3_2"
@@ -79,7 +81,8 @@
         android:layout_toEndOf="@id/ship2"
         android:layout_alignStart="@+id/fleet"
         android:background="@drawable/battleship"
-        android:scaleType="fitXY" />
+        android:scaleType="fitXY"
+        android:visibility="invisible"/>
 
     <ImageButton
         android:id="@+id/ship5"
@@ -89,7 +92,8 @@
         android:layout_marginStart="20dp"
         android:layout_toEndOf="@id/ship4"
         android:background="@drawable/battleship"
-        android:scaleType="fitXY" />
+        android:scaleType="fitXY"
+        android:visibility="invisible"/>
 
 
 

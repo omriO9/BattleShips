@@ -19,33 +19,25 @@ public class PCPlayer extends Player  {
 
     public PCPlayer(String name,int size,int numOfShips){
         super(name,size,numOfShips);
-        //this.playerName="BlueGene";
-        //this.battleFieldSize = size;
-        //this.myField=new BattleField(battleFieldSize);
         initBattleShipsRandomly();
         listOfPossibleShots=new ArrayList<>();
         initListOfPossibleShots();
         lastShot=null;
-        //myField.printMat();
-
     }
 
     private void initListOfPossibleShots() {
-        int id = 0;
         for (int i=0;i<getMyField().myShipsLocation.length*getMyField().myShipsLocation.length;i++){
             listOfPossibleShots.add(i);
         }
     }
 
     public void initBattleShipsRandomly() {
-        List <Coordinate> listOfPossibilities = new ArrayList<>();
-
         Map<String,BattleShip> map = myField.shipMap;
+
        for(Map.Entry<String,BattleShip> entry : map.entrySet()){
-            Log.d(TAG, "initBattleShipsRandomly: inside "+ entry.getKey());
+            Log.d(TAG, "initBattleShipsRandomly: shipName =  "+ entry.getKey());
             Coordinate randomShipCord = generateRandomCoordinate(getMyField().myShipsLocation.length);
-            //Coordinate randomShipCord = generateRandomCoordinate(battleFieldSize);
-            listOfPossibilities = myField.showPossiblePositions(randomShipCord, entry.getKey());//check what if listOfPossibilities is empty
+           List <Coordinate> listOfPossibilities = myField.showPossiblePositions(randomShipCord, entry.getKey());//check what if listOfPossibilities is empty
             int randomIndex = generateRandomIndex(listOfPossibilities.size());
             myField.placeShip(randomShipCord,listOfPossibilities.get(randomIndex),entry.getKey());
        }
@@ -68,30 +60,29 @@ public class PCPlayer extends Player  {
     }
 
 
-    public Coordinate generateShot() {
+    public void generateShot() {
         // has an ArrayList of 0-99 possible positions to atk , remove after each attack.
         // randomize index 0-list.size();
         Random r = new Random();
         Log.d(TAG, "attack: listOfPossibleShots.size="+listOfPossibleShots.size());
         int randomIndex = r.nextInt(listOfPossibleShots.size());
         Log.d(TAG, "attack: listOfPossibleShots.size randomIndex="+randomIndex);
-        Coordinate shotTarget = new Coordinate(listOfPossibleShots.get(randomIndex)/getMyField().myShipsLocation.length,listOfPossibleShots.get(randomIndex)%getMyField().myShipsLocation.length);
+
+        int chosenCell = listOfPossibleShots.get(randomIndex);
+        int fieldSize = getMyField().myShipsLocation.length;
+        Coordinate shotTarget = new Coordinate(chosenCell/fieldSize,chosenCell%fieldSize);
         listOfPossibleShots.remove(randomIndex);
+
         Log.d(TAG, "attack: PCAttacks="+shotTarget.toString());
         // shotTarget - PC requested atk target.
         setLastShot(shotTarget);
-        return shotTarget;
     }
 
     @Override
     public String getName() {
-        return null;
+        return this.playerName;
     }
 
-    @Override
-    public void placeBattleShips(Coordinate position) {
-
-    }
     public Coordinate getLastShot() {
         return lastShot;
     }

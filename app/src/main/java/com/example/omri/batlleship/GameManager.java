@@ -8,32 +8,54 @@ import java.io.Serializable;
 
 public class GameManager implements Serializable {
 
+    private static final String TAG = GameManager.class.getSimpleName();
+    public final static int EASY_GRID_SIZE = 5;
+    public final static int MEDIUM_GRID_SIZE = 7;
+    public final static int INSANE_GRID_SIZE = 10;
+    public final static int EASY_SHIPS_AMOUNT = 3;
+    public final static int MEDIUM_SHIPS_AMOUNT = 4;
+    public final static int INSANE_SHIPS_AMOUNT = 5;
+    public final static String EASY = "Easy";
+    public final static String MEDIUM = "Medium";
 
 
-    HumanPlayer humanPlayer;
-    PCPlayer pcPlayer;
-    boolean isGameOver;
+    private HumanPlayer humanPlayer;
+    private PCPlayer pcPlayer;
+    private boolean isGameOver;
+    private String difficulty;
     private boolean humanPlayerTurn;
 
-    public GameManager(){
+    public GameManager(String difficulty){
+        this.difficulty=difficulty;
         isGameOver=false;
         humanPlayerTurn=true;
     }
-    public void createHuman(String name,int sizeOfMap,int numOfShips){
-        this.humanPlayer=new HumanPlayer(name,sizeOfMap,numOfShips);
-    }
-    public void createPC(String name,int sizeOfMap,int numOfShips){
-        this.pcPlayer=new PCPlayer(name,sizeOfMap,numOfShips);
-    }
+    public int[] createPlayers(String humanName,String pcName){
+
+        if(difficulty.equals(EASY)){
+            humanPlayer = new HumanPlayer(humanName,EASY_GRID_SIZE,EASY_SHIPS_AMOUNT);
+            pcPlayer=new PCPlayer(pcName,EASY_GRID_SIZE,EASY_SHIPS_AMOUNT);
+            return new int []{EASY_GRID_SIZE,EASY_SHIPS_AMOUNT};
+        }
+        else if(difficulty.equals(MEDIUM)){
+            humanPlayer = new HumanPlayer(humanName,MEDIUM_GRID_SIZE,MEDIUM_SHIPS_AMOUNT);
+            pcPlayer=new PCPlayer(pcName,MEDIUM_GRID_SIZE,MEDIUM_SHIPS_AMOUNT);
+            return new int []{MEDIUM_GRID_SIZE,MEDIUM_SHIPS_AMOUNT};
+        }
+        // hard level
+            humanPlayer = new HumanPlayer(humanName,INSANE_GRID_SIZE,INSANE_SHIPS_AMOUNT);
+        pcPlayer=new PCPlayer(pcName,INSANE_GRID_SIZE,INSANE_SHIPS_AMOUNT);
+            return new int []{INSANE_GRID_SIZE,INSANE_SHIPS_AMOUNT};
+        }
+
     public boolean manageGame(Coordinate target){
         boolean returnFlag;
-        if (target!=null){ // a human player pressed on grid same as - if (humanPlayerTurn).
-            //humanPlayer.attack(target)
+        if (humanPlayerTurn){ // a human player pressed on grid same as - if (humanPlayerTurn).
+            humanPlayerTurn=false;
             if(pcPlayer.receiveFire(target))
                 returnFlag=true;
             else
                 returnFlag=false;
-            humanPlayerTurn=false;
         }
         else { // a pc player has to randomize hit
             pcPlayer.generateShot();
@@ -54,13 +76,6 @@ public class GameManager implements Serializable {
     public boolean isHumanPlayerTurn() {
         return humanPlayerTurn;
     }
-
-    public void setHumanPlayerTurn(boolean humanPlayerTurn) {
-        this.humanPlayerTurn = humanPlayerTurn;
-    }
-//    public void toggleHumanPlayerTurn() {
-//        this.humanPlayerTurn = !this.humanPlayerTurn;
-//    }
 
     public boolean isGameOver(Player p){
         return p.hasBeenDefeated();
