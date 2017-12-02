@@ -5,15 +5,15 @@
     android:id="@+id/relativeLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.omri.batlleship.arrangeBattleFieldActivity">
+    tools:context="com.example.omri.battleShip.arrangeBattleFieldActivity">
 
     <GridLayout
         android:id="@+id/gridLayout"
         android:layout_width="@dimen/boardDimen"
         android:layout_height="@dimen/boardDimen"
-        android:layout_marginBottom="20dp"
+        android:layout_centerVertical="true"
         android:layout_marginStart="35dp"
-        android:layout_marginTop="20dp">
+        >
     </GridLayout>
 
     <TextView

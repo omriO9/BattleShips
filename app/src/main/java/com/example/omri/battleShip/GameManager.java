@@ -21,13 +21,11 @@ public class GameManager implements Serializable {
 
     private HumanPlayer humanPlayer;
     private PCPlayer pcPlayer;
-    private boolean isGameOver;
     private String difficulty;
     private boolean humanPlayerTurn;
 
     public GameManager(String difficulty){
         this.difficulty=difficulty;
-        isGameOver=false;
         humanPlayerTurn=true;
     }
     public int[] createPlayers(String humanName,String pcName){
@@ -77,7 +75,4 @@ public class GameManager implements Serializable {
         return humanPlayerTurn;
     }
 
-    public boolean isGameOver(Player p){
-        return p.hasBeenDefeated();
-    }
 }

@@ -111,7 +111,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     Coordinate target = new Coordinate(gridButton.getPositionX(), gridButton.getPositionY());
                     hitResult = manager.manageGame(target);
                     paintAttack(enemyGridLayout, target, hitResult);
-
+                    if (manager.getPcPlayer().hasBeenDefeated())
+                        gameOver(manager.getPcPlayer());
                     final Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
                         @Override
@@ -145,20 +146,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 .show();
     }
 
-    public void onQuitPressed(View view) {
-        new AlertDialog.Builder(this)
-                .setMessage("Are you sure you want to exit this game?")
-                .setCancelable(false)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        Intent intent = new Intent(GameActivity.this, MainActivity.class);
-                        startActivity(intent);
-                    }
-                })
-                .setNegativeButton("No", null)
-                .show();
-    }
-
     public void paintAttack( GridLayout theGrid,Coordinate target,boolean isHit) {
                 if (isHit)
                     ((GridButton) theGrid.getChildAt(target.getX() + target.getY() * gridSize)).setBackgroundResource(R.drawable.blast);
@@ -170,7 +157,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onSupportNavigateUp(){
         //finish();
         new AlertDialog.Builder(this)
-                .setMessage("Your positioning will be reseted,\n are you sure you want exit?")
+                .setMessage("Are you sure you want to exit this game?")
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
