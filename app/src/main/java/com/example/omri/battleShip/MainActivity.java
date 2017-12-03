@@ -6,38 +6,55 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.gson.Gson;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
     SharedPreferences sharedPref;
-    HumanPlayer playerH;
+    String userName;
     String gameDifficulty;
     String defaultDifficulty = "Easy";
-
+    SharedPreferences.Editor editor;
     private EditText userNameEditText;
+    Button nameBtn;
+    TextView registeredName;
+    ImageButton editPencil;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        Gson gson = new Gson();
+        //editor.clear().apply();
+        //Gson gson = new Gson();
         sharedPref=getPreferences(Context.MODE_PRIVATE);
         userNameEditText= (EditText)findViewById(R.id.userNameEditText);
-        String json = sharedPref.getString("playerH", null);
-        if (json!=null) {
-            HumanPlayer playerH = gson.fromJson(json, HumanPlayer.class);
-            userNameEditText.setText("Welcome back, "+playerH.getPlayerName());
+        nameBtn = (Button)findViewById(R.id.nameBtn);
+        registeredName = (TextView)findViewById(R.id.registeredName);
+        editPencil = (ImageButton)findViewById(R.id.edit_Pencil);
+        //String json = sharedPref.getString("playerH", null);
+        //if (json!=null) {
+        //    HumanPlayer playerH = gson.fromJson(json, HumanPlayer.class);
+        String name = sharedPref.getString("userName","unknown");
+        Toast.makeText(this, "name="+name, Toast.LENGTH_SHORT).show();
+        if (!name.equals("unknown")){
+            userNameEditText.setVisibility(View.INVISIBLE);
+            nameBtn.setVisibility(View.INVISIBLE);
+            registeredName.setVisibility(View.VISIBLE);
+            registeredName.setText("Hello, "+name+"!");
+            editPencil.setVisibility(View.VISIBLE);
+        }
+
            // playerH.setAmountOfLogins(playerH.getAmountOfLogins()+1);
            // Toast.makeText(this, "you have logged in "+playerH.getAmountOfLogins()+" times!", Toast.LENGTH_SHORT).show();
-        }
+        //}
         RadioGroup radGrp = (RadioGroup) findViewById(R.id.radioGroup);
         radGrp.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             public void onCheckedChanged(RadioGroup arg0, int id) {
@@ -65,8 +82,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void startArrangeBattleFieldActivity(View view) {
         Intent ArrangeBattleFieldActivity = new Intent(this,arrangeBattleFieldActivity.class);
-        if(gameDifficulty != null)
-            ArrangeBattleFieldActivity.putExtra("gameDifficulty",gameDifficulty);
+        if(gameDifficulty != null) {
+            ArrangeBattleFieldActivity.putExtra("gameDifficulty", gameDifficulty);
+            ArrangeBattleFieldActivity.putExtra("userName",userName);
+        }
         else
             ArrangeBattleFieldActivity.putExtra("gameDifficulty",defaultDifficulty);
         startActivity(ArrangeBattleFieldActivity);
@@ -79,17 +98,28 @@ public class MainActivity extends AppCompatActivity {
 
     public void saveUserName(View view) {
 
-        String userName= userNameEditText.getText().toString();
-        playerH = new HumanPlayer(userName,10,5);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        Gson gson = new Gson();
-        String json = gson.toJson(playerH);
-        editor.putString("playerH", json);
+        userName= userNameEditText.getText().toString();
+        editor = sharedPref.edit();
+        //Gson gson = new Gson();
+        //String json = gson.toJson(userName);
+        editor.putString("userName", userName);
         //sharedPref.edit().putString()
         //editor.putInt(getString(R.string.saved_high_score), newHighScore);
         editor.commit();
-        Toast.makeText(this, ""+userName+" saved!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Username saved!", Toast.LENGTH_SHORT).show();
+        userNameEditText.setVisibility(View.INVISIBLE);
+        view.setVisibility(View.INVISIBLE);
+        editPencil.setVisibility(View.VISIBLE);
+        registeredName.setVisibility(View.VISIBLE);
+        registeredName.setText("Hello, "+userName+"!");
     }
 
+    public void editUserName(View view) {
+        editPencil.setVisibility(View.INVISIBLE);
+        registeredName.setVisibility(View.INVISIBLE);
+        nameBtn.setVisibility(View.VISIBLE);
+        userNameEditText.setVisibility(View.VISIBLE);
+
+    }
 }
 

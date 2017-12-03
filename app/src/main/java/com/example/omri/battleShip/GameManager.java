@@ -48,27 +48,30 @@ public class GameManager implements Serializable {
 
 
     public BattleField.shotState manageGame(Coordinate target){
-        BattleField.shotState state;
+        BattleField.shotState returnFlag;
+        BattleField.shotState status;
         if (humanPlayerTurn){ // a human player pressed on grid same as - if (humanPlayerTurn).
             humanPlayerTurn=false;
-            if(pcPlayer.receiveFire(target) == BattleField.shotState.SUNK )
-                state=BattleField.shotState.SUNK ;
-            else if(pcPlayer.receiveFire(target) == BattleField.shotState.HIT )
-                state=BattleField.shotState.HIT ;
+            status = pcPlayer.receiveFire(target);
+            if(status==BattleField.shotState.SUNK)
+                returnFlag=BattleField.shotState.SUNK;
+            else if (status==BattleField.shotState.HIT)
+                returnFlag=BattleField.shotState.HIT;
             else
-                state=BattleField.shotState.HIT ;
+                returnFlag=BattleField.shotState.MISS;
         }
         else { // a pc player has to randomize hit
             pcPlayer.generateShot();
-            if(humanPlayer.receiveFire(pcPlayer.getLastShot()) == BattleField.shotState.SUNK)
-                state= BattleField.shotState.SUNK;
-            else if(humanPlayer.receiveFire(pcPlayer.getLastShot()) == BattleField.shotState.HIT)
-                state= BattleField.shotState.HIT;
+            status=humanPlayer.receiveFire(pcPlayer.getLastShot());
+            if(status==BattleField.shotState.SUNK)
+                returnFlag= BattleField.shotState.SUNK;
+            else if (status==BattleField.shotState.HIT)
+                returnFlag= BattleField.shotState.HIT;
             else
-                state= BattleField.shotState.MISS;
+                returnFlag=BattleField.shotState.MISS;
             humanPlayerTurn=true;
         }
-        return state;
+        return returnFlag;
     }
     public String getDifficulty() {
         return difficulty;
