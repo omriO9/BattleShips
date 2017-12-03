@@ -185,18 +185,28 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
         // it paints on the list of Coordinates it receives .
         GridButton btn;
         boolean isVertical=false;
-        int front,center,rear;
+        int front,center,rear,frontExplosion,centerExplosion,rearExplosion;
         if (list2Paint.get(0).getX()==list2Paint.get(1).getX())
             isVertical=true;
         if (isVertical) {
             front = R.drawable.front_vertical;
+            frontExplosion = R.drawable.front_vertical;
+
             center = R.drawable.center_vertical;
+            centerExplosion = R.drawable.center_vertical;
+
             rear = R.drawable.rear_vertical;
+            rearExplosion = R.drawable.rear_vertical;
         }
         else {
             front = R.drawable.front;
+            frontExplosion = R.drawable.front;
+
             center = R.drawable.center;
+            centerExplosion = R.drawable.center;
+
             rear = R.drawable.rear;
+            rearExplosion = R.drawable.rear;
         }
        // int imageResource = getResources().getIdentifier(uri, null, getPackageName());
         for (int i=0;i<list2Paint.size();i++){
@@ -210,16 +220,16 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
             else { // we are placing a ship!
                 if (i==0) {
                     btn.setBackgroundResource(front);
-                   manager.getHumanPlayer().getBattleField().getMyShipsLocation()[list2Paint.get(i).getX()][list2Paint.get(i).getY()].setImgResourceID(front);
+                   manager.getHumanPlayer().getBattleField().getMyShipsLocation()[list2Paint.get(i).getX()][list2Paint.get(i).getY()].setImgsResourceID(front,frontExplosion);
                 }
                 else if (i==list2Paint.size()-1) {
                     btn.setBackgroundResource(rear);
-                   manager.getHumanPlayer().getBattleField().getMyShipsLocation()[list2Paint.get(i).getX()][list2Paint.get(i).getY()].setImgResourceID(rear);
+                   manager.getHumanPlayer().getBattleField().getMyShipsLocation()[list2Paint.get(i).getX()][list2Paint.get(i).getY()].setImgsResourceID(rear,rearExplosion);
                     Log.d(TAG, "paintLayout: list2Paint inside rear?");
                 }
                 else {
                     btn.setBackgroundResource(center);
-                   manager.getHumanPlayer().getBattleField().getMyShipsLocation()[list2Paint.get(i).getX()][list2Paint.get(i).getY()].setImgResourceID(center);
+                   manager.getHumanPlayer().getBattleField().getMyShipsLocation()[list2Paint.get(i).getX()][list2Paint.get(i).getY()].setImgsResourceID(center,centerExplosion);
                 }
             }
             btn.setAvailability(state);

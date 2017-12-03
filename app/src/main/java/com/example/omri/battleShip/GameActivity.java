@@ -14,6 +14,9 @@ import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 //import com.example.omri.batlleship.GameManager;
 //import com.example.omri.batlleship.GridButton;
 //import com.example.omri.batlleship.HumanPlayer;
@@ -104,7 +107,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        boolean hitResult; // true = hit , false = miss.
+        BattleField.shotState shotResult; // hit/miss/sunk
         boolean legalShot; // true = can attack there, false = I already shot there!
         if (v instanceof GridButton) {
             final GridButton gridButton = (GridButton) v;
@@ -114,12 +117,13 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 if (manager.isHumanPlayerTurn()) { // human player's tur
                     gridButton.setAvailability(GridButton.State.INUSE);
                     Coordinate target = new Coordinate(gridButton.getPositionX(), gridButton.getPositionY());
-                    hitResult = manager.manageGame(target);
-                    if(hitResult) {
+                    shotResult = manager.manageGame(target);
+                    if(shotResult == BattleField.shotState.HIT) {
                         MediaPlayer hitSound = MediaPlayer.create(this, R.raw.hit);
                         hitSound.start();
                     }
-                    paintAttack(enemyGridLayout, target, hitResult);
+
+                    paintAttack(enemyGridLayout, target, shotResult,manager.getHumanPlayer());
                     changeArrowImageByTurn(false);// true means its PC's turn
                     if (manager.getPcPlayer().hasBeenDefeated())
                         gameOver(manager.getHumanPlayer());
@@ -127,14 +131,14 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            boolean hitResult = manager.manageGame(null);
-                            paintAttack(myGridLayout, manager.getPcPlayer().getLastShot(), hitResult);
+                            BattleField.shotState  shotResult = manager.manageGame(null);
+                            paintAttack(myGridLayout, manager.getPcPlayer().getLastShot(), shotResult,manager.getPcPlayer());
                             if (manager.getHumanPlayer().hasBeenDefeated())
                                 gameOver(manager.getPcPlayer());
                             changeArrowImageByTurn(true);
 
                         }
-                    }, 1000);
+                    }, 1750);
                     //if (manager.isGameOver)
                 } else {
                     Toast.makeText(this, "Please wait for your turn", Toast.LENGTH_SHORT).show();
@@ -186,8 +190,15 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 .show();
     }
 
-    public void paintAttack( GridLayout theGrid,Coordinate target,boolean isHit) {
-                if (isHit) {
+    public void paintAttack( GridLayout theGrid,Coordinate target,BattleField.shotState shotState,Player p) {
+            List<Coordinate> CordsToPaint;
+                if(shotState == BattleField.shotState.SUNK){
+                    CordsToPaint = p.getBattleField().getSunkShipCords(target);
+                    for(Coordinate c : CordsToPaint){
+                        ((GridButton) theGrid.getChildAt(c.getX() + c.getY() * gridSize)).setBackgroundResource(p.getBattleField().getMyShipsLocation()[c.getX()][c.getY()].getImgExplosionResourceID());
+                    }
+                }
+                else if (shotState == BattleField.shotState.HIT) {
                     ((GridButton) theGrid.getChildAt(target.getX() + target.getY() * gridSize)).setBackgroundResource(R.drawable.blast);
                 }
                 else

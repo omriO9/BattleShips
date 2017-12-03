@@ -14,9 +14,12 @@ import java.util.Map;
 
 public class BattleField implements Serializable {
 
+    public enum shotState {MISS,HIT,SUNK};
+
     private static final String TAG = BattleField.class.getSimpleName();
     private final static int MEDIUM_SHIPS_AMOUNT = 4;
     private final static int INSANE_SHIPS_AMOUNT = 5;
+    private shotState status;
     protected CellInfo[][] myShipsLocation;
     protected HashMap<String,BattleShip> shipMap;
 
@@ -142,6 +145,19 @@ public BattleField(int size,int numOfShips){
         }
     }
 
+    public List<Coordinate> getSunkShipCords(Coordinate target){
+        List<Coordinate> CordsToPaint = new ArrayList<>();
+        String shipName = myShipsLocation[target.getX()][target.getY()].getShipName();
+        for (int i=0;i<myShipsLocation.length;i++){
+            for (int j=0;j<myShipsLocation.length;j++){
+                if(myShipsLocation[i][j].getShipName().equals(shipName)){
+                    CordsToPaint.add(new Coordinate(i,j));
+                }
+            }
+        }
+        return CordsToPaint;
+    }
+
 
     public boolean checkIfBlockedByShip(Coordinate shipPos, Coordinate desiredPos){
             // pos = ship's starting (pressed) location ,
@@ -183,7 +199,7 @@ public BattleField(int size,int numOfShips){
         return shipMap;
     }
 
-    public boolean shipWasHit(String name){
+    public shotState shipWasHit(String name){
         // receives a ship's name that was hit - updates it's number of hits +1 , if it was sunk then return
         // true , else just updates and returns false.
         BattleShip b= shipMap.get(name);
@@ -194,9 +210,9 @@ public BattleField(int size,int numOfShips){
         Log.d(TAG, "shipWasHit: b has numOfhits="+b.getNumberOfHits());
         if (b.getNumberOfHits()==b.getLength()){
             b.setSunk(true);
-            return true;
+            return status.SUNK;
         }
-        return false;
+        return status.HIT;
     }
 
     public boolean isAllShipsSunk(){

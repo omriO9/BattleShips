@@ -6,7 +6,7 @@ import android.content.Context;
  */
 public class GridButton extends android.support.v7.widget.AppCompatButton {
 
-    public enum State {EMPTY,POSSIBLE, INUSE};
+    public enum State {EMPTY,POSSIBLE,INUSE};
     private int positionX;
     private int positionY;
     private State availability; // false - can click on it to finish placing a ship. true - can click on it to begin placing a ship.

@@ -7,6 +7,6 @@ package com.example.omri.battleShip;
 interface PlayerIF {
    // public Coordinate attack();
     //public boolean hasBeenDefeated();
-    public boolean receiveFire(Coordinate target);
+    public BattleField.shotState receiveFire(Coordinate target);
     public String getName();
 }

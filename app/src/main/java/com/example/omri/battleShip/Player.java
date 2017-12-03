@@ -11,6 +11,7 @@ import java.io.Serializable;
 public abstract class Player implements PlayerIF , Serializable {
 
     private static final String TAG = Player.class.getSimpleName();
+
     public int numOfShips = 5;
     protected String playerName; // me/computer
     //protected int battleFieldSize;
@@ -64,19 +65,20 @@ public abstract class Player implements PlayerIF , Serializable {
     }
 
     @Override
-    public boolean receiveFire(Coordinate target) {
+    public BattleField.shotState receiveFire(Coordinate target) {
         if (myField.myShipsLocation[target.getX()][target.getY()]!=null) { // i got hit!
             String shipHitName = myField.myShipsLocation[target.getX()][target.getY()].getShipName();
-            if(myField.shipWasHit(shipHitName)) { // true = hit and sunk.
+            if(myField.shipWasHit(shipHitName) == BattleField.shotState.SUNK ) { // SUNK = hit and sunk.
                 numOfSunkShips++;
                 Log.d(TAG, "receiveFire: ship sunk ("+numOfShips+")");
                 if (numOfSunkShips==numOfShips) {
                     hasBeenDefeated = true;
                     Log.d(TAG, "receiveFire: player "+this.getPlayerName()+" has been defeated!!!");
                 }
+                return BattleField.shotState.SUNK;
             }
-            return true;
+            return BattleField.shotState.HIT;
         }
-        return false;
+        return BattleField.shotState.MISS;
     }
 }

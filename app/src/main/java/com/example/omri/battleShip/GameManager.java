@@ -47,24 +47,28 @@ public class GameManager implements Serializable {
         }
 
 
-    public boolean manageGame(Coordinate target){
-        boolean returnFlag;
+    public BattleField.shotState manageGame(Coordinate target){
+        BattleField.shotState state;
         if (humanPlayerTurn){ // a human player pressed on grid same as - if (humanPlayerTurn).
             humanPlayerTurn=false;
-            if(pcPlayer.receiveFire(target))
-                returnFlag=true;
+            if(pcPlayer.receiveFire(target) == BattleField.shotState.SUNK )
+                state=BattleField.shotState.SUNK ;
+            else if(pcPlayer.receiveFire(target) == BattleField.shotState.HIT )
+                state=BattleField.shotState.HIT ;
             else
-                returnFlag=false;
+                state=BattleField.shotState.HIT ;
         }
         else { // a pc player has to randomize hit
             pcPlayer.generateShot();
-            if(humanPlayer.receiveFire(pcPlayer.getLastShot()))
-                returnFlag= true;
+            if(humanPlayer.receiveFire(pcPlayer.getLastShot()) == BattleField.shotState.SUNK)
+                state= BattleField.shotState.SUNK;
+            else if(humanPlayer.receiveFire(pcPlayer.getLastShot()) == BattleField.shotState.HIT)
+                state= BattleField.shotState.HIT;
             else
-                returnFlag= false;
+                state= BattleField.shotState.MISS;
             humanPlayerTurn=true;
         }
-        return returnFlag;
+        return state;
     }
     public String getDifficulty() {
         return difficulty;
