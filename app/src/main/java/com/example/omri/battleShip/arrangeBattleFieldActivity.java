@@ -44,6 +44,7 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
         super.onResume();
         String gameDifficulty  = getIntent().getStringExtra("gameDifficulty");
         String userName = getIntent().getStringExtra("userName");
+        Log.d(TAG, "nullwongame?: name="+userName);
         manager = new GameManager(gameDifficulty);
         int [] arr = manager.createPlayers(userName,"BlueGene"); //gridSize and numOfShips are decided according to gameDifficulty
         gridSize = arr[0];
@@ -86,7 +87,7 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
                 gridLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 gridLayoutHeight = gridLayout.getHeight(); //width is ready
                 int cellSize = gridLayoutHeight / gridLayout.getColumnCount();
-                cellSize -= 3;
+                //cellSize -= 3;
                 for (int i = 0; i < gridLayout.getChildCount(); i++) {
                     GridButton btn = (GridButton) gridLayout.getChildAt(i);
                     btn.setPositionX(i % gridLayout.getColumnCount());
@@ -181,34 +182,36 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
                 btn.setDefaultDrawable();
         }
     }
+
     private void paintLayout(List<Coordinate> list2Paint,GridButton.State state) {
         // the func receives a flag - true - it paints ships / false - it paints gray available cells
         // it paints on the list of Coordinates it receives .
         GridButton btn;
-        boolean isVertical=false;
-        int front=-1,center=-1,rear=-1;
-        int frontEx=-1,centerEx=-1,rearEx=-1;
-        if (state==GridButton.State.INUSE) {
-
-            if (list2Paint.get(0).getX() == list2Paint.get(1).getX())
-                isVertical = true;
-            if (isVertical) {
-                front = R.drawable.front_vertical;
-                center = R.drawable.center_vertical;
-                rear = R.drawable.rear_vertical;
-                frontEx = R.drawable.front_vertical_ex;
-                centerEx = R.drawable.center_vertical_ex;
-                rearEx = R.drawable.rear_vertical_ex;
-
-            } else {
-                front = R.drawable.front;
-                center = R.drawable.center;
-                rear = R.drawable.rear;
-                frontEx = R.drawable.front_ex;
-                centerEx = R.drawable.center_ex;
-                rearEx = R.drawable.rear_ex;
-            }
-        }
+//        boolean isVertical=false;
+//        int front=-1,center=-1,rear=-1;
+//        int frontEx=-1,centerEx=-1,rearEx=-1;
+//        if (state==GridButton.State.INUSE) {
+//
+//            if (list2Paint.get(0).getX() == list2Paint.get(1).getX())
+//                isVertical = true;
+//            if (isVertical) {
+//                front = R.drawable.front_vertical;
+//                center = R.drawable.center_vertical;
+//                rear = R.drawable.rear_vertical;
+//                frontEx = R.drawable.front_vertical_ex;
+//                centerEx = R.drawable.center_vertical_ex;
+//                rearEx = R.drawable.rear_vertical_ex;
+//                Log.d(TAG, "paintLayout: frontEx="+frontEx);
+//
+//            } else {
+//                front = R.drawable.front;
+//                center = R.drawable.center;
+//                rear = R.drawable.rear;
+//                frontEx = R.drawable.front_ex;
+//                centerEx = R.drawable.center_ex;
+//                rearEx = R.drawable.rear_ex;
+//            }
+//        }
        // int imageResource = getResources().getIdentifier(uri, null, getPackageName());
         for (int i=0;i<list2Paint.size();i++){
             Log.d(TAG, "paintLayout: list2Paint.size="+list2Paint.size());
@@ -219,22 +222,24 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
                 btn.setBackgroundResource(R.drawable.cell_border_available);
             }
             else { // we are placing a ship!
-                if (i==0) {
-                    btn.setBackgroundResource(front);
-                   manager.getHumanPlayer().getBattleField().getMyShipsLocation()[list2Paint.get(i).getX()][list2Paint.get(i).getY()].setImgResourceID(front,frontEx);
-                   // gridLayout.getChildAt(0).setBackgroundResource(manager.getHumanPlayer().getBattleField().getMyShipsLocation()[list2Paint.get(i).getX()][list2Paint.get(i).getY()].getImgExplosioResourceID());
-                }
-                else if (i==list2Paint.size()-1) {
-                    btn.setBackgroundResource(rear);
-                   manager.getHumanPlayer().getBattleField().getMyShipsLocation()[list2Paint.get(i).getX()][list2Paint.get(i).getY()].setImgResourceID(rear,rearEx);
-                   // gridLayout.getChildAt(1).setBackgroundResource(manager.getHumanPlayer().getBattleField().getMyShipsLocation()[list2Paint.get(i).getX()][list2Paint.get(i).getY()].getImgExplosioResourceID());
-                    Log.d(TAG, "paintLayout: list2Paint inside rear?");
-                }
-                else {
-                    btn.setBackgroundResource(center);
-                   manager.getHumanPlayer().getBattleField().getMyShipsLocation()[list2Paint.get(i).getX()][list2Paint.get(i).getY()].setImgResourceID(center,centerEx);
-                   // gridLayout.getChildAt(3).setBackgroundResource(manager.getHumanPlayer().getBattleField().getMyShipsLocation()[list2Paint.get(i).getX()][list2Paint.get(i).getY()].getImgExplosioResourceID());
-                }
+                btn.setBackgroundResource(manager.getHumanPlayer().getBattleField().getMyShipsLocation()[list2Paint.get(i).getX()][list2Paint.get(i).getY()].getImg());
+
+//                if (i==0) {
+//                   btn.setBackgroundResource(front);
+//                   manager.getHumanPlayer().getBattleField().getMyShipsLocation()[list2Paint.get(i).getX()][list2Paint.get(i).getY()].setImgResourceID(front,frontEx);
+//                   // gridLayout.getChildAt(0).setBackgroundResource(manager.getHumanPlayer().getBattleField().getMyShipsLocation()[list2Paint.get(i).getX()][list2Paint.get(i).getY()].getImgExplosioResourceID());
+//                }
+//                else if (i==list2Paint.size()-1) {
+//                    btn.setBackgroundResource(rear);
+//                   manager.getHumanPlayer().getBattleField().getMyShipsLocation()[list2Paint.get(i).getX()][list2Paint.get(i).getY()].setImgResourceID(rear,rearEx);
+//                   // gridLayout.getChildAt(1).setBackgroundResource(manager.getHumanPlayer().getBattleField().getMyShipsLocation()[list2Paint.get(i).getX()][list2Paint.get(i).getY()].getImgExplosioResourceID());
+//                    Log.d(TAG, "paintLayout: list2Paint inside rear?");
+//                }
+//                else {
+//                    btn.setBackgroundResource(center);
+//                   manager.getHumanPlayer().getBattleField().getMyShipsLocation()[list2Paint.get(i).getX()][list2Paint.get(i).getY()].setImgResourceID(center,centerEx);
+//                   // gridLayout.getChildAt(3).setBackgroundResource(manager.getHumanPlayer().getBattleField().getMyShipsLocation()[list2Paint.get(i).getX()][list2Paint.get(i).getY()].getImgExplosioResourceID());
+//                }
             }
             btn.setAvailability(state);
         }

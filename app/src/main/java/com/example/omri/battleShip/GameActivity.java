@@ -47,6 +47,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         gridSize = manager.getHumanPlayer().getMyField().getMyShipsLocation().length;
         initGridLayout(myGridLayout, manager.getHumanPlayer());
         initGridLayout(enemyGridLayout, manager.getPcPlayer());
+
+        Log.d(TAG, "printMat: human:\n");
+        manager.getHumanPlayer().getMyField().printMat();
+        Log.d(TAG, "\n\nprintMat: pc: \n ");
+        manager.getPcPlayer().getMyField().printMat();
     }
 
     private void paintGridLayout(GridLayout grid, Player p) {
@@ -136,7 +141,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                             changeArrowImageByTurn(true);
 
                         }
-                    }, 1000);
+                    }, 100);
                     //if (manager.isGameOver)
                 } else {
                     Toast.makeText(this, "Please wait for your turn", Toast.LENGTH_SHORT).show();
@@ -193,15 +198,17 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 if (hitStatus==BattleField.shotState.SUNK){
                     List<Coordinate> cords = player.getBattleField().getSunkShipCords(target);
                     if (cords!=null) { // i received a list.
-                        Log.d(TAG, "paintAttack: cords.size="+cords.size());
+                        //Log.d(TAG, "paintAttack: cords.size="+cords.size());
                         for (Coordinate cord : cords){
                             //gridLayout.getChildAt(0).setBackgroundResource(manager.getHumanPlayer().getBattleField().getMyShipsLocation()[list2Paint.get(i).getX()][list2Paint.get(i).getY()].getImgExplosioResourceID());
-                            if (player.getBattleField().getMyShipsLocation()[cord.getX()][cord.getY()]!=null){
-                                if (player.getBattleField().getMyShipsLocation()[cord.getX()][cord.getY()].getImg()!=0)
-                                    Log.d(TAG, "paintAttack: there is a ship here");
-                            }
+                            //if (player.getBattleField().getMyShipsLocation()[cord.getX()][cord.getY()]!=null){
+                             //   if (player.getBattleField().getMyShipsLocation()[cord.getX()][cord.getY()].getImg()!=0)
+                            //        Log.d(TAG, "paintAttack: there is a ship here");
+                            //}
 
-                            int img2draw = player.getBattleField().getMyShipsLocation()[cord.getX()][cord.getY()].getImg();
+                            int img2draw = player.getBattleField().getMyShipsLocation()[cord.getX()][cord.getY()].getImgExplosioResourceID();
+                            Log.d(TAG, "paintAttack: img2draw="+img2draw);
+                            Log.d(TAG, "paintAttack: rear"+R.drawable.rear_vertical_ex+",center="+R.drawable.center_vertical+",front="+R.drawable.front_vertical_ex);
                             // img2draw isn't the right one!!!
                             GridButton btn2Paint = ((GridButton) theGrid.getChildAt(cord.getX() + cord.getY() * gridSize));
                             btn2Paint.setBackgroundResource(img2draw);

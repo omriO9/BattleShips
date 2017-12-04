@@ -42,13 +42,13 @@ public class MainActivity extends AppCompatActivity {
         //String json = sharedPref.getString("playerH", null);
         //if (json!=null) {
         //    HumanPlayer playerH = gson.fromJson(json, HumanPlayer.class);
-        String name = sharedPref.getString("userName","unknown");
-        Toast.makeText(this, "name="+name, Toast.LENGTH_SHORT).show();
-        if (!name.equals("unknown")){
+        userName = sharedPref.getString("userName","unknown");
+        Toast.makeText(this, "name="+userName, Toast.LENGTH_SHORT).show();
+        if (!userName.equals("unknown")){
             userNameEditText.setVisibility(View.INVISIBLE);
             nameBtn.setVisibility(View.INVISIBLE);
             registeredName.setVisibility(View.VISIBLE);
-            registeredName.setText("Hello, "+name+"!");
+            registeredName.setText("Hello, "+userName+"!");
             editPencil.setVisibility(View.VISIBLE);
         }
 
@@ -81,10 +81,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startArrangeBattleFieldActivity(View view) {
+        userName = registeredName.getText().toString();
         Intent ArrangeBattleFieldActivity = new Intent(this,arrangeBattleFieldActivity.class);
+        ArrangeBattleFieldActivity.putExtra("userName",userName);
         if(gameDifficulty != null) {
             ArrangeBattleFieldActivity.putExtra("gameDifficulty", gameDifficulty);
-            ArrangeBattleFieldActivity.putExtra("userName",userName);
         }
         else
             ArrangeBattleFieldActivity.putExtra("gameDifficulty",defaultDifficulty);

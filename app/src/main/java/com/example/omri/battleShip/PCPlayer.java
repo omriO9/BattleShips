@@ -19,6 +19,7 @@ public class PCPlayer extends Player {
 
     public PCPlayer(String name,int size,int numOfShips){
         super(name,size,numOfShips);
+        Log.d(TAG, "printMat: pcPlayer supposed to init "+numOfShips+" amount of ships");
         initBattleShipsRandomly();
         listOfPossibleShots=new ArrayList<>();
         initListOfPossibleShots();
@@ -34,15 +35,19 @@ public class PCPlayer extends Player {
     public void initBattleShipsRandomly() {
         Map<String,BattleShip> map = myField.shipMap;
         List<Coordinate> listOfPossibilities;
-
+        Log.d(TAG, "printMat: starting initBattleShipsRandomly ");
        for(Map.Entry<String,BattleShip> entry : map.entrySet()){
-            Log.d(TAG, "initBattleShipsRandomly: shipName =  "+ entry.getKey());
-            Coordinate randomShipCord = generateRandomCoordinate(getMyField().myShipsLocation.length);
-            do {
-                listOfPossibilities  = myField.showPossiblePositions(randomShipCord, entry.getKey());//check what if listOfPossibilities is empty
-            }while(listOfPossibilities.size() ==0);
-            int randomIndex = generateRandomIndex(listOfPossibilities.size());
+            //Log.d(TAG, "initBattleShipsRandomly: shipName =  "+ entry.getKey());
+           Coordinate randomShipCord;
+           do {
+               randomShipCord = generateRandomCoordinate(getMyField().myShipsLocation.length);
+               listOfPossibilities  = myField.showPossiblePositions(randomShipCord, entry.getKey());//check what if listOfPossibilities is empty
+           }while(listOfPossibilities.size() ==0);
+           int randomIndex = generateRandomIndex(listOfPossibilities.size());
+           Log.d(TAG, "printMat: before placeShip! ");
+           Log.d(TAG, "initBattleShipsRandomly: coords of shipname="+entry.getKey()+" to place - "+randomShipCord+" *to "+listOfPossibilities.get(randomIndex));
             myField.placeShip(randomShipCord,listOfPossibilities.get(randomIndex),entry.getKey());
+           Log.d(TAG, "printMat: PCPlayer inits a ship, name="+entry.getValue());
        }
     }
 

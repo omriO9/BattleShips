@@ -13,6 +13,7 @@
         android:layout_height="@dimen/boardDimen"
         android:layout_centerVertical="true"
         android:layout_marginStart="35dp"
+
         >
     </GridLayout>
 

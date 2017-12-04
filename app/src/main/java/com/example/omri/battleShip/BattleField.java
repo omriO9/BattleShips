@@ -125,45 +125,134 @@ public BattleField(int size,int numOfShips){
                 return listOfPossibilities;
             }
 
-    public List<Coordinate> placeShip(Coordinate shipStartingPos, Coordinate requestedPosition,String shipName) {
+        public List<Coordinate> placeShip(Coordinate shipStartingPos, Coordinate requestedPosition,String shipName) {
         // func gets starting ship position and desired position to place ship
         // returns list of coordinates that the ship is placed in to paint on grid
-        List<Coordinate> CordsToPaint = new ArrayList<>();
-        if (shipStartingPos.getX()==requestedPosition.getX()) { // we have same X - same column
-            if (shipStartingPos.getY() < requestedPosition.getY()) { // fill it down
-                for (int i = shipStartingPos.getY(); i <= requestedPosition.getY(); i++) {
-                    myShipsLocation[shipStartingPos.getX()][i]=new CellInfo(shipName,-1);
-                    CordsToPaint.add(new Coordinate(shipStartingPos.getX(),i));
+            int front=-1,center=-1,rear=-1;
+            int frontEx=-1,centerEx=-1,rearEx=-1;
+            boolean isVertical=false;
+            if (shipStartingPos.getX() == requestedPosition.getX())
+                isVertical = true;
+            if (isVertical) {
+                front = R.drawable.front_vertical;
+                center = R.drawable.center_vertical;
+                rear = R.drawable.rear_vertical;
+                frontEx = R.drawable.front_vertical_ex;
+                centerEx = R.drawable.center_vertical_ex;
+                rearEx = R.drawable.rear_vertical_ex;
+            } else {
+                front = R.drawable.front;
+                center = R.drawable.center;
+                rear = R.drawable.rear;
+                frontEx = R.drawable.front_ex;
+                centerEx = R.drawable.center_ex;
+                rearEx = R.drawable.rear_ex;
+            }
+        List<Coordinate> cordsOfShip = createCordList(shipStartingPos,requestedPosition);
+            for (int i=0;i<cordsOfShip.size();i++){
+                Log.d(TAG, "initBattleShipsRandomly: Cord="+cordsOfShip.get(i));
+                Coordinate currCoord = cordsOfShip.get(i);
+                int x = currCoord.getX() , y = currCoord.getY();
+                Log.d(TAG, "printMat: BattleField.placeShip cord=[ "+x+","+y+"]");
+                if (i==0) // rear
+                    myShipsLocation[x][y] = new CellInfo(shipName,front,frontEx);
+                else if (i==cordsOfShip.size()-1) //front
+                    myShipsLocation[x][y] = new CellInfo(shipName,rear,rearEx);
+                else //center
+                    myShipsLocation[x][y] = new CellInfo(shipName,center,centerEx);
+
+            }
+//            List<Coordinate> CordsToPaint = new ArrayList<>();
+//        if (shipStartingPos.getX()==requestedPosition.getX()) { // we have same X - same column
+//            if (shipStartingPos.getY() < requestedPosition.getY()) { // fill it down
+//                for (int i = shipStartingPos.getY(); i <= requestedPosition.getY(); i++) {
+//                    myShipsLocation[shipStartingPos.getX()][i]=new CellInfo(shipName,-1);
+//                    CordsToPaint.add(new Coordinate(shipStartingPos.getX(),i));
+//                }
+//            } else if (shipStartingPos.getY() > requestedPosition.getY()) { //fill it up
+//                for (int i = requestedPosition.getY(); i <= shipStartingPos.getY(); i++) {
+//                    myShipsLocation[shipStartingPos.getX()][i]=new CellInfo(shipName,-1);
+//                    CordsToPaint.add(new Coordinate(shipStartingPos.getX(),i));
+//                }
+//            }
+//        }
+//        else {//if(pos.getY()==gridButton.getPositionY()){
+//            if(shipStartingPos.getX()< requestedPosition.getX()) { // fill it right
+//                for (int i = shipStartingPos.getX(); i <=requestedPosition.getX(); i++) {
+//                    myShipsLocation[i][shipStartingPos.getY()]=new CellInfo(shipName,-1);
+//                    CordsToPaint.add(new Coordinate(i,shipStartingPos.getY()));
+//                }
+//            }
+//            else if(shipStartingPos.getX()> requestedPosition.getX()){ //fill it left
+//                for (int i = requestedPosition.getX(); i <= shipStartingPos.getX(); i++) {
+//                    myShipsLocation[i][shipStartingPos.getY()]=new CellInfo(shipName,-1);
+//                    CordsToPaint.add(new Coordinate(i,shipStartingPos.getY()));
+//                }
+//            }
+//        }
+            Log.d(TAG, "printMat: before return cordsOfShip");
+        return cordsOfShip;
+    }
+    public List<Coordinate> createCordList(Coordinate start,Coordinate end){
+
+        List<Coordinate> cordList = new ArrayList<>();
+        if (start.getX()==end.getX()) { // Vertical running
+            if (start.getY() < end.getY()) { // fill it down
+                for (int i = start.getY(); i <= end.getY(); i++) {
+                    cordList.add(new Coordinate(start.getX(),i));
                 }
-            } else if (shipStartingPos.getY() > requestedPosition.getY()) { //fill it up
-                for (int i = requestedPosition.getY(); i <= shipStartingPos.getY(); i++) {
-                    myShipsLocation[shipStartingPos.getX()][i]=new CellInfo(shipName,-1);
-                    CordsToPaint.add(new Coordinate(shipStartingPos.getX(),i));
+            }
+            else {
+                for (int i = end.getY(); i <= start.getY(); i++) {
+                    cordList.add(new Coordinate(start.getX(),i));
                 }
             }
         }
-        else {//if(pos.getY()==gridButton.getPositionY()){
-            if(shipStartingPos.getX()< requestedPosition.getX()) { // fill it right
-                for (int i = shipStartingPos.getX(); i <=requestedPosition.getX(); i++) {
-                    myShipsLocation[i][shipStartingPos.getY()]=new CellInfo(shipName,-1);
-                    CordsToPaint.add(new Coordinate(i,shipStartingPos.getY()));
+        else {
+            if(start.getX()< end.getX()) { // fill it right
+                for (int i = start.getX(); i <=end.getX(); i++) {
+                    cordList.add(new Coordinate(i,start.getY()));
                 }
             }
-            else if(shipStartingPos.getX()> requestedPosition.getX()){ //fill it left
-                for (int i = requestedPosition.getX(); i <= shipStartingPos.getX(); i++) {
-                    myShipsLocation[i][shipStartingPos.getY()]=new CellInfo(shipName,-1);
-                    CordsToPaint.add(new Coordinate(i,shipStartingPos.getY()));
+            else if(start.getX()> end.getX()){ //fill it left
+                for (int i = end.getX(); i <= start.getX(); i++) {
+                    cordList.add(new Coordinate(i,start.getY()));
                 }
             }
         }
-        return CordsToPaint;
+        Log.d(TAG, "createCordList: printing cordList before return= "+cordList.toString());
+        return cordList;
+    }
+
+    public void initCellImgs(Coordinate start,Coordinate end){
+        int front=-1,center=-1,rear=-1;
+        int frontEx=-1,centerEx=-1,rearEx=-1;
+        boolean isVertical=false;
+        if (start.getX() == end.getX())
+            isVertical = true;
+        if (isVertical) {
+            front = R.drawable.front_vertical;
+            center = R.drawable.center_vertical;
+            rear = R.drawable.rear_vertical;
+            frontEx = R.drawable.front_vertical_ex;
+            centerEx = R.drawable.center_vertical_ex;
+            rearEx = R.drawable.rear_vertical_ex;
+        } else {
+            front = R.drawable.front;
+            center = R.drawable.center;
+            rear = R.drawable.rear;
+            frontEx = R.drawable.front_ex;
+            centerEx = R.drawable.center_ex;
+            rearEx = R.drawable.rear_ex;
+        }
+
     }
 
     public void printMat() {
         for (int i = 0; i < myShipsLocation.length; i++) {
             for (int j = 0; j < myShipsLocation.length; j++) {
                 if (myShipsLocation[i][j] != null) {
-                    Log.d(TAG, "printMat: [" + i + "," + j + "]=" + myShipsLocation[i][j]);
+                    Log.d(TAG, "printMat: shipName="+myShipsLocation[i][j].getShipName()+"[" + i + "," + j + "]=" + myShipsLocation[i][j]);
                 }
             }
         }

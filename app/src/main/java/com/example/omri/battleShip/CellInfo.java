@@ -14,9 +14,10 @@ public class CellInfo implements Serializable {
     private int imgResourceID;
     private int imgExplosioResourceID;
 
-    public CellInfo(String name,int id){
+    public CellInfo(String name,int id,int explosionID){
         this.shipName=name;
         this.imgResourceID=id; // -1 - default value means not initilized yet.
+        this.imgExplosioResourceID=explosionID;
     }
     public String getShipName() {
         return shipName;

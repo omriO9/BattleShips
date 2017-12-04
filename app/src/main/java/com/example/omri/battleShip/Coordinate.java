@@ -32,6 +32,6 @@ class Coordinate implements Serializable {
         this.y = y;
     }
     public String toString(){
-        return "["+x+","+y+"]";
+        return "["+this.y+","+this.x+"]";
     }
 }
