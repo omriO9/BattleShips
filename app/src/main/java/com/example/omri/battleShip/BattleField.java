@@ -134,6 +134,7 @@ public BattleField(int size,int numOfShips){
             if (shipStartingPos.getX() == requestedPosition.getX())
                 isVertical = true;
             if (isVertical) {
+                Log.d(TAG, "placeShip: isVertical=true");
                 front = R.drawable.front_vertical;
                 center = R.drawable.center_vertical;
                 rear = R.drawable.rear_vertical;
