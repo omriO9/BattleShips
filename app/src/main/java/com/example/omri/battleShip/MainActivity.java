@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     Button nameBtn;
     TextView registeredName;
     private boolean isSound = true;
+    Switch soundSwitch;
     ImageButton editPencil;
 
     @Override
@@ -45,6 +47,10 @@ public class MainActivity extends AppCompatActivity {
         //if (json!=null) {
         //    HumanPlayer playerH = gson.fromJson(json, HumanPlayer.class);
         userName = sharedPref.getString("userName","unknown");
+        isSound = sharedPref.getBoolean("isSound",true);
+        soundSwitch = (Switch) findViewById(R.id.soungSwitch);
+        soundSwitch.setChecked(isSound);
+
         Toast.makeText(this, "name="+userName, Toast.LENGTH_SHORT).show();
         if (!userName.equals("unknown")){
             userNameEditText.setVisibility(View.INVISIBLE);
@@ -128,8 +134,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onSwitchClicked(View view) {
-        Switch soundSwitch = (Switch) findViewById(R.id.soungSwitch);
+        soundSwitch = (Switch) findViewById(R.id.soungSwitch);
         isSound = soundSwitch.isChecked();
+        editor = sharedPref.edit();
+        editor.putBoolean("isSound", isSound);
+        editor.commit();
+        Log.d(TAG, "onSwitchClicked: isSound="+isSound);
+
     }
 }
 

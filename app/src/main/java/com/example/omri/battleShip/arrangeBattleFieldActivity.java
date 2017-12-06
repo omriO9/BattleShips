@@ -163,6 +163,14 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
         }
         if (v instanceof ImageButton) { // means i clicked on a BattleShip image
             final ImageButton selectedImageButton = (ImageButton) v;
+            int squaresCount = gridLayout.getColumnCount() * gridLayout.getRowCount();
+            for (int i = 0; i < squaresCount; i++) {
+                GridButton btn = ((GridButton)gridLayout.getChildAt(i));
+                if(btn.checkAvailability()==GridButton.State.POSSIBLE || btn.getBackground().getConstantState().equals(getResources().getDrawable(R.drawable.hit).getConstantState()) ){
+                    btn.setDefaultDrawable();
+                    btn.setAvailability(GridButton.State.EMPTY);
+                }
+            }
             if (selectedBattleID == 0) {
                 selectedImageButton.setAlpha(0.5f);
             } else if (selectedBattleID != selectedImageButton.getId()) {
@@ -189,31 +197,7 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
         // the func receives a flag - true - it paints ships / false - it paints gray available cells
         // it paints on the list of Coordinates it receives .
         GridButton btn;
-//        boolean isVertical=false;
-//        int front=-1,center=-1,rear=-1;
-//        int frontEx=-1,centerEx=-1,rearEx=-1;
-//        if (state==GridButton.State.INUSE) {
-//
-//            if (list2Paint.get(0).getX() == list2Paint.get(1).getX())
-//                isVertical = true;
-//            if (isVertical) {
-//                front = R.drawable.front_vertical;
-//                center = R.drawable.center_vertical;
-//                rear = R.drawable.rear_vertical;
-//                frontEx = R.drawable.front_vertical_ex;
-//                centerEx = R.drawable.center_vertical_ex;
-//                rearEx = R.drawable.rear_vertical_ex;
-//                Log.d(TAG, "paintLayout: frontEx="+frontEx);
-//
-//            } else {
-//                front = R.drawable.front;
-//                center = R.drawable.center;
-//                rear = R.drawable.rear;
-//                frontEx = R.drawable.front_ex;
-//                centerEx = R.drawable.center_ex;
-//                rearEx = R.drawable.rear_ex;
-//            }
-//        }
+
        // int imageResource = getResources().getIdentifier(uri, null, getPackageName());
         for (int i=0;i<list2Paint.size();i++){
             Log.d(TAG, "paintLayout: list2Paint.size="+list2Paint.size());
@@ -226,32 +210,10 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
             else { // we are placing a ship!
                 btn.setBackgroundResource(manager.getHumanPlayer().getBattleField().getMyShipsLocation()[list2Paint.get(i).getX()][list2Paint.get(i).getY()].getImg());
 
-//                if (i==0) {
-//                   btn.setBackgroundResource(front);
-//                   manager.getHumanPlayer().getBattleField().getMyShipsLocation()[list2Paint.get(i).getX()][list2Paint.get(i).getY()].setImgResourceID(front,frontEx);
-//                   // gridLayout.getChildAt(0).setBackgroundResource(manager.getHumanPlayer().getBattleField().getMyShipsLocation()[list2Paint.get(i).getX()][list2Paint.get(i).getY()].getImgExplosioResourceID());
-//                }
-//                else if (i==list2Paint.size()-1) {
-//                    btn.setBackgroundResource(rear);
-//                   manager.getHumanPlayer().getBattleField().getMyShipsLocation()[list2Paint.get(i).getX()][list2Paint.get(i).getY()].setImgResourceID(rear,rearEx);
-//                   // gridLayout.getChildAt(1).setBackgroundResource(manager.getHumanPlayer().getBattleField().getMyShipsLocation()[list2Paint.get(i).getX()][list2Paint.get(i).getY()].getImgExplosioResourceID());
-//                    Log.d(TAG, "paintLayout: list2Paint inside rear?");
-//                }
-//                else {
-//                    btn.setBackgroundResource(center);
-//                   manager.getHumanPlayer().getBattleField().getMyShipsLocation()[list2Paint.get(i).getX()][list2Paint.get(i).getY()].setImgResourceID(center,centerEx);
-//                   // gridLayout.getChildAt(3).setBackgroundResource(manager.getHumanPlayer().getBattleField().getMyShipsLocation()[list2Paint.get(i).getX()][list2Paint.get(i).getY()].getImgExplosioResourceID());
-//                }
             }
             btn.setAvailability(state);
         }
-//        for (Coordinate c : list2Paint){
-//            int positionOnGrid = c.getY() * gridLayout.getColumnCount() + c.getX();
-//            btn = (GridButton) gridLayout.getChildAt(positionOnGrid);
-//            btn.setBackgroundResource(imageResource);
-//            btn.setAvailability(state);
-//            //btn.setOnClickListener(null);
-//        }
+
     }
     public void startGameActivity(View view) {
 
