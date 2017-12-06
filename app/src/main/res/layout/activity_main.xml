@@ -11,8 +11,14 @@
         android:id="@+id/play_button"
         android:layout_width="@dimen/play_button_width"
         android:layout_height="@dimen/play_button_height"
-        android:layout_centerInParent="true"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/buttonShape"
         android:onClick="startArrangeBattleFieldActivity"
+        android:shadowColor="#A8A8A8"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="5"
         android:text="@string/play_button"
         android:textSize="@dimen/play_button_textsize" />
 
@@ -22,13 +28,18 @@
         android:layout_height="@dimen/rules_button_height"
         android:layout_below="@+id/play_button"
         android:layout_centerHorizontal="true"
+        android:background="@drawable/buttonShape"
+        android:shadowColor="#A8A8A8"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="5"
         android:layout_marginTop="14dp"
         android:onClick="startRulesActivity"
         android:text="@string/rules_button"
         android:textSize="@dimen/rules_button_textsize" />
 
     <Switch
-        android:id="@+id/switch1"
+        android:id="@+id/soungSwitch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
@@ -36,6 +47,7 @@
         android:layout_marginEnd="11dp"
         android:layout_marginTop="12dp"
         android:checked="true"
+        android:onClick="onSwitchClicked"
         android:text="@string/sound" />
 
     <Button

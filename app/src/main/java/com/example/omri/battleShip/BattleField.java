@@ -14,16 +14,14 @@ import java.util.Map;
 
 public class BattleField implements Serializable {
 
+    public enum shotState {MISS,HIT,SUNK};
+
     private static final String TAG = BattleField.class.getSimpleName();
     private final static int MEDIUM_SHIPS_AMOUNT = 4;
     private final static int INSANE_SHIPS_AMOUNT = 5;
+    private shotState status;
     protected CellInfo[][] myShipsLocation;
     protected HashMap<String,BattleShip> shipMap;
-
-
-
-    public enum shotState {MISS,HIT,SUNK};
-    private shotState status;
 
 
 public BattleField(int size,int numOfShips){

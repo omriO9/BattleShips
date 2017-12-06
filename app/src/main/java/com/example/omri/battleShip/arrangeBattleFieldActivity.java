@@ -28,6 +28,7 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
     int selectedBattleID = 0; // the ID is from the resource file.
     int numberOfPlacedShips=0;
     GameManager manager;
+    private boolean isSound = true;
     List<Coordinate> possibleCords;
 
 
@@ -44,6 +45,7 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
         super.onResume();
         String gameDifficulty  = getIntent().getStringExtra("gameDifficulty");
         String userName = getIntent().getStringExtra("userName");
+        isSound = getIntent().getBooleanExtra("isSound",true);
         Log.d(TAG, "nullwongame?: name="+userName);
         manager = new GameManager(gameDifficulty);
         int [] arr = manager.createPlayers(userName,"BlueGene"); //gridSize and numOfShips are decided according to gameDifficulty
@@ -259,6 +261,7 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
         else {
         Intent GameActivity = new Intent(this, GameActivity.class);
         GameActivity.putExtra("GameManager", manager);
+        GameActivity.putExtra("isSound",isSound);
         startActivity(GameActivity);
         }
     }

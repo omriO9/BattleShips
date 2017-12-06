@@ -26,6 +26,7 @@ public class CellInfo implements Serializable {
     public int getImg() {
         return imgResourceID;
     }
+
     public void setShipName(String shipName) {
         this.shipName = shipName;
     }

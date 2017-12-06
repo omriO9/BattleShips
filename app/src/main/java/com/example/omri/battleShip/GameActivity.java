@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.List;
+import java.util.Random;
 
 //import com.example.omri.batlleship.GameManager;
 //import com.example.omri.batlleship.GridButton;
@@ -31,6 +32,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private GameManager manager;
     private int gridSize;
     private ImageView img;
+    private boolean isSound =true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +46,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         myGridLayout = (GridLayout) findViewById(R.id.myGridLayout);
         enemyGridLayout = (GridLayout) findViewById(R.id.enemyGridLayout);
         manager = (GameManager) getIntent().getSerializableExtra("GameManager");
+        isSound = getIntent().getBooleanExtra("isSound",true);
         gridSize = manager.getHumanPlayer().getMyField().getMyShipsLocation().length;
         initGridLayout(myGridLayout, manager.getHumanPlayer());
         initGridLayout(enemyGridLayout, manager.getPcPlayer());
@@ -122,7 +125,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     gridButton.setAvailability(GridButton.State.INUSE);
                     Coordinate target = new Coordinate(gridButton.getPositionX(), gridButton.getPositionY());
                     BattleField.shotState shotResult = manager.manageGame(target);
-                    if(shotResult==BattleField.shotState.HIT || shotResult==BattleField.shotState.SUNK) {
+                    if((shotResult==BattleField.shotState.HIT || shotResult==BattleField.shotState.SUNK)&& isSound) {
                         MediaPlayer hitSound = MediaPlayer.create(this, R.raw.hit);
                         hitSound.start();
                     }
@@ -130,6 +133,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     changeArrowImageByTurn(false);// true means its PC's turn
                     if (manager.getPcPlayer().hasBeenDefeated())
                         gameOver(manager.getHumanPlayer());
+                    Random r = new Random();
                     final Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
                         @Override
@@ -141,7 +145,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                             changeArrowImageByTurn(true);
 
                         }
-                    }, 100);
+                    }, 1250 +r.nextInt(500));
                     //if (manager.isGameOver)
                 } else {
                     Toast.makeText(this, "Please wait for your turn", Toast.LENGTH_SHORT).show();
@@ -168,12 +172,14 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void gameOver(Player p) {
-        MediaPlayer gameOverSound;
-        if (p instanceof HumanPlayer)
-            gameOverSound = MediaPlayer.create(this,R.raw.game_won);
-        else
-            gameOverSound = MediaPlayer.create(this,R.raw.game_lost);
-        gameOverSound.start();
+        if(isSound) {
+            MediaPlayer gameOverSound;
+            if (p instanceof HumanPlayer)
+                gameOverSound = MediaPlayer.create(this, R.raw.game_won);
+            else
+                gameOverSound = MediaPlayer.create(this, R.raw.game_lost);
+            gameOverSound.start();
+        }
         new AlertDialog.Builder(this)
                 .setMessage(p.getPlayerName()+" WON the game!!!")
                 .setCancelable(false)
@@ -216,7 +222,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }
                 else if (hitStatus== BattleField.shotState.HIT) {
-                    ((GridButton) theGrid.getChildAt(target.getX() + target.getY() * gridSize)).setBackgroundResource(R.drawable.blast);
+                    if(player instanceof HumanPlayer)
+                        ((GridButton) theGrid.getChildAt(target.getX() + target.getY() * gridSize)).setBackgroundResource(player.getMyField().getMyShipsLocation()[target.getX()][target.getY()].getImgExplosioResourceID());
+                    else
+                        ((GridButton) theGrid.getChildAt(target.getX() + target.getY() * gridSize)).setBackgroundResource(R.drawable.blast);
                 }
                 else
                     ((GridButton) theGrid.getChildAt(target.getX() + target.getY() * gridSize)).setBackgroundResource(R.drawable.miss);

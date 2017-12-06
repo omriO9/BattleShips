@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText userNameEditText;
     Button nameBtn;
     TextView registeredName;
+    private boolean isSound = true;
     ImageButton editPencil;
 
     @Override
@@ -89,6 +91,8 @@ public class MainActivity extends AppCompatActivity {
         }
         else
             ArrangeBattleFieldActivity.putExtra("gameDifficulty",defaultDifficulty);
+
+        ArrangeBattleFieldActivity.putExtra("isSound",isSound);
         startActivity(ArrangeBattleFieldActivity);
     }
 
@@ -121,6 +125,11 @@ public class MainActivity extends AppCompatActivity {
         nameBtn.setVisibility(View.VISIBLE);
         userNameEditText.setVisibility(View.VISIBLE);
 
+    }
+
+    public void onSwitchClicked(View view) {
+        Switch soundSwitch = (Switch) findViewById(R.id.soungSwitch);
+        isSound = soundSwitch.isChecked();
     }
 }
 
