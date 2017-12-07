@@ -182,6 +182,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 gameOverSound = MediaPlayer.create(this, R.raw.game_lost);
             gameOverSound.start();
         }
+
         new AlertDialog.Builder(this)
                 .setMessage(p.getPlayerName()+" WON the game!!!")
                 .setCancelable(false)
