@@ -7,4 +7,5 @@
     <string name="fightButton">Fight!</string>
     <string name="quit">Quit</string>
     <string name="battleship_fleet"><u><b>BattleShip fleet:</b></u></string>
+    <string name="rules">1. Choose the game difficulty you wish to play , then press "Play Now!"  \n2. Choose a ship you wish to position and press anywhere on the grid.  \n3. Choose one of the gray cells that appears on the grid in order to complete the ship positioning.  \n4. Press "Fight" when ready!  5. Beating BlueGene is not easy , GOOD LUCK!</string>
 </resources>

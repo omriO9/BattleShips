@@ -145,7 +145,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                             changeArrowImageByTurn(true);
 
                         }
-                    }, 1250 +r.nextInt(500));
+                    }, r.nextInt(500)); // 1250 +
                     //if (manager.isGameOver)
                 } else {
                     Toast.makeText(this, "Please wait for your turn", Toast.LENGTH_SHORT).show();
@@ -180,8 +180,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 gameOverSound = MediaPlayer.create(this, R.raw.game_lost);
             gameOverSound.start();
         }
+        String name = p.getPlayerName();
+//        if (name.equals(""))
+//            name="unregistered player";
         new AlertDialog.Builder(this)
-                .setMessage(p.getPlayerName()+" WON the game!!!")
+                .setMessage(name+" WON the game!!!")
                 .setCancelable(false)
                 .setPositiveButton("Rematch", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {

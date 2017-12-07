@@ -45,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
         //if (json!=null) {
         //    HumanPlayer playerH = gson.fromJson(json, HumanPlayer.class);
         userName = sharedPref.getString("userName","unknown");
-        Toast.makeText(this, "name="+userName, Toast.LENGTH_SHORT).show();
         if (!userName.equals("unknown")){
             userNameEditText.setVisibility(View.INVISIBLE);
             nameBtn.setVisibility(View.INVISIBLE);
@@ -83,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startArrangeBattleFieldActivity(View view) {
-        userName = registeredName.getText().toString();
+        //userName = registeredName.getText().toString();
         Intent ArrangeBattleFieldActivity = new Intent(this,arrangeBattleFieldActivity.class);
         ArrangeBattleFieldActivity.putExtra("userName",userName);
         if(gameDifficulty != null) {
@@ -128,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onSwitchClicked(View view) {
-        Switch soundSwitch = (Switch) findViewById(R.id.soungSwitch);
+        Switch soundSwitch = (Switch) findViewById(R.id.soundSwitch);
         isSound = soundSwitch.isChecked();
     }
 }

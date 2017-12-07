@@ -89,7 +89,7 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
                 gridLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 gridLayoutHeight = gridLayout.getHeight(); //width is ready
                 int cellSize = gridLayoutHeight / gridLayout.getColumnCount();
-                //cellSize -= 3;
+                //cellSize -= 1;
                 for (int i = 0; i < gridLayout.getChildCount(); i++) {
                     GridButton btn = (GridButton) gridLayout.getChildAt(i);
                     btn.setPositionX(i % gridLayout.getColumnCount());
@@ -169,7 +169,8 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
                 oldImageBattleShip.setAlpha(1.0f);
                 selectedImageButton.setAlpha(0.5f);
             }
-            v.animate().rotationXBy(360).setDuration(1500).start();
+            //v.animate().rotationXBy(360).setDuration(1500).start();
+            //v.animate().
             selectedBattleID = selectedImageButton.getId();
             oldImageBattleShip = selectedImageButton;
         }
@@ -225,7 +226,12 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
             }
             else { // we are placing a ship!
                 btn.setBackgroundResource(manager.getHumanPlayer().getBattleField().getMyShipsLocation()[list2Paint.get(i).getX()][list2Paint.get(i).getY()].getImg());
-
+                btn.setPadding(1,1,1,1);
+                //                GradientDrawable gd = new GradientDrawable();
+//                gd.setColor(0xFF00FF00); // Changes this drawbale to use a single color instead of a gradient
+//                gd.setCornerRadius(5);
+//                gd.setStroke(1, 0xFF000000);
+//                btn.setBackground(gd);
 //                if (i==0) {
 //                   btn.setBackgroundResource(front);
 //                   manager.getHumanPlayer().getBattleField().getMyShipsLocation()[list2Paint.get(i).getX()][list2Paint.get(i).getY()].setImgResourceID(front,frontEx);
