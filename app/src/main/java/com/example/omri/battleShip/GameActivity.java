@@ -147,7 +147,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                             changeArrowImageByTurn(true);
 
                         }
-                    }, 1250 +r.nextInt(500));
+                    }, 1000 +r.nextInt(500));
                     //if (manager.isGameOver)
                 } else {
                     Toast.makeText(this, "Please wait for your turn", Toast.LENGTH_SHORT).show();
