@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         //    HumanPlayer playerH = gson.fromJson(json, HumanPlayer.class);
         userName = sharedPref.getString("userName","unknown");
         isSound = sharedPref.getBoolean("isSound",true);
-        soundSwitch = (Switch) findViewById(R.id.soungSwitch);
+        soundSwitch = (Switch) findViewById(R.id.soundSwitch);
         soundSwitch.setChecked(isSound);
 
         Toast.makeText(this, "name="+userName, Toast.LENGTH_SHORT).show();
