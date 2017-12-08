@@ -131,8 +131,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     }
                     paintAttack(enemyGridLayout, target, shotResult,manager.getPcPlayer());
                     changeArrowImageByTurn(false);// true means its PC's turn
-                    if (manager.getPcPlayer().hasBeenDefeated())
+                    if (manager.getPcPlayer().hasBeenDefeated()) {
                         gameOver(manager.getHumanPlayer());
+                        return;
+                    }
                     Random r = new Random();
                     final Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
@@ -145,7 +147,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                             changeArrowImageByTurn(true);
 
                         }
-                    }, r.nextInt(500)); // 1250 +
+                    }, 1000 +r.nextInt(500));
                     //if (manager.isGameOver)
                 } else {
                     Toast.makeText(this, "Please wait for your turn", Toast.LENGTH_SHORT).show();
@@ -190,6 +192,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     public void onClick(DialogInterface dialog, int id) {
                         Intent arrangeBattleFieldActivity = new Intent(GameActivity.this, arrangeBattleFieldActivity.class);
                         arrangeBattleFieldActivity.putExtra("gameDifficulty", manager.getDifficulty());
+                        arrangeBattleFieldActivity.putExtra("isSound",isSound);
                         startActivity(arrangeBattleFieldActivity);
                     }
                 })
