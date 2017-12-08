@@ -79,6 +79,7 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
 
     public void initGridLayout(int gridSize) {
         gridLayout = (GridLayout) findViewById(R.id.gridLayout);
+
         Log.d(TAG, "initGridLayout: "+gridSize);
         gridLayout.setColumnCount(gridSize);
         gridLayout.setRowCount(gridSize);
@@ -109,6 +110,7 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
         for (int i = 0; i < squaresCount; i++) {
             GridButton gridButton = new GridButton(this);
             gridButton.setOnClickListener(this);
+
             gridLayout.addView(gridButton);
         }
     }
@@ -226,7 +228,7 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
             }
             else { // we are placing a ship!
                 btn.setBackgroundResource(manager.getHumanPlayer().getBattleField().getMyShipsLocation()[list2Paint.get(i).getX()][list2Paint.get(i).getY()].getImg());
-                btn.setPadding(1,1,1,1);
+                //btn.setPadding(1,1,1,1);
                 //                GradientDrawable gd = new GradientDrawable();
 //                gd.setColor(0xFF00FF00); // Changes this drawbale to use a single color instead of a gradient
 //                gd.setCornerRadius(5);
