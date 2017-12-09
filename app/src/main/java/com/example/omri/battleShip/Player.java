@@ -4,19 +4,12 @@ import android.util.Log;
 
 import java.io.Serializable;
 
-/**
- * Created by Mark on 24/11/2017.
- */
-
-public abstract class Player implements PlayerIF , Serializable {
+public abstract class Player implements Serializable {
 
     private static final String TAG = Player.class.getSimpleName();
     public int numOfShips = 5;
     protected String playerName; // me/computer
-    //protected int battleFieldSize;
-    protected BattleField myField; // 0 - there is no ship here , 1 - there is.
-    protected int[][] hitShots; // possibly change to enum with - {not shot,hit,miss} . - this mat of where i shot.
-    //protected List<BattleShip> battleShips;
+    protected BattleField myField;
     private int numOfSunkShips;
     private boolean hasBeenDefeated;
 
@@ -24,7 +17,6 @@ public abstract class Player implements PlayerIF , Serializable {
         this.playerName=name;
         this.numOfShips=numOfShips;
         numOfSunkShips=0;
-        //battleFieldSize=sizeOfMap;
         this.myField=new BattleField(sizeOfMap,numOfShips);
         hasBeenDefeated=false;
     }
@@ -36,38 +28,15 @@ public abstract class Player implements PlayerIF , Serializable {
     public String getPlayerName() {
         return playerName;
     }
-    public void setPlayerName(String playerName) {
-        this.playerName = playerName;
-    }
-    public BattleField getBattleField() {
-        return myField;
-    }
-    public void setBattleField(BattleField bf) {
-        this.myField = bf;
-    }
-    public int[][] getHitShots() {
-        return hitShots;
-    }
-    public void setHitShots(int[][] hitShots) {
-        this.hitShots = hitShots;
-    }
-
-//    public List<BattleShip> getBattleShips() {
-//        return battleShips;
-//    }
-//    public void setBattleShips(List<BattleShip> list) {
-//        this.battleShips=list;
-//    }
 
     public BattleField getMyField() {
         return myField;
     }
 
-    @Override
     public BattleField.shotState receiveFire(Coordinate target) {
-        if (myField.myShipsLocation[target.getX()][target.getY()]!=null) { // i got hit!
+        if (myField.getMyShipsLocation()[target.getX()][target.getY()]!=null) { // i got hit!
             Log.d(TAG, "receiveFire: fireHit in "+target);
-            String shipHitName = myField.myShipsLocation[target.getX()][target.getY()].getShipName();
+            String shipHitName = myField.getMyShipsLocation()[target.getX()][target.getY()].getShipName();
             if(myField.shipWasHit(shipHitName)==BattleField.shotState.SUNK) { // true = hit and sunk.
                 numOfSunkShips++;
                 Log.d(TAG, "receiveFire: ship sunk ("+numOfSunkShips+")");

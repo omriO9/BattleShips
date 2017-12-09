@@ -7,19 +7,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-/**
- * Created by Omri on 12/1/2017.
- */
-
 public class PCPlayer extends Player {
     private static final String TAG = PCPlayer.class.getSimpleName();
 
-   private List<Integer> listOfPossibleShots; // possible locations to randomize a shot that are left.
+    private List<Integer> listOfPossibleShots; // possible locations to randomize a shot that are left.
     private Coordinate lastShot;
 
     public PCPlayer(String name,int size,int numOfShips){
         super(name,size,numOfShips);
-        Log.d(TAG, "printMat: pcPlayer supposed to init "+numOfShips+" amount of ships");
         initBattleShipsRandomly();
         listOfPossibleShots=new ArrayList<>();
         initListOfPossibleShots();
@@ -27,27 +22,24 @@ public class PCPlayer extends Player {
     }
 
     private void initListOfPossibleShots() {
-        for (int i=0;i<getMyField().myShipsLocation.length*getMyField().myShipsLocation.length;i++){
+        int amountOfShots = getMyField().getMyShipsLocation().length*getMyField().getMyShipsLocation().length;
+        for (int i=0;i<amountOfShots;i++){
             listOfPossibleShots.add(i);
         }
     }
 
     public void initBattleShipsRandomly() {
-        Map<String,BattleShip> map = myField.shipMap;
+        Map<String,BattleShip> map = myField.getShipMap();
         List<Coordinate> listOfPossibilities;
-        Log.d(TAG, "printMat: starting initBattleShipsRandomly ");
+        Log.d(TAG, "initBattleShipsRandomly: starting initBattleShipsRandomly ");
        for(Map.Entry<String,BattleShip> entry : map.entrySet()){
-            //Log.d(TAG, "initBattleShipsRandomly: shipName =  "+ entry.getKey());
            Coordinate randomShipCord;
            do {
-               randomShipCord = generateRandomCoordinate(getMyField().myShipsLocation.length);
+               randomShipCord = generateRandomCoordinate(getMyField().getMyShipsLocation().length);
                listOfPossibilities  = myField.showPossiblePositions(randomShipCord, entry.getKey());//check what if listOfPossibilities is empty
            }while(listOfPossibilities.size() ==0);
            int randomIndex = generateRandomIndex(listOfPossibilities.size());
-           Log.d(TAG, "printMat: before placeShip! ");
-           Log.d(TAG, "initBattleShipsRandomly: coords of shipname="+entry.getKey()+" to place - "+randomShipCord+" *to "+listOfPossibilities.get(randomIndex));
-            myField.placeShip(randomShipCord,listOfPossibilities.get(randomIndex),entry.getKey());
-           Log.d(TAG, "printMat: PCPlayer inits a ship, name="+entry.getValue());
+           myField.placeShip(randomShipCord,listOfPossibilities.get(randomIndex),entry.getKey());
        }
     }
 
@@ -56,40 +48,33 @@ public class PCPlayer extends Player {
         return r.nextInt(length);
     }
 
-    private Coordinate generateRandomCoordinate(int battleFieldSize ) {
+    public Coordinate generateRandomCoordinate(int battleFieldSize ) {
         Log.d(TAG, "generateRandomCoordinate: "+battleFieldSize);
         int x ,y;
         Random r = new Random();
         do {
-            x = r.nextInt(battleFieldSize-0);
-            y = r.nextInt(battleFieldSize-0);
+            x = r.nextInt(battleFieldSize);
+            y = r.nextInt(battleFieldSize);
         }while(!myField.isShipInXY(x,y));
         return new Coordinate(x,y);
     }
-
 
     public void generateShot() {
         // has an ArrayList of 0-99 possible positions to atk , remove after each attack.
         // randomize index 0-list.size();
         Random r = new Random();
-        Log.d(TAG, "attack: listOfPossibleShots.size="+listOfPossibleShots.size());
         int randomIndex = r.nextInt(listOfPossibleShots.size());
-        Log.d(TAG, "attack: listOfPossibleShots.size randomIndex="+randomIndex);
-
+        Log.d(TAG, "generateShot: listOfPossibleShots.size randomIndex="+randomIndex);
         int chosenCell = listOfPossibleShots.get(randomIndex);
-        int fieldSize = getMyField().myShipsLocation.length;
+        int fieldSize = getMyField().getMyShipsLocation().length;
         Coordinate shotTarget = new Coordinate(chosenCell/fieldSize,chosenCell%fieldSize);
         listOfPossibleShots.remove(randomIndex);
-
         Log.d(TAG, "attack: PCAttacks="+shotTarget.toString());
         // shotTarget - PC requested atk target.
         setLastShot(shotTarget);
     }
 
-    @Override
-    public String getName() {
-        return this.playerName;
-    }
+
 
     public Coordinate getLastShot() {
         return lastShot;

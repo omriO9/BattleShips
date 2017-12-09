@@ -2,10 +2,6 @@ package com.example.omri.battleShip;
 
 import java.io.Serializable;
 
-/**
- * Created by Mark on 01/12/2017.
- */
-
 public class GameManager implements Serializable {
 
     private static final String TAG = GameManager.class.getSimpleName();
@@ -17,7 +13,6 @@ public class GameManager implements Serializable {
     public final static int INSANE_SHIPS_AMOUNT = 5;
     public final static String EASY = "Easy";
     public final static String MEDIUM = "Medium";
-
 
     private HumanPlayer humanPlayer;
     private PCPlayer pcPlayer;
@@ -41,7 +36,7 @@ public class GameManager implements Serializable {
             return new int []{MEDIUM_GRID_SIZE,MEDIUM_SHIPS_AMOUNT};
         }
         // hard level
-            humanPlayer = new HumanPlayer(humanName,INSANE_GRID_SIZE,INSANE_SHIPS_AMOUNT);
+        humanPlayer = new HumanPlayer(humanName,INSANE_GRID_SIZE,INSANE_SHIPS_AMOUNT);
         pcPlayer=new PCPlayer(pcName,INSANE_GRID_SIZE,INSANE_SHIPS_AMOUNT);
             return new int []{INSANE_GRID_SIZE,INSANE_SHIPS_AMOUNT};
         }

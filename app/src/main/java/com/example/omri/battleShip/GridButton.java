@@ -9,8 +9,7 @@ public class GridButton extends android.support.v7.widget.AppCompatButton {
     public enum State {EMPTY,POSSIBLE, INUSE};
     private int positionX;
     private int positionY;
-    private State availability; // false - can click on it to finish placing a ship. true - can click on it to begin placing a ship.
-    // isAvailable - possibly needs to be eNum = {ship,empty,gray}
+    private State availability; //Enum of states.
 
     public GridButton(Context context) {
         super(context);
@@ -40,7 +39,6 @@ public class GridButton extends android.support.v7.widget.AppCompatButton {
     public void setAvailability(State s) {
         availability=s;
     }
-
     public void setDefaultDrawable(){
         this.setBackgroundResource(R.drawable.cell_border);
     }

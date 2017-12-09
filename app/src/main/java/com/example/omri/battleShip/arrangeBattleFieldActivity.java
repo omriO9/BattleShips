@@ -18,44 +18,35 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
 
     private static final String TAG = arrangeBattleFieldActivity.class.getSimpleName();
 
-    GridLayout gridLayout;
-    int gridLayoutHeight;
-    Coordinate shipPos;
+    private GridLayout gridLayout;
+    private int gridLayoutHeight;
+    private Coordinate shipPos;
     private int numOfShips;
     private int gridSize;
-    ImageButton ship5, ship4, ship3, ship3_2, ship2;
-    ImageButton oldImageBattleShip;
-    int selectedBattleID = 0; // the ID is from the resource file.
-    int numberOfPlacedShips=0;
-    GameManager manager;
+    private ImageButton ship5, ship4, ship3, ship3_2, ship2;
+    private ImageButton oldImageBattleShip;
+    private int selectedBattleID = 0; // the ID is from the resource file.
+    private int numberOfPlacedShips=0;
+    private GameManager manager;
     private boolean isSound = true;
-    List<Coordinate> possibleCords;
+    private List<Coordinate> possibleCords;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_arrange_battle_field);
-        //ActionBar actionBar = getActionBar();
-        //actionBar.setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
-    @Override
-    protected void onResume() {
-        super.onResume();
         String gameDifficulty  = getIntent().getStringExtra("gameDifficulty");
         String userName = getIntent().getStringExtra("userName");
         isSound = getIntent().getBooleanExtra("isSound",true);
-        Log.d(TAG, "nullwongame?: name="+userName);
         manager = new GameManager(gameDifficulty);
-        int [] arr = manager.createPlayers(userName,"BlueGene"); //gridSize and numOfShips are decided according to gameDifficulty
+        int [] arr = manager.createPlayers(userName,"BlueGene");
         gridSize = arr[0];
         numOfShips = arr[1];
         initGridLayout(gridSize);
         initFleet(numOfShips);
-
     }
-
     private void initFleet(int shipAmount) {
 
         ship3 = (ImageButton) findViewById(R.id.ship3);
@@ -76,7 +67,6 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
             }
         }
     }
-
     public void initGridLayout(int gridSize) {
         gridLayout = (GridLayout) findViewById(R.id.gridLayout);
 
@@ -104,17 +94,14 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
             }
         });
     }
-
     private void initGridLayoutButtons() {
         int squaresCount = gridLayout.getColumnCount() * gridLayout.getRowCount();
         for (int i = 0; i < squaresCount; i++) {
             GridButton gridButton = new GridButton(this);
             gridButton.setOnClickListener(this);
-
             gridLayout.addView(gridButton);
         }
     }
-
     @Override
     public void onClick(View v) {
         if (v instanceof GridButton) {
@@ -123,8 +110,7 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
             if (selectedBattleID != 0) { // there's a ship selected!
                 String name = getResources().getResourceEntryName(selectedBattleID);
 
-                if (gridButton.checkAvailability()== GridButton.State.EMPTY) {
-                    
+                if (gridButton.checkAvailability()== GridButton.State.EMPTY) { // first placement of ship
                     pos = new Coordinate(((GridButton) v).getPositionX(), ((GridButton) v).getPositionY());
                     if (possibleCords!=null) {
                         Log.d(TAG, "onClick: possibleCords is not null!!!");
@@ -137,27 +123,20 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
                     paintLayout(possibleCords, GridButton.State.POSSIBLE);
                     gridButton.setBackgroundResource(R.drawable.hit);
                 }
-                else if (gridButton.checkAvailability()== GridButton.State.POSSIBLE) {//if (manager.getHumanPlayer().getBattleField().getMyShipsLocation()[pos.getX()][pos.getY()]!=null){//gridButton is notAvailable - means we place a ship
-                    //gridButton.setAvailability(GridButton.State.INUSE);
+                else if (gridButton.checkAvailability()== GridButton.State.POSSIBLE) {// means we place a ship
                     pos = new Coordinate(((GridButton) v).getPositionX(), ((GridButton) v).getPositionY());
-                    //Toast.makeText(this, "bad positioning?", Toast.LENGTH_SHORT).show();
                     List<Coordinate> list2Paint =manager.getHumanPlayer().myField.placeShip(shipPos,pos,name);
                     removePossibleCords(possibleCords); // delete the remaining gray cells.
                     gridButton.setAvailability(GridButton.State.INUSE);
                     paintLayout(list2Paint, GridButton.State.INUSE);
                     //possibleCords.remove(pos); - this line doesn't remove somewhy!!!
                     possibleCords =null; // clean the list for future placing.
-
                     // Restarting the selection - cannot choose that battleShip again
                     selectedBattleID=0;
                     oldImageBattleShip.setClickable(false);
                     oldImageBattleShip.setBackgroundResource(R.drawable.miss);
                     numberOfPlacedShips++;
                 }
-                else
-                    Toast.makeText(this, "nothing happens", Toast.LENGTH_SHORT).show();
-
-
             }
             else{ // didn't choose a ship / already placed one.
                 Toast.makeText(this, "Please select a ship first", Toast.LENGTH_SHORT).show();
@@ -179,13 +158,10 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
                 oldImageBattleShip.setAlpha(1.0f);
                 selectedImageButton.setAlpha(0.5f);
             }
-            //v.animate().rotationXBy(360).setDuration(1500).start();
-            //v.animate().
             selectedBattleID = selectedImageButton.getId();
             oldImageBattleShip = selectedImageButton;
         }
     }
-
     private void removePossibleCords(List<Coordinate> possibleCords) {
         // func that receives a list of "old" possible cords - not relevant anymore since
         // ship was placed - and removes them = sets button Drawable to correct one.
@@ -195,7 +171,6 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
                 btn.setDefaultDrawable();
         }
     }
-
     private void paintLayout(List<Coordinate> list2Paint,GridButton.State state) {
         // the func receives a flag - true - it paints ships / false - it paints gray available cells
         // it paints on the list of Coordinates it receives .
@@ -207,14 +182,10 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
             int positionOnGrid = list2Paint.get(i).getY() * gridLayout.getColumnCount() + list2Paint.get(i).getX();
             btn = (GridButton) gridLayout.getChildAt(positionOnGrid);
 
-            if (state== GridButton.State.POSSIBLE) { // we want gray cells
+            if (state== GridButton.State.POSSIBLE) // we want gray cells
                 btn.setBackgroundResource(R.drawable.cell_border_available);
-            }
-            else { // we are placing a ship!
-                btn.setBackgroundResource(manager.getHumanPlayer().getBattleField().getMyShipsLocation()[list2Paint.get(i).getX()][list2Paint.get(i).getY()].getImg());
-
-
-            }
+            else  // we are placing a ship!
+                btn.setBackgroundResource(manager.getHumanPlayer().getMyField().getMyShipsLocation()[list2Paint.get(i).getX()][list2Paint.get(i).getY()].getImg());
             btn.setAvailability(state);
         }
 
@@ -231,8 +202,6 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
         startActivity(GameActivity);
         }
     }
-
-
     @Override
     public boolean onSupportNavigateUp(){
         //finish();

@@ -17,12 +17,6 @@ import android.widget.Toast;
 import java.util.List;
 import java.util.Random;
 
-//import com.example.omri.batlleship.GameManager;
-//import com.example.omri.batlleship.GridButton;
-//import com.example.omri.batlleship.HumanPlayer;
-//import com.example.omri.batlleship.MainActivity;
-//import com.example.omri.batlleship.Player;
-
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = GameActivity.class.getSimpleName();
@@ -31,7 +25,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private GridLayout enemyGridLayout;
     private GameManager manager;
     private int gridSize;
-    private ImageView img;
     private boolean isSound =true;
 
     @Override
@@ -39,10 +32,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
-
-    protected void onResume() {
-        super.onResume();
         myGridLayout = (GridLayout) findViewById(R.id.myGridLayout);
         enemyGridLayout = (GridLayout) findViewById(R.id.enemyGridLayout);
         manager = (GameManager) getIntent().getSerializableExtra("GameManager");
@@ -50,23 +39,16 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         gridSize = manager.getHumanPlayer().getMyField().getMyShipsLocation().length;
         initGridLayout(myGridLayout, manager.getHumanPlayer());
         initGridLayout(enemyGridLayout, manager.getPcPlayer());
-
-        Log.d(TAG, "printMat: human:\n");
-        manager.getHumanPlayer().getMyField().printMat();
-        Log.d(TAG, "\n\nprintMat: pc: \n ");
-        manager.getPcPlayer().getMyField().printMat();
     }
 
     private void paintGridLayout(GridLayout grid, Player p) {
         Log.d(TAG, "paintMyGridLayout: starting to paint");
         CellInfo[][] playerField = p.getMyField().getMyShipsLocation();
-
         for (int row = 0; row < playerField.length; row++) {
             for (int col = 0; col < playerField.length; col++) {
                 View btn = (grid.getChildAt(row + col * gridSize));
                 if (playerField[row][col] != null && (p instanceof HumanPlayer)) {
-                    btn.setBackgroundResource(playerField[row][col].getImg()); // need int
-                    //playerField[row][col].getImg() - Drawable
+                    btn.setBackgroundResource(playerField[row][col].getImg());
                 } else
                     btn.setBackgroundResource(R.drawable.cell_border);
             }
@@ -102,7 +84,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initGridLayoutButtons(GridLayout theGrid,boolean isClickable) {
-
         int squaresCount = theGrid.getColumnCount() * theGrid.getRowCount();
         for (int i = 0; i < squaresCount; i++) {
             GridButton gridButton = new GridButton(this);
@@ -114,14 +95,12 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        boolean hitResult; // true = hit , false = miss.
-        boolean legalShot; // true = can attack there, false = I already shot there!
         if (v instanceof GridButton) {
             final GridButton gridButton = (GridButton) v;
             if (gridButton.checkAvailability()== GridButton.State.INUSE)//not available
                 Toast.makeText(this, "Why would you shoot this again?!", Toast.LENGTH_SHORT).show();
             else {
-                if (manager.isHumanPlayerTurn()) { // human player's tur
+                if (manager.isHumanPlayerTurn()) { // human player's turn
                     gridButton.setAvailability(GridButton.State.INUSE);
                     Coordinate target = new Coordinate(gridButton.getPositionX(), gridButton.getPositionY());
                     BattleField.shotState shotResult = manager.manageGame(target);
@@ -133,8 +112,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     changeArrowImageByTurn(false);// true means its PC's turn
                     if (manager.getPcPlayer().hasBeenDefeated()) {
                         gameOver(manager.getHumanPlayer());
-                        return;
+                        return; // to block a case where PC attacks after you shot and won!
                     }
+                    // PCPlayer begins to attack :
                     Random r = new Random();
                     final Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
@@ -148,7 +128,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
                         }
                     }, 1000 +r.nextInt(500));
-                    //if (manager.isGameOver)
                 } else {
                     Toast.makeText(this, "Please wait for your turn", Toast.LENGTH_SHORT).show();
                 }
@@ -157,7 +136,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void changeArrowImageByTurn(boolean b) {
-
+        ImageView img;
         if(b) {
             img = (ImageView) findViewById(R.id.enemyTurnArrow);
             img.setVisibility(View.INVISIBLE);
@@ -183,8 +162,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             gameOverSound.start();
         }
         String name = p.getPlayerName();
-//        if (name.equals(""))
-//            name="unregistered player";
         new AlertDialog.Builder(this)
                 .setMessage(name+" WON the game!!!")
                 .setCancelable(false)
@@ -206,22 +183,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void paintAttack( GridLayout theGrid,Coordinate target,BattleField.shotState hitStatus,Player player) {
-
                 if (hitStatus==BattleField.shotState.SUNK){
-                    List<Coordinate> cords = player.getBattleField().getSunkShipCords(target);
+                    List<Coordinate> cords = player.getMyField().getSunkShipCords(target);
                     if (cords!=null) { // i received a list.
-                        //Log.d(TAG, "paintAttack: cords.size="+cords.size());
                         for (Coordinate cord : cords){
-                            //gridLayout.getChildAt(0).setBackgroundResource(manager.getHumanPlayer().getBattleField().getMyShipsLocation()[list2Paint.get(i).getX()][list2Paint.get(i).getY()].getImgExplosioResourceID());
-                            //if (player.getBattleField().getMyShipsLocation()[cord.getX()][cord.getY()]!=null){
-                             //   if (player.getBattleField().getMyShipsLocation()[cord.getX()][cord.getY()].getImg()!=0)
-                            //        Log.d(TAG, "paintAttack: there is a ship here");
-                            //}
-
-                            int img2draw = player.getBattleField().getMyShipsLocation()[cord.getX()][cord.getY()].getImgExplosioResourceID();
-                            Log.d(TAG, "paintAttack: img2draw="+img2draw);
-                            Log.d(TAG, "paintAttack: rear"+R.drawable.rear_vertical_ex+",center="+R.drawable.center_vertical+",front="+R.drawable.front_vertical_ex);
-                            // img2draw isn't the right one!!!
+                            int img2draw = player.getMyField().getMyShipsLocation()[cord.getX()][cord.getY()].getImgExplosionResourceID();
                             GridButton btn2Paint = ((GridButton) theGrid.getChildAt(cord.getX() + cord.getY() * gridSize));
                             btn2Paint.setBackgroundResource(img2draw);
                         }
@@ -229,16 +195,13 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 else if (hitStatus== BattleField.shotState.HIT) {
                     if(player instanceof HumanPlayer)
-                        ((GridButton) theGrid.getChildAt(target.getX() + target.getY() * gridSize)).setBackgroundResource(player.getMyField().getMyShipsLocation()[target.getX()][target.getY()].getImgExplosioResourceID());
+                        ((GridButton) theGrid.getChildAt(target.getX() + target.getY() * gridSize)).setBackgroundResource(player.getMyField().getMyShipsLocation()[target.getX()][target.getY()].getImgExplosionResourceID());
                     else
                         ((GridButton) theGrid.getChildAt(target.getX() + target.getY() * gridSize)).setBackgroundResource(R.drawable.blast);
                 }
                 else
                     ((GridButton) theGrid.getChildAt(target.getX() + target.getY() * gridSize)).setBackgroundResource(R.drawable.miss);
-
-
     }
-
 
     @Override
     public boolean onSupportNavigateUp(){
