@@ -14,8 +14,7 @@ public class RulesActivity extends AppCompatActivity {
     }
     public boolean onSupportNavigateUp(){
 
-        Intent intent = new Intent(RulesActivity.this, MainActivity.class);
-        startActivity(intent);
+        super.onBackPressed();
 
         return true;
     }

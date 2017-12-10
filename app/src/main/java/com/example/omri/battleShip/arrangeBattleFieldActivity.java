@@ -18,6 +18,7 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
 
     private static final String TAG = arrangeBattleFieldActivity.class.getSimpleName();
 
+    static boolean shouldDie = false;
     private GridLayout gridLayout;
     private int gridLayoutHeight;
     private Coordinate shipPos;
@@ -47,6 +48,17 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
         initGridLayout(gridSize);
         initFleet(numOfShips);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(shouldDie){
+            finish();
+        }
+        shouldDie = false;
+    }
+
+
     private void initFleet(int shipAmount) {
 
         ship3 = (ImageButton) findViewById(R.id.ship3);
@@ -210,8 +222,7 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Intent intent = new Intent(arrangeBattleFieldActivity.this, MainActivity.class);
-                        startActivity(intent);
+                        arrangeBattleFieldActivity.super.onBackPressed();
                     }
                 })
                 .setNegativeButton("No", null)

@@ -25,4 +25,6 @@
         android:textSize="14sp"
         android:layout_marginTop="62dp"
         android:text="@string/rules" />
+
+
 </RelativeLayout>

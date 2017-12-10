@@ -170,13 +170,15 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                         Intent arrangeBattleFieldActivity = new Intent(GameActivity.this, arrangeBattleFieldActivity.class);
                         arrangeBattleFieldActivity.putExtra("gameDifficulty", manager.getDifficulty());
                         arrangeBattleFieldActivity.putExtra("isSound",isSound);
+                        GameActivity.super.onBackPressed();
                         startActivity(arrangeBattleFieldActivity);
                     }
                 })
                 .setNegativeButton("Back to menu", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Intent MainActivity = new Intent(GameActivity.this, MainActivity.class);
-                        startActivity(MainActivity);
+                        arrangeBattleFieldActivity.shouldDie = true;
+                        GameActivity.super.onBackPressed();
+
                     }
                 })
                 .show();
@@ -211,8 +213,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Intent intent = new Intent(GameActivity.this, MainActivity.class);
-                        startActivity(intent);
+                        arrangeBattleFieldActivity.shouldDie = true;
+                        GameActivity.super.onBackPressed();
                     }
                 })
                 .setNegativeButton("No", null)
