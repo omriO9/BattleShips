@@ -3,6 +3,7 @@ package com.example.omri.battleShip;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -15,6 +16,8 @@ import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.omri.battleShip.Data.shipsOpenHelper;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,10 +35,18 @@ public class MainActivity extends AppCompatActivity {
     private Switch soundSwitch;
     private ImageButton editPencil;
 
+    private shipsOpenHelper dbHelper;
+    private SQLiteDatabase db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // DB - tryouts
+        dbHelper= new shipsOpenHelper(this);
+        this.deleteDatabase(dbHelper.getDatabaseName()); // // delete a db
+        // finish DB tryouts
 
         sharedPref=getPreferences(Context.MODE_PRIVATE);
         editor = sharedPref.edit();

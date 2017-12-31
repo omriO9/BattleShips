@@ -14,6 +14,8 @@ import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.omri.battleShip.Data.shipsOpenHelper;
+
 import java.util.List;
 import java.util.Random;
 
@@ -27,10 +29,15 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private int gridSize;
     private boolean isSound =true;
 
+    private shipsOpenHelper dbHelper;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+
+        // db testing //
+        dbHelper= new shipsOpenHelper(this);
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         myGridLayout = (GridLayout) findViewById(R.id.myGridLayout);
         enemyGridLayout = (GridLayout) findViewById(R.id.enemyGridLayout);
@@ -47,7 +54,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         for (int row = 0; row < playerField.length; row++) {
             for (int col = 0; col < playerField.length; col++) {
                 View btn = (grid.getChildAt(row + col * gridSize));
-                if (playerField[row][col] != null && (p instanceof HumanPlayer)) {
+                if (playerField[row][col] != null){ //&& (p instanceof HumanPlayer)) {
                     btn.setBackgroundResource(playerField[row][col].getImg());
                 } else
                     btn.setBackgroundResource(R.drawable.cell_border);
@@ -127,7 +134,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                             changeArrowImageByTurn(true);
 
                         }
-                    }, 1000 +r.nextInt(500));
+                    }, r.nextInt(50));
                 } else {
                     Toast.makeText(this, "Please wait for your turn", Toast.LENGTH_SHORT).show();
                 }
@@ -162,6 +169,15 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             gameOverSound.start();
         }
         String name = p.getPlayerName();
+
+        float score = (float)(manager.getHumanPlayer().getNumOfAttempts()) / manager.getNumOfCells();
+        String scoreString = String.format("%.2f",score);
+        score = Float.parseFloat(scoreString);
+        Log.d(TAG, "gameOver: shots="+manager.getHumanPlayer().getNumOfAttempts()+
+                    "\nnumOfCells="+manager.getNumOfCells()+
+                    "\nscore="+score);
+        dbHelper.put(name,score,manager.getDifficulty());
+
         new AlertDialog.Builder(this)
                 .setMessage(name+" WON the game!!!")
                 .setCancelable(false)
