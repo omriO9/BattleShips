@@ -56,7 +56,7 @@ public class GameManager implements Serializable {
     public BattleField.shotState manageGame(Coordinate target){
         BattleField.shotState returnFlag;
         BattleField.shotState status;
-        if (humanPlayerTurn){ // a human player pressed on grid same as - if (humanPlayerTurn).
+        if (target!=null){ // a human player pressed on grid same as - if (humanPlayerTurn).
             humanPlayerTurn=false;
             humanPlayer.increaseAttempts();
             status = pcPlayer.receiveFire(target);

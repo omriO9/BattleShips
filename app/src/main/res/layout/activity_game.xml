@@ -45,4 +45,15 @@
         app:srcCompat="@drawable/left_arrow"
         android:visibility="invisible"/>
 
+    <TextView
+        android:id="@+id/accelometer_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/myTurnArrow"
+        android:layout_centerHorizontal="true"
+        android:text="blank"
+        android:textSize="16sp"
+        android:textColor="@color/colorPrimary"/>
+
+
 </RelativeLayout>

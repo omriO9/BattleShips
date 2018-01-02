@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
         // DB - tryouts
         dbHelper= new shipsOpenHelper(this);
-        this.deleteDatabase(dbHelper.getDatabaseName()); // // delete a db
+        //this.deleteDatabase(dbHelper.getDatabaseName()); // // delete a db
         // finish DB tryouts
 
         sharedPref=getPreferences(Context.MODE_PRIVATE);
@@ -150,6 +150,13 @@ public class MainActivity extends AppCompatActivity {
         editor.commit();
         Log.d(TAG, "onSwitchClicked: isSound="+isSound);
 
+    }
+
+    public void start_Leaderboard_Activity(View view) {
+        Intent openLeaderBoards = new Intent(this,LeaderBoard_Activity.class);
+        Log.d(TAG, "start_Leaderboard_Activity: gameDifficulty="+gameDifficulty);
+        openLeaderBoards.putExtra("difficulty",gameDifficulty);
+        startActivity(openLeaderBoards);
     }
 }
 

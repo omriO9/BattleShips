@@ -7,7 +7,7 @@ import java.io.Serializable;
 public abstract class Player implements Serializable {
 
     private static final String TAG = Player.class.getSimpleName();
-    public int numOfShips = 5;
+    public int numOfShips;
     protected String playerName; // me/computer
     protected BattleField myField;
     private int numOfSunkShips;

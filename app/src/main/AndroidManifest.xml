@@ -9,9 +9,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="false"
         android:theme="@style/AppTheme">
-        <provider
-            android:name=".Data.DataProvider"
-            android:authorities="com.example.omri.provider" />
+
+        <service
+            android:name=".SensorService"
+            android:enabled="true"
+            android:label="ShipService_o_rly?"
+            android:icon="@drawable/app_icon"/>
+
 
         <activity
             android:name=".MainActivity"
@@ -32,7 +36,6 @@
         <activity
             android:name=".GameActivity"
             android:screenOrientation="landscape" />
-        <activity android:name="com.example.omri.batlleship.LeaderBoard_Activity" />
         <activity android:name=".LeaderBoard_Activity"></activity>
     </application>
 

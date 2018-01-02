@@ -18,10 +18,10 @@ public class shipsOpenHelper extends SQLiteOpenHelper {
     private static final String TAG = shipsOpenHelper.class.getSimpleName();
 
     private static final int DATABASE_VERSION = 1;
-    private static final String SCORES_TABLE = "scores";
-    private static final String COL_1 = "name";
-    private static final String COL_2 = "score";
-    private static final String COL_3 = "difficulty";
+    public static final String SCORES_TABLE = "scores";
+    public static final String COL_1 = "name";
+    public static final String COL_2 = "score";
+    public static final String COL_3 = "difficulty";
     private SQLiteDatabase dataBase;
 
     public shipsOpenHelper(Context context) {

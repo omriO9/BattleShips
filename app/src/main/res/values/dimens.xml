@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="play_button_width">200dp</dimen>
-    <dimen name="play_button_height">70dp</dimen>
-    <dimen name="play_button_textsize">30sp</dimen>
-    <dimen name="rules_button_width">130dp</dimen>
-    <dimen name="rules_button_height">40dp</dimen>
-    <dimen name="rules_button_textsize">18sp</dimen>
+    <dimen name="play_button_width">250dp</dimen>
+    <dimen name="play_button_height">90dp</dimen>
+    <dimen name="play_button_textsize">34sp</dimen>
+    <dimen name="small_button_width">125dp</dimen>
+    <dimen name="small_button_height">45dp</dimen>
+    <dimen name="small_button_textsize">18sp</dimen>
     <dimen name="boardDimen">260dp</dimen>
     <dimen name="ship_width">45dp</dimen>
     <dimen name="ship_height">95dp</dimen>
