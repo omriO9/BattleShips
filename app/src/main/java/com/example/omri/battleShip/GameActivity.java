@@ -230,7 +230,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 gameOverSound = MediaPlayer.create(this, R.raw.game_lost);
             gameOverSound.start();
         }
-        String name = p.getPlayerName();
+        //String name = p.getPlayerName();
 
         score = (float) (manager.getHumanPlayer().getNumOfAttempts()) / manager.getNumOfCells();
         String scoreString = String.format("%.2f", score);
@@ -246,7 +246,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         new AlertDialog.Builder(this)
                 .setView(input)
-                .setMessage(name + " WON the game!!!")
+                .setMessage("Congratulations,\nyou WON the game!!!")
                 .setCancelable(false)
                 .setPositiveButton("Rematch", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -262,8 +262,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 })
                 .setNegativeButton("Back to menu", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        String name=
-                                input.getText()==null?"John Doe":input.getText().toString();
+                        String name=input.getText()==null?"John Doe":input.getText().toString();
                         dbHelper.put(name, score, manager.getDifficulty());
                         arrangeBattleFieldActivity.shouldDie = true;
                         GameActivity.super.onBackPressed();
@@ -379,13 +378,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         });
 
 
-        //Log.d(TAG, "onUpdate: [X,Y,Z]=["+currXYZ[0]+","+currXYZ[1]+","+currXYZ[2]+",]");
-//        runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                accelometerText.setText("[X,Y,Z]= [" + xyz[0] + "," + xyz[1] + "," + xyz[2] + "]");
-//            }
-//        });
+
     }
 
     public void checkIfMoved() {

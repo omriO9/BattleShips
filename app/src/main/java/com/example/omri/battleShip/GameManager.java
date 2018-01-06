@@ -31,23 +31,23 @@ public class GameManager implements Serializable {
         this.difficulty=difficulty;
         humanPlayerTurn=true;
     }
-    public int[] createPlayers(String humanName,String pcName){
+    public int[] createPlayers(){
 
         if(difficulty.equals(EASY)){
-            humanPlayer = new HumanPlayer(humanName,EASY_GRID_SIZE,EASY_SHIPS_AMOUNT);
-            pcPlayer=new PCPlayer(pcName,EASY_GRID_SIZE,EASY_SHIPS_AMOUNT);
+            humanPlayer = new HumanPlayer(EASY_GRID_SIZE,EASY_SHIPS_AMOUNT);
+            pcPlayer=new PCPlayer(EASY_GRID_SIZE,EASY_SHIPS_AMOUNT);
             numOfShipCells=EASY_CELLS;
             return new int []{EASY_GRID_SIZE,EASY_SHIPS_AMOUNT};
         }
         else if(difficulty.equals(MEDIUM)){
-            humanPlayer = new HumanPlayer(humanName,MEDIUM_GRID_SIZE,MEDIUM_SHIPS_AMOUNT);
-            pcPlayer=new PCPlayer(pcName,MEDIUM_GRID_SIZE,MEDIUM_SHIPS_AMOUNT);
+            humanPlayer = new HumanPlayer(MEDIUM_GRID_SIZE,MEDIUM_SHIPS_AMOUNT);
+            pcPlayer=new PCPlayer(MEDIUM_GRID_SIZE,MEDIUM_SHIPS_AMOUNT);
             numOfShipCells=MEDIUM_CELLS;
             return new int []{MEDIUM_GRID_SIZE,MEDIUM_SHIPS_AMOUNT};
         }
         // hard level
-        humanPlayer = new HumanPlayer(humanName,INSANE_GRID_SIZE,INSANE_SHIPS_AMOUNT);
-        pcPlayer=new PCPlayer(pcName,INSANE_GRID_SIZE,INSANE_SHIPS_AMOUNT);
+        humanPlayer = new HumanPlayer(INSANE_GRID_SIZE,INSANE_SHIPS_AMOUNT);
+        pcPlayer=new PCPlayer(INSANE_GRID_SIZE,INSANE_SHIPS_AMOUNT);
         numOfShipCells=INSANE_CELLS;
             return new int []{INSANE_GRID_SIZE,INSANE_SHIPS_AMOUNT};
         }

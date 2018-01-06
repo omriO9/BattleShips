@@ -25,8 +25,6 @@ interface UpdateListener {
 }
 public class SensorService extends Service implements SensorEventListener {
 
-
-
     private static final String TAG = SensorService.class.getSimpleName();
 
     private SensorManager sensorManager;
@@ -38,7 +36,7 @@ public class SensorService extends Service implements SensorEventListener {
     private MyBinder myBinder = new MyBinder();
 
     private final ArrayList<UpdateListener> mListeners
-            = new ArrayList<UpdateListener>();
+            = new ArrayList<>();
 
 
     @Override

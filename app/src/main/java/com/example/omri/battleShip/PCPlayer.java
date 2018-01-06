@@ -13,8 +13,8 @@ public class PCPlayer extends Player {
     private List<Integer> listOfPossibleShots; // possible locations to randomize a shot that are left.
     private Coordinate lastShot;
 
-    public PCPlayer(String name,int size,int numOfShips){
-        super(name,size,numOfShips);
+    public PCPlayer(int size,int numOfShips){
+        super(size,numOfShips);
         initBattleShipsRandomly();
         listOfPossibleShots=new ArrayList<>();
         initListOfPossibleShots();

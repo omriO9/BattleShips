@@ -9,4 +9,5 @@
     <dimen name="boardDimen">260dp</dimen>
     <dimen name="ship_width">45dp</dimen>
     <dimen name="ship_height">95dp</dimen>
+    <dimen name="tableRowTextSize">14sp</dimen>
 </resources>

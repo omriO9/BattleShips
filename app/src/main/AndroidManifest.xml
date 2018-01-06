@@ -10,6 +10,8 @@
         android:supportsRtl="false"
         android:theme="@style/AppTheme">
 
+        <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyA9PHei4M9TbTM8ARxS0q9_5Ar8wQw3coo"/>
+
         <service
             android:name=".SensorService"
             android:enabled="true"

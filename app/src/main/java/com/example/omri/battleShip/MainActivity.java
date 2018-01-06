@@ -3,21 +3,13 @@ package com.example.omri.battleShip;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Switch;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.example.omri.battleShip.Data.shipsOpenHelper;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,18 +17,18 @@ public class MainActivity extends AppCompatActivity {
     public final static String defaultDifficulty = "Easy";
 
     private SharedPreferences sharedPref;
-    private String userName;
+    //private String userName;
     private String gameDifficulty;
     private SharedPreferences.Editor editor;
-    private EditText userNameEditText;
-    private Button nameBtn;
-    private TextView registeredName;
+    //private EditText userNameEditText;
+    //private Button nameBtn;
+    //private TextView registeredName;
     private boolean isSound = true;
     private Switch soundSwitch;
-    private ImageButton editPencil;
+    //private ImageButton editPencil;
 
-    private shipsOpenHelper dbHelper;
-    private SQLiteDatabase db;
+    //private shipsOpenHelper dbHelper;
+    //private SQLiteDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,28 +36,28 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // DB - tryouts
-        dbHelper= new shipsOpenHelper(this);
+        //dbHelper= new shipsOpenHelper(this);
         //this.deleteDatabase(dbHelper.getDatabaseName()); // // delete a db
         // finish DB tryouts
 
         sharedPref=getPreferences(Context.MODE_PRIVATE);
         editor = sharedPref.edit();
-        userNameEditText= (EditText)findViewById(R.id.userNameEditText);
-        nameBtn = (Button)findViewById(R.id.nameBtn);
-        registeredName = (TextView)findViewById(R.id.registeredName);
-        editPencil = (ImageButton)findViewById(R.id.edit_Pencil);
-        userName = sharedPref.getString("userName","unknown");
+        //userNameEditText= (EditText)findViewById(R.id.userNameEditText);
+        //nameBtn = (Button)findViewById(R.id.nameBtn);
+        //registeredName = (TextView)findViewById(R.id.registeredName);
+        //editPencil = (ImageButton)findViewById(R.id.edit_Pencil);
+        //userName = sharedPref.getString("userName","unknown");
         isSound = sharedPref.getBoolean("isSound",true);
         soundSwitch = (Switch) findViewById(R.id.soundSwitch);
         soundSwitch.setChecked(isSound);
-        if (!userName.equals("unknown")){
-            userNameEditText.setVisibility(View.INVISIBLE);
-            nameBtn.setVisibility(View.INVISIBLE);
-            registeredName.setVisibility(View.VISIBLE);
-            String registeredNameTxt = "Hello, "+userName+"!";
-            registeredName.setText(registeredNameTxt);
-            editPencil.setVisibility(View.VISIBLE);
-        }
+//        if (!userName.equals("unknown")){
+//            userNameEditText.setVisibility(View.INVISIBLE);
+//            nameBtn.setVisibility(View.INVISIBLE);
+//            registeredName.setVisibility(View.VISIBLE);
+//            String registeredNameTxt = "Hello, "+userName+"!";
+//            registeredName.setText(registeredNameTxt);
+//            editPencil.setVisibility(View.VISIBLE);
+//        }
         initRadioGroup();
     }
     public void initRadioGroup(){
@@ -102,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
     }
     public void startArrangeBattleFieldActivity(View view) {
         Intent ArrangeBattleFieldActivity = new Intent(this,arrangeBattleFieldActivity.class);
-        ArrangeBattleFieldActivity.putExtra("userName",userName);
+        //ArrangeBattleFieldActivity.putExtra("userName",userName);
         if(gameDifficulty != null) {
             ArrangeBattleFieldActivity.putExtra("gameDifficulty", gameDifficulty);
             editor.putString("gameDifficulty",gameDifficulty);
@@ -121,27 +113,27 @@ public class MainActivity extends AppCompatActivity {
         finishAffinity();
     }
 
-    public void saveUserName(View view) {
+//    public void saveUserName(View view) {
+//
+//        userName= userNameEditText.getText().toString();
+//        editor.putString("userName", userName);
+//        editor.commit();
+//        Toast.makeText(this, "Username saved!", Toast.LENGTH_SHORT).show();
+//        userNameEditText.setVisibility(View.INVISIBLE);
+//        view.setVisibility(View.INVISIBLE);
+//        editPencil.setVisibility(View.VISIBLE);
+//        registeredName.setVisibility(View.VISIBLE);
+//        String registeredNameText = "Hello, "+userName+"!";
+//        registeredName.setText(registeredNameText);
+//    }
 
-        userName= userNameEditText.getText().toString();
-        editor.putString("userName", userName);
-        editor.commit();
-        Toast.makeText(this, "Username saved!", Toast.LENGTH_SHORT).show();
-        userNameEditText.setVisibility(View.INVISIBLE);
-        view.setVisibility(View.INVISIBLE);
-        editPencil.setVisibility(View.VISIBLE);
-        registeredName.setVisibility(View.VISIBLE);
-        String registeredNameText = "Hello, "+userName+"!";
-        registeredName.setText(registeredNameText);
-    }
-
-    public void editUserName(View view) {
-        editPencil.setVisibility(View.INVISIBLE);
-        registeredName.setVisibility(View.INVISIBLE);
-        nameBtn.setVisibility(View.VISIBLE);
-        userNameEditText.setVisibility(View.VISIBLE);
-
-    }
+//    public void editUserName(View view) {
+//        editPencil.setVisibility(View.INVISIBLE);
+//        registeredName.setVisibility(View.INVISIBLE);
+//        nameBtn.setVisibility(View.VISIBLE);
+//        userNameEditText.setVisibility(View.VISIBLE);
+//
+//    }
 
     public void onSwitchClicked(View view) {
         soundSwitch = (Switch) findViewById(R.id.soundSwitch);

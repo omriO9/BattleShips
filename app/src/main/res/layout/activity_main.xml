@@ -61,31 +61,6 @@
         android:textColorHighlight="@color/backgroundColor"
         android:text="@string/sound" />
 
-    <Button
-        android:id="@+id/nameBtn"
-        android:layout_width="45dp"
-        android:layout_height="40dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="15dp"
-        android:layout_toEndOf="@+id/userNameEditText"
-        android:layout_centerHorizontal="true"
-        android:onClick="saveUserName"
-        android:background="@drawable/button_shape"
-        android:text="Save"
-        android:textSize="10sp" />
-
-    <EditText
-        android:id="@+id/userNameEditText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="15dp"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="15dp"
-        android:ems="10"
-        android:hint="Your name..."
-        android:inputType="textPersonName" />
-
     <RadioGroup
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -125,22 +100,6 @@
         android:layout_toEndOf="@+id/edit_Pencil"
         android:textSize="@dimen/small_button_textsize"
         android:visibility="invisible" />
-
-    <ImageButton
-        android:id="@+id/edit_Pencil"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="15dp"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="15dp"
-        android:background="@null"
-        android:onClick="editUserName"
-        android:scaleType="fitXY"
-        android:visibility="invisible"
-        app:srcCompat="@drawable/edit_pencil" />
-
-
 
 
 </RelativeLayout>

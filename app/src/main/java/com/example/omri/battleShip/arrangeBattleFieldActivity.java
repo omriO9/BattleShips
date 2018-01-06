@@ -39,10 +39,10 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
         setContentView(R.layout.activity_arrange_battle_field);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         String gameDifficulty  = getIntent().getStringExtra("gameDifficulty");
-        String userName = getIntent().getStringExtra("userName");
+        //String userName = getIntent().getStringExtra("userName");
         isSound = getIntent().getBooleanExtra("isSound",true);
         manager = new GameManager(gameDifficulty);
-        int [] arr = manager.createPlayers(userName,"BlueGene");
+        int [] arr = manager.createPlayers();
         gridSize = arr[0];
         numOfShips = arr[1];
         initGridLayout(gridSize);

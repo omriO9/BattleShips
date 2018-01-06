@@ -8,15 +8,17 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.omri.battleShip.Data.shipsOpenHelper;
+
+import java.util.ArrayList;
 
 
 public class TableFragment extends Fragment {
@@ -25,111 +27,80 @@ public class TableFragment extends Fragment {
 
     private shipsOpenHelper dbHelper;
     private SQLiteDatabase db ;
-
+    private final ArrayList<FragmentListener> mListeners
+            = new ArrayList<>();
     private String difficulty;
-
+    private LayoutInflater inflater;
+    private ViewGroup container;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: inside here");
         dbHelper= new shipsOpenHelper(getActivity());// might be getContext @@@
         db =dbHelper.getReadableDatabase();
-        if (getArguments()!=null) {
-            Log.d(TAG, "onCreate: getArguments != null");
-            difficulty = getArguments().getString("difficulty");
-        }
+
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
+        this.inflater=inflater;
+        this.container=container;
+        if (getArguments()!=null) {
+            Log.d(TAG, "onCreate: getArguments != null");
+            difficulty = getArguments().getString("difficulty");
+        }
+        Log.d(TAG, "onCreateView: TableFragment diff "+difficulty);
+        View v=inflateTable(difficulty);
+        return v;
+    }
+
+    public View inflateTable(String difficulty) {
+        Log.d(TAG, "inflateTable: difficulty="+difficulty);
+        Toast.makeText(getContext(), "diff"+difficulty, Toast.LENGTH_SHORT).show();
         View view =inflater.inflate(R.layout.fragment_table, container, false);
         TableLayout table = (TableLayout)view.findViewById(R.id.table_layout);
 
         // trying to set my table
+        db =dbHelper.getReadableDatabase();
         db.beginTransaction();
-
-
-
-
-        TableRow rowHeader = new TableRow(getActivity());
-        rowHeader.setBackgroundColor(Color.parseColor("#000000"));
-        rowHeader.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT,
-                TableLayout.LayoutParams.WRAP_CONTENT));
-
-
-        String[] headerText={"#","Name","Score"};
-        for(String c:headerText) {
-            TextView tv = new TextView(getActivity());
-            tv.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
-                    TableRow.LayoutParams.WRAP_CONTENT));
-            tv.setGravity(Gravity.CENTER);
-            tv.setTextSize(20);
-            tv.setPadding(20, 5, 20, 5);
-            tv.setTextColor(Color.WHITE);
-            tv.setText(c);
-            rowHeader.addView(tv);
-        }
-        table.addView(rowHeader);
-
-        // " WHERE "+shipsOpenHelper.COL_3+    ='Easy'
-
-
         try{
-            //String selectQuery = "SELECT* FROM "+ shipsOpenHelper.SCORES_TABLE+" WHERE "+shipsOpenHelper.COL_3+"='Easy'";
-            //String selectQuery = "SELECT * FROM "+ shipsOpenHelper.SCORES_TABLE+"ORDER BY score DESC WHERE "+shipsOpenHelper.COL_3+"='Easy' ";
-            Log.d(TAG, "onCreateView: difficulty="+difficulty);
-            String selectQuery = "SELECT * FROM "+shipsOpenHelper.SCORES_TABLE+" WHERE difficulty='"+difficulty+"' ORDER BY score ASC LIMIT 3";
+            String selectQuery = "SELECT * FROM "+shipsOpenHelper.SCORES_TABLE+" WHERE difficulty='"+difficulty+"' ORDER BY score ASC LIMIT 10";
             Cursor cursor = db.rawQuery(selectQuery,null);
-
-
 
             if(cursor.getCount() >0){
                 int count=0;
+                String[] position ={"1","2","3","4","5","6","7","8","9","10"};
                 while (cursor.moveToNext()) {
                     // Read columns data
-                    Log.d(TAG, "onCreateView: inside while:cursor");
-                    TableRow tr = new TableRow(getActivity());
+                    final TableRow tr = (TableRow)LayoutInflater.from(getActivity()).inflate(R.layout.table_row, null);
+                    table.addView(tr);
+
                     if(count%2!=0)
                         tr.setBackgroundColor(Color.LTGRAY);
 
-                    String[] position ={"1","2","3","4","5","6","7","8","9","10"};
-                    TextView tv = new TextView(getActivity());
-                    tv.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
-                            TableRow.LayoutParams.WRAP_CONTENT));
-                    tv.setGravity(Gravity.CENTER);
-                    tv.setTextSize(16);
-                    tv.setPadding(20, 5, 20, 5);
-                    tv.setText(position[count]);
-                    tr.addView(tv);
-
-
-                    String name = cursor.getString(1);
-                    TextView tv1 = new TextView(getActivity());
-                    tv1.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
-                            TableRow.LayoutParams.WRAP_CONTENT));
-                    tv1.setGravity(Gravity.CENTER);
-                    tv1.setTextSize(16);
-                    tv1.setPadding(20, 5, 20, 5);
-                    tv1.setText(name);
-                    tr.addView(tv1);
-
-
-                    Float score = cursor.getFloat(2);
-                    TextView tv2 = new TextView(getActivity());
-                    tv2.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
-                            TableRow.LayoutParams.WRAP_CONTENT));
-                    tv2.setGravity(Gravity.CENTER);
-                    tv2.setTextSize(16);
-                    tv2.setPadding(20, 5, 20, 5);
-                    tv2.setText(score.toString());
-                    tr.addView(tv2);
-
-                    table.addView(tr);
+                    final TextView rowNumber = (TextView)tr.findViewById(R.id.rowNumber);
+                    rowNumber.setText(position[count]);
+                    int id = cursor.getInt(0);
+                    tr.setId(id);
+                    TextView rowName = (TextView)tr.findViewById(R.id.rowName);
+                    rowName.setText(cursor.getString(1));
+                    TextView rowScore = (TextView)tr.findViewById(R.id.rowScore);
+                    rowScore.setText(cursor.getString(2));
                     count++;
-                }
 
+                    // setting click listener of a table row :
+                    tr.setOnClickListener(new View.OnClickListener(){
+                        @Override
+                        public void onClick(View v) {
+                            Log.d(TAG, "TableRow clicked: "+rowNumber+" #id="+tr.getId());
+                            sendUpdateToActivity(tr.getId());
+                        }
+                    });
+                }
             }
             db.setTransactionSuccessful();
         }catch (SQLiteException e) {
@@ -140,8 +111,24 @@ public class TableFragment extends Fragment {
             db.close();
             // Close database
         }
-
         return view;
+    }
+
+    // need to copy this code to the Map Fragment aswell!!!
+    public void registerListener(FragmentListener listener) {
+        mListeners.add(listener);
+    }
+
+    public void unregisterListener(FragmentListener listener) {
+        mListeners.remove(listener);
+    }
+
+    private void sendUpdateToActivity(int id) {
+        for (int i=mListeners.size()-1; i>=0; i--) {
+            mListeners.get(i).sendUpdate(id,true); // true = I come from tableFragment
+        }
+    }
+    public void setTable(String difficulty){
 
     }
 

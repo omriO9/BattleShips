@@ -5,4 +5,5 @@
     <color name="colorAccent">#46bdbf</color>
     <color name="colorWhite">#ffffff</color>
     <color name="backgroundColor">#4fa5d5</color>
+    <color name="tableHeader">#848686</color>
 </resources>

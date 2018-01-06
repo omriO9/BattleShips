@@ -8,13 +8,13 @@ public abstract class Player implements Serializable {
 
     private static final String TAG = Player.class.getSimpleName();
     public int numOfShips;
-    protected String playerName; // me/computer
+    //protected String playerName; // me/computer
     protected BattleField myField;
     private int numOfSunkShips;
     private boolean hasBeenDefeated;
 
-    public Player(String name,int sizeOfMap,int numOfShips){
-        this.playerName=name;
+    public Player(int sizeOfMap,int numOfShips){
+        //this.playerName=name;
         this.numOfShips=numOfShips;
         numOfSunkShips=0;
         this.myField=new BattleField(sizeOfMap,numOfShips);
@@ -25,9 +25,9 @@ public abstract class Player implements Serializable {
         return hasBeenDefeated;
     }
 
-    public String getPlayerName() {
-        return playerName;
-    }
+//    public String getPlayerName() {
+//        return playerName;
+//    }
 
     public BattleField getMyField() {
         return myField;
@@ -42,7 +42,7 @@ public abstract class Player implements Serializable {
                 Log.d(TAG, "receiveFire: ship sunk ("+numOfSunkShips+")");
                 if (numOfSunkShips==numOfShips) {
                     hasBeenDefeated = true;
-                    Log.d(TAG, "receiveFire: player "+this.getPlayerName()+" has been defeated!!!");
+                   // Log.d(TAG, "receiveFire: player "+this.getPlayerName()+" has been defeated!!!");
                 }
                 return BattleField.shotState.SUNK;
             }
