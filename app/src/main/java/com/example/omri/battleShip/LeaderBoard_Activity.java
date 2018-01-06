@@ -1,5 +1,6 @@
 package com.example.omri.battleShip;
 
+import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -7,6 +8,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
+
+import com.google.android.gms.maps.MapFragment;
 
 public class LeaderBoard_Activity extends AppCompatActivity implements FragmentListener {
 
@@ -24,9 +28,19 @@ public class LeaderBoard_Activity extends AppCompatActivity implements FragmentL
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         fragmentManager = getSupportFragmentManager();
+
+
         difficulty=getIntent().getStringExtra("difficulty");
         //Toast.makeText(this, "difficulty="+difficulty, Toast.LENGTH_SHORT).show();
         initRadioGroup();
+        RadioGroup radGrp = (RadioGroup) findViewById(R.id.radioGroup);
+        for (int i=0;i<radGrp.getChildCount();i++){
+            if (difficulty.equals(((RadioButton)radGrp.getChildAt(i)).getText().toString())) {
+                ((RadioButton) radGrp.getChildAt(i)).setChecked(true);
+            }
+        }
+
+        Toast.makeText(this, "difficulty="+difficulty, Toast.LENGTH_SHORT).show();
 
         fragmentTransaction = fragmentManager.beginTransaction();
 
@@ -39,11 +53,18 @@ public class LeaderBoard_Activity extends AppCompatActivity implements FragmentL
                 .commit();
         ((TableFragment)tableFrag).registerListener(LeaderBoard_Activity.this);
 
+        Fragment mapFrag= new MapFragment();
+        Bundle args2 = new Bundle();
+        args2.putString("difficulty",difficulty);
+        mapFrag.setArguments(args);
+        fragmentTransaction.add(R.id.mapFrame, mapFrag,"frag2");
+        fragmentTransaction.commit();
     }
 
     private void initRadioGroup() {
         radGrp = (RadioGroup) findViewById(R.id.radioGroup);
         Log.d(TAG, "initRadioGroup: ");
+
 
         radGrp.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             public void onCheckedChanged(RadioGroup arg0, int id) {
@@ -83,6 +104,14 @@ public class LeaderBoard_Activity extends AppCompatActivity implements FragmentL
         else {
             // the id is from map , need to send update to table
 
-        }
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        switch (item.getItemId()) {
+//            // Respond to the action bar's Up/Home button
+//            case android.R.id.home:
+//                NavUtils.navigateUpFromSameTask(this);
+//                return true;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 }

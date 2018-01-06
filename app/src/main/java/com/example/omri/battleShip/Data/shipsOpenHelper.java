@@ -22,6 +22,8 @@ public class shipsOpenHelper extends SQLiteOpenHelper {
     public static final String COL_1 = "name";
     public static final String COL_2 = "score";
     public static final String COL_3 = "difficulty";
+    private static final String COL_4 = "latitude";
+    private static final String COL_5 = "longitude";
     private SQLiteDatabase dataBase;
 
     public shipsOpenHelper(Context context) {
@@ -29,13 +31,13 @@ public class shipsOpenHelper extends SQLiteOpenHelper {
         super(context, context.getResources().getString(R.string.app_name) + ".db", null, DATABASE_VERSION);
     }
 
-    private String SCORES_TABLE_CREATE(String name, String score,String difficulty) {
-        return "CREATE TABLE " + SCORES_TABLE + " (ID INTEGER PRIMARY KEY AUTOINCREMENT, " + name + " TEXT,"+score + " FLOAT,"+difficulty+" TEXT)";
+    private String SCORES_TABLE_CREATE(String name, String score,String difficulty, String latitude ,String longitude) {
+        return "CREATE TABLE " + SCORES_TABLE + " (ID INTEGER PRIMARY KEY AUTOINCREMENT, " + name + " TEXT,"+score + " FLOAT,"+difficulty+" TEXT,"+latitude +" DOUBLE,"+longitude+" DOUBLE)";
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(SCORES_TABLE_CREATE(COL_1,COL_2,COL_3));
+        db.execSQL(SCORES_TABLE_CREATE(COL_1,COL_2,COL_3,COL_4,COL_5));
         this.dataBase = db;
     }
 
@@ -57,12 +59,14 @@ public class shipsOpenHelper extends SQLiteOpenHelper {
         return rowId;
     }
 
-    public long put(String name, Float score,String difficulty) {
+    public long put(String name, Float score,String difficulty,double latitude , double longitude) {
         ContentValues values = new ContentValues();
         values.put(COL_1, name);
         values.put(COL_2, score);
         values.put(COL_3, difficulty);
-        Log.d(TAG, "put: name="+name+" | score="+score+" | difficulty="+difficulty);
+        values.put(COL_4, latitude);
+        values.put(COL_5, longitude);
+        Log.d(TAG, "put: name="+name+" | score="+score+" | difficulty="+difficulty +" | latitude=" + latitude + " | longitude=" + longitude);
         return this.put(values);
     }
 

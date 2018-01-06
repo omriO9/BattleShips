@@ -17,7 +17,7 @@ public class RulesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rules);
-
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class RulesActivity extends AppCompatActivity {
                         .setAutoCancel(true)
                         .setPriority(Notification.PRIORITY_MAX);
 
-        Intent resultIntent = new Intent(this, RulesActivity.class);
+        Intent resultIntent = new Intent(this, LeaderBoard_Activity.class);
 
         // Because clicking the notification opens a new ("special") activity, there's
         // no need to create an artificial back stack.

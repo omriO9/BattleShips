@@ -27,11 +27,10 @@
         android:id="@+id/rules_button"
         android:layout_width="@dimen/small_button_width"
         android:layout_height="@dimen/small_button_height"
-        android:layout_below="@id/play_button"
-        android:layout_toStartOf="@id/play_button"
-
+        android:layout_alignStart="@+id/play_button"
+        android:layout_below="@+id/play_button"
+        android:layout_marginTop="12dp"
         android:background="@drawable/button_shape"
-        android:layout_marginTop="10dp"
         android:onClick="startRulesActivity"
         android:text="@string/rules_button"
         android:textSize="@dimen/small_button_textsize" />
@@ -40,10 +39,9 @@
         android:id="@+id/Leaderboard"
         android:layout_width="@dimen/small_button_width"
         android:layout_height="@dimen/small_button_height"
+        android:layout_above="@+id/radioGroup"
+        android:layout_alignEnd="@+id/play_button"
         android:background="@drawable/button_shape"
-        android:layout_alignTop="@id/rules_button"
-        android:layout_toEndOf="@id/rules_button"
-        android:layout_marginEnd="5dp"
         android:onClick="start_Leaderboard_Activity"
         android:text="Leaderboard"
         android:textSize="@dimen/small_button_textsize" />
@@ -91,15 +89,7 @@
             android:text="Insane" />
     </RadioGroup>
 
-    <TextView
-        android:id="@+id/registeredName"
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        android:layout_alignBottom="@+id/edit_Pencil"
 
-        android:layout_toEndOf="@+id/edit_Pencil"
-        android:textSize="@dimen/small_button_textsize"
-        android:visibility="invisible" />
 
 
 </RelativeLayout>
