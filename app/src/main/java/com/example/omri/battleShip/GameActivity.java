@@ -1,15 +1,25 @@
 package com.example.omri.battleShip;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.content.ServiceConnection;
 import android.hardware.SensorManager;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
@@ -28,9 +38,12 @@ import com.example.omri.battleShip.Data.shipsOpenHelper;
 import java.util.List;
 import java.util.Random;
 
-public class GameActivity extends AppCompatActivity implements View.OnClickListener,UpdateListener {
+public class GameActivity extends AppCompatActivity implements View.OnClickListener,UpdateListener , LocationListener {
 
     private static final String TAG = GameActivity.class.getSimpleName();
+
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 100;
+
 
     private GridLayout myGridLayout;
     private GridLayout enemyGridLayout;
@@ -38,7 +51,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private int gridSize;
     private boolean isSound = true;
 
+    private Location currentLocation =null;
+    private LocationManager locationManager;
     private shipsOpenHelper dbHelper;
+
 
 
     private boolean isServiceConnected;
@@ -76,6 +92,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         gridSize = manager.getHumanPlayer().getMyField().getMyShipsLocation().length;
         initGridLayout(myGridLayout, manager.getHumanPlayer());
         initGridLayout(enemyGridLayout, manager.getPcPlayer());
+        locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         beginService();
         accelometerText = (TextView) findViewById(R.id.accelometer_text);
     }
@@ -235,6 +252,13 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         score = (float) (manager.getHumanPlayer().getNumOfAttempts()) / manager.getNumOfCells();
         String scoreString = String.format("%.2f", score);
         score = Float.parseFloat(scoreString);
+        Log.d(TAG, "gameOver: shots="+manager.getHumanPlayer().getNumOfAttempts()+
+                    "\nnumOfCells="+manager.getNumOfCells()+
+                    "\nscore="+score);
+        // getting latitude and longitude coordinates
+        //double coordinates [] = getLocation();
+        // adding a row to the database
+        //dbHelper.put(name,score,manager.getDifficulty(),coordinates[0],coordinates[1]);
         Log.d(TAG, "gameOver: shots=" + manager.getHumanPlayer().getNumOfAttempts() +
                 "\nnumOfCells=" + manager.getNumOfCells() +
                 "\nscore=" + score);
@@ -252,7 +276,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     public void onClick(DialogInterface dialog, int id) {
                         String name=
                                 input.getText()==null?"John Doe":input.getText().toString();
-                        dbHelper.put(name, score, manager.getDifficulty());
+                        double coordinates [] = getLocation();
+                        dbHelper.put(name, score, manager.getDifficulty(),coordinates[0],coordinates[1]);
                         Intent arrangeBattleFieldActivity = new Intent(GameActivity.this, arrangeBattleFieldActivity.class);
                         arrangeBattleFieldActivity.putExtra("gameDifficulty", manager.getDifficulty());
                         arrangeBattleFieldActivity.putExtra("isSound", isSound);
@@ -264,7 +289,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     public void onClick(DialogInterface dialog, int id) {
                         String name=
                                 input.getText()==null?"John Doe":input.getText().toString();
-                        dbHelper.put(name, score, manager.getDifficulty());
+                        double coordinates [] = getLocation();
+                        dbHelper.put(name, score, manager.getDifficulty(),coordinates[0],coordinates[1]);
                         arrangeBattleFieldActivity.shouldDie = true;
                         GameActivity.super.onBackPressed();
 
@@ -273,6 +299,69 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 .show();
         //Log.d(TAG, "gameOver: input text="+input.toString());
     }
+
+    public double[] getLocation() {
+
+        Location location;
+        double latitude=-1,longitude=-1;
+
+
+        // checking if user have the necessary permissions , if not we are asking him to allow those permissions
+            if(ActivityCompat.checkSelfPermission
+                (this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission
+                (this,Manifest.permission.ACCESS_COARSE_LOCATION) !=PackageManager.PERMISSION_GRANTED ){
+                //get the users permission to location
+            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},LOCATION_PERMISSION_REQUEST_CODE);
+        }
+        if (currentLocation == null) {
+            // get current location
+            currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        }
+
+        float metersToUpdate = 1;
+        long intervalMilliseconds = 1000;
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, intervalMilliseconds, metersToUpdate, this);
+
+        if(currentLocation != null){
+            latitude = currentLocation.getLatitude();
+            Log.d(TAG, "getLocation: latitude: "+latitude);
+            longitude = currentLocation.getLongitude();
+            Log.d(TAG, "getLocation: longitude: "+longitude);
+        }
+
+        return new double[]{latitude,longitude};
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        currentLocation = location;
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+        Log.d(TAG, "onStatusChanged: " + provider);
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch(requestCode){
+            case LOCATION_PERMISSION_REQUEST_CODE:
+                getLocation();
+                break;
+        }
+    }
+
 
     public void paintAttack(GridLayout theGrid, Coordinate target, BattleField.shotState hitStatus, Player player) {
         if (hitStatus == BattleField.shotState.SUNK) {
@@ -407,10 +496,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             Log.d(TAG, "checkIfMoved: screen moved ");
             isScreenMoved=true;
     }
- 
-       
 
-        
+
+
+
     }
     public void setMaxXYZ(){
 

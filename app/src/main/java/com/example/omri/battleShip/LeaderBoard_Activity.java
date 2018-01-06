@@ -5,6 +5,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 public class LeaderBoard_Activity extends AppCompatActivity {
@@ -15,18 +18,21 @@ public class LeaderBoard_Activity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_leader_board_);
+        setContentView(R.layout.activity_leader_board);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         fragmentManager = getSupportFragmentManager();
-        difficulty=getIntent().getStringExtra("difficulty");
-        Toast.makeText(this, "difficulty="+difficulty, Toast.LENGTH_SHORT).show();
 
-//        RelativeLayout layout = (RelativeLayout)findViewById(R.id.relativeLayout_Leader);
-//        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams
-//                (RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-//        params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-//        RadioGroup rg = (RadioGroup)findViewById(R.id.radioGroup);
+
+        difficulty=getIntent().getStringExtra("difficulty");
+        RadioGroup radGrp = (RadioGroup) findViewById(R.id.radioGroup);
+        for (int i=0;i<radGrp.getChildCount();i++){
+            if (difficulty.equals(((RadioButton)radGrp.getChildAt(i)).getText().toString())) {
+                ((RadioButton) radGrp.getChildAt(i)).setChecked(true);
+            }
+        }
+
+        Toast.makeText(this, "difficulty="+difficulty, Toast.LENGTH_SHORT).show();
 
         FragmentTransaction ft = fragmentManager.beginTransaction();
 
@@ -38,36 +44,16 @@ public class LeaderBoard_Activity extends AppCompatActivity {
 
 
 
-//        getSupportFragmentManager()
-//                .beginTransaction()
-//                .add(R.id.linerLayout_Leader, tableFrag,"frag1")
-//                .commit();
-
-        Fragment tableFrag2= new TableFragment();
+        Fragment mapFrag= new MapFragment();
         Bundle args2 = new Bundle();
         args2.putString("difficulty",difficulty);
-        tableFrag2.setArguments(args);
-        ft.add(R.id.mapFrame, tableFrag2,"frag2");
+        mapFrag.setArguments(args);
+        ft.add(R.id.mapFrame, mapFrag,"frag2");
 
         ft.commit();
-//
-//        getSupportFragmentManager()
-//                .beginTransaction()
-//                .add(R.id.linerLayout_Leader, tableFrag2,"frag2")
-//                .commit();
-//
+
 
 
     }
 
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        switch (item.getItemId()) {
-//            // Respond to the action bar's Up/Home button
-//            case android.R.id.home:
-//                NavUtils.navigateUpFromSameTask(this);
-//                return true;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
 }

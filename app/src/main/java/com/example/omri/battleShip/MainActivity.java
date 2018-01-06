@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         isSound = sharedPref.getBoolean("isSound",true);
         soundSwitch = (Switch) findViewById(R.id.soundSwitch);
         soundSwitch.setChecked(isSound);
+
         if (!userName.equals("unknown")){
             userNameEditText.setVisibility(View.INVISIBLE);
             nameBtn.setVisibility(View.INVISIBLE);
@@ -158,5 +159,6 @@ public class MainActivity extends AppCompatActivity {
         openLeaderBoards.putExtra("difficulty",gameDifficulty);
         startActivity(openLeaderBoards);
     }
+
 }
 
