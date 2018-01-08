@@ -1,7 +1,6 @@
 package com.example.omri.battleShip;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -15,9 +14,12 @@ public class LeaderBoard_Activity extends AppCompatActivity implements FragmentL
 
     private static final String TAG = LeaderBoard_Activity.class.getSimpleName();
     private String difficulty ;
+
     private FragmentManager fragmentManager;
     TableFragment tableFrag;
+    MapFragment mapFrag;
     FragmentTransaction fragmentTransaction;
+
     RadioGroup radGrp;
 
     @Override
@@ -44,12 +46,14 @@ public class LeaderBoard_Activity extends AppCompatActivity implements FragmentL
         fragmentManager.beginTransaction()
                 .add(R.id.tableFrame,tableFrag,"frag1")
                 .commit();
-        ((TableFragment)tableFrag).registerListener(LeaderBoard_Activity.this);
+        tableFrag.registerListener(LeaderBoard_Activity.this);
 
-        Fragment mapFrag= new MapFragment();
+        mapFrag= new MapFragment();
         mapFrag.setArguments(args);
         fragmentTransaction.add(R.id.mapFrame, mapFrag,"frag2");
         fragmentTransaction.commit();
+        mapFrag.registerListener(LeaderBoard_Activity.this);
+
     }
 
     private void initRadioGroup() {
@@ -84,7 +88,7 @@ public class LeaderBoard_Activity extends AppCompatActivity implements FragmentL
                 fragmentTransaction =fragmentManager.beginTransaction();
                // fragmentTransaction.remove(tableFrag).replace(R.id.tableFrame,frag).commit();
                 fragmentTransaction.detach(tableFrag).attach(tableFrag).commit();
-
+                mapFrag.showMarkers(difficulty);
             }
         });
 
@@ -95,9 +99,11 @@ public class LeaderBoard_Activity extends AppCompatActivity implements FragmentL
 
         if (isFromTableFrag) {
             // the id is from table , need to send update to map
+            mapFrag.selectMarker(id);
             Log.d(TAG, "Activity receives message : " + id);
         } else {
             // the id is from map , need to send update to table
+            tableFrag.selectRow(id);
         }
     }
 
