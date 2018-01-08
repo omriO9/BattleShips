@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // DB - tryouts
-
+        //shipsOpenHelper dbHelper = new shipsOpenHelper(this);
         //this.deleteDatabase(dbHelper.getDatabaseName()); // // delete a db
         // finish DB tryouts
 

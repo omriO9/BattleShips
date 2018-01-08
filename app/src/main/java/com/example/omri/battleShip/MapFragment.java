@@ -19,10 +19,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.SeekBar;
-import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.example.omri.battleShip.Data.shipsOpenHelper;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -32,7 +28,6 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -51,7 +46,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback ,Locatio
     private String difficulty;
     private shipsOpenHelper dbHelper;
     private SQLiteDatabase db ;
-    private HashMap <MarkerOptions,Integer> markersMap;
+    private HashMap <Marker,Integer> markersMap;
 
 
     private GoogleMap mGoogleMap;
@@ -130,9 +125,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback ,Locatio
         if (getArguments()!=null) {
             difficulty = getArguments().getString("difficulty");
         }
-
         showMarkers(difficulty);
-
     }
 
 
@@ -219,20 +212,27 @@ public class MapFragment extends Fragment implements OnMapReadyCallback ,Locatio
                 Log.d(TAG, "showMarkers: " + latitude + " " + longitude);
 
                 LatLng temp = new LatLng(latitude, longitude);
-                MarkerOptions marker = new MarkerOptions().position(temp).title(name);
-                int id = cursor.getInt(0);
+                //Marker marker = //new MarkerOptions().position(temp).title(name);
+                final int id = cursor.getInt(0);
+                Marker marker = mGoogleMap.addMarker(new MarkerOptions().position(temp).title(name));
                 markersMap.put(marker,id);
                 mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener(){
                   @Override
                   public boolean onMarkerClick(Marker marker) {
-                      int id = markersMap.get(marker);
-                      Log.d(TAG, "onMarkerClick: " + id);
+                      Log.d(TAG, "onMarkerClick: Marker ="+marker.getPosition().toString());
+                      Log.d(TAG, "onMarkerClick: mapvalues:"+markersMap.toString());
+                      if (markersMap.get(marker)!=null) {
+
+                          int id = markersMap.get(marker).intValue();
+                          Log.d(TAG, "onMarkerClick: id="+id);
+                      }
+
                    //   sendUpdateToActivity(id);
                   return true;
                   }
                 });
 
-                mGoogleMap.addMarker(marker);
+
 
             }
 

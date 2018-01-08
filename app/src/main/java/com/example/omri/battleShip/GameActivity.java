@@ -1,27 +1,24 @@
 package com.example.omri.battleShip;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.content.ServiceConnection;
-import android.hardware.SensorManager;
 import android.media.MediaPlayer;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.os.HandlerThread;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.util.Log;
@@ -285,8 +282,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                         double coordinates [] = getLocation();
                         String name=input.getText()==null?"John Doe":input.getText().toString();
                         dbHelper.put(name, score, manager.getDifficulty(),coordinates[0],coordinates[1]);
-
-                        dbHelper.put(name, score, manager.getDifficulty());
                         arrangeBattleFieldActivity.shouldDie = true;
                         GameActivity.super.onBackPressed();
 
