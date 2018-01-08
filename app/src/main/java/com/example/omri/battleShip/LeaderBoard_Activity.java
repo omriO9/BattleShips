@@ -23,7 +23,7 @@ public class LeaderBoard_Activity extends AppCompatActivity implements FragmentL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_leader_board_);
+        setContentView(R.layout.activity_leader_board);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         fragmentManager = getSupportFragmentManager();
@@ -54,6 +54,7 @@ public class LeaderBoard_Activity extends AppCompatActivity implements FragmentL
 
     private void initRadioGroup() {
         Log.d(TAG, "initRadioGroup: ");
+
 
         radGrp = (RadioGroup) findViewById(R.id.radioGroup);
         for (int i=0;i<radGrp.getChildCount();i++){

@@ -2,6 +2,7 @@ package com.example.omri.battleShip;
 
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -10,6 +11,7 @@ import android.database.sqlite.SQLiteException;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -42,6 +44,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback ,Locatio
 
     private Location currentLocation =null;
     private LocationManager locationManager;
+    private boolean didAlreadyRequestLocationPermission;
 
     private String difficulty;
     private shipsOpenHelper dbHelper;
@@ -111,16 +114,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback ,Locatio
 
         MapsInitializer.initialize(getContext());
         mGoogleMap = googleMap;
-        googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
-        double LatLong [] = getLocation();
-                //((GameActivity)getActivity()).getLocation();
+        if (requestLocationPermissionsIfNeeded(false)) {
+            boolean isAllowedToUseLocation = isPermissionForLocationServicesGranted();
+            if (isAllowedToUseLocation) {
+                double LatLong[] = getLocation();
+                CameraPosition currentLocation = CameraPosition.builder().target(new LatLng(LatLong[0],LatLong[1])).zoom(12).bearing(0).tilt(45).build();
+                mGoogleMap.moveCamera(CameraUpdateFactory.newCameraPosition(currentLocation));
+            }
+        }
 
         //googleMap.addMarker(new MarkerOptions().position(new LatLng(LatLong[0],LatLong[1])).title("You Are Here!"));
-        CameraPosition boom = CameraPosition.builder().target(new LatLng(LatLong[0],LatLong[1])).zoom(12).bearing(0).tilt(45).build();
+
 //        googleMap.addMarker(new MarkerOptions().position(new LatLng(32.178195,34.907610)).title("BOOM"));
 //        CameraPosition boom = CameraPosition.builder().target(new LatLng(32.178195,34.907610)).zoom(16).bearing(0).tilt(45).build();
-        googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(boom));
+
 
         if (getArguments()!=null) {
             difficulty = getArguments().getString("difficulty");
@@ -131,37 +140,67 @@ public class MapFragment extends Fragment implements OnMapReadyCallback ,Locatio
 
 
 
+    @SuppressLint("MissingPermission")
     public double[] getLocation() {
 
-
         Location location;
-        double latitude=-1,longitude=-1;
-
+        double latitude = -1, longitude = -1;
 
         // checking if user have the necessary permissions , if not we are asking him to allow those permissions
-        if(ActivityCompat.checkSelfPermission
-                (getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission
-                (getContext(),Manifest.permission.ACCESS_COARSE_LOCATION) !=PackageManager.PERMISSION_GRANTED ){
-            //get the users permission to location
-            ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.ACCESS_FINE_LOCATION},LOCATION_PERMISSION_REQUEST_CODE);
-        }
-        if (currentLocation == null) {
-            // get current location
-            currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        }
 
-        float metersToUpdate = 1;
-        long intervalMilliseconds = 1000;
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, intervalMilliseconds, metersToUpdate, this);
+            if (currentLocation == null) {
+                // get current location
+                currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            }
 
-        if(currentLocation != null){
+            float metersToUpdate = 1;
+            long intervalMilliseconds = 1000;
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, intervalMilliseconds, metersToUpdate, this);
+
+        if (currentLocation != null) {
             latitude = currentLocation.getLatitude();
+            Log.d(TAG, "getLocation: latitude: " + latitude);
             longitude = currentLocation.getLongitude();
+            Log.d(TAG, "getLocation: longitude: " + longitude);
         }
 
         return new double[]{latitude,longitude};
     }
+
+    private boolean isPermissionForLocationServicesGranted() {
+        return android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.M ||
+                (!(getActivity().getApplicationContext().checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                        getActivity().getApplicationContext().checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED));
+
+    }
+
+    private boolean requestLocationPermissionsIfNeeded(boolean byUserAction) {
+        boolean isAccessGranted;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            String fineLocationPermission = android.Manifest.permission.ACCESS_FINE_LOCATION;
+            String coarseLocationPermission = android.Manifest.permission.ACCESS_COARSE_LOCATION;
+            isAccessGranted = getActivity().getApplicationContext().checkSelfPermission(fineLocationPermission) == PackageManager.PERMISSION_GRANTED &&
+                    getActivity().getApplicationContext().checkSelfPermission(coarseLocationPermission) == PackageManager.PERMISSION_GRANTED;
+            if (!isAccessGranted) { // The user blocked the location services of THIS app / not yet approved
+
+                if (!didAlreadyRequestLocationPermission || byUserAction) {
+                    didAlreadyRequestLocationPermission = true;
+                    String[] permissionsToAsk = new String[]{fineLocationPermission, coarseLocationPermission};
+                    // IllegalArgumentException: Can only use lower 16 bits for requestCode
+                    ActivityCompat.requestPermissions(getActivity(), permissionsToAsk, LOCATION_PERMISSION_REQUEST_CODE);
+                }
+            }
+        } else {
+            // Because the user's permissions started only from Android M and on...
+            isAccessGranted = true;
+        }
+
+        return isAccessGranted;
+    }
+
+
+
 
     @Override
     public void onLocationChanged(Location location) {
@@ -211,10 +250,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback ,Locatio
 
                 Log.d(TAG, "showMarkers: " + latitude + " " + longitude);
 
-                LatLng temp = new LatLng(latitude, longitude);
+                LatLng locationToSetMarkerAt = new LatLng(latitude, longitude);
                 //Marker marker = //new MarkerOptions().position(temp).title(name);
                 final int id = cursor.getInt(0);
-                Marker marker = mGoogleMap.addMarker(new MarkerOptions().position(temp).title(name));
+                Marker marker = mGoogleMap.addMarker(new MarkerOptions().position(locationToSetMarkerAt).title(name));
                 markersMap.put(marker,id);
                 mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener(){
                   @Override
@@ -222,6 +261,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback ,Locatio
                       Log.d(TAG, "onMarkerClick: Marker ="+marker.getPosition().toString());
                       Log.d(TAG, "onMarkerClick: mapvalues:"+markersMap.toString());
                       if (markersMap.get(marker)!=null) {
+                          marker.showInfoWindow();
 
                           int id = markersMap.get(marker).intValue();
                           Log.d(TAG, "onMarkerClick: id="+id);

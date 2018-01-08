@@ -1,6 +1,7 @@
 package com.example.omri.battleShip;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -13,6 +14,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -35,7 +37,7 @@ import com.example.omri.battleShip.Data.shipsOpenHelper;
 import java.util.List;
 import java.util.Random;
 
-public class GameActivity extends AppCompatActivity implements View.OnClickListener,UpdateListener , LocationListener {
+public class GameActivity extends AppCompatActivity implements View.OnClickListener, UpdateListener, LocationListener {
 
     private static final String TAG = GameActivity.class.getSimpleName();
 
@@ -48,8 +50,12 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private int gridSize;
     private boolean isSound = true;
 
-    private Location currentLocation =null;
+    private double [] LatLong;
+
+    private Location currentLocation = null;
     private LocationManager locationManager;
+    private boolean didAlreadyRequestLocationPermission;
+    private boolean isAllowedToUseLocation;
     private shipsOpenHelper dbHelper;
 
 
@@ -80,6 +86,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         isScreenMoved = false;
         // db testing //
         dbHelper = new shipsOpenHelper(this);
+        //this.deleteDatabase(dbHelper.getDatabaseName()); // // delete a db
+        //Location flag initialized
+        didAlreadyRequestLocationPermission = false;
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         myGridLayout = (GridLayout) findViewById(R.id.myGridLayout);
@@ -89,7 +98,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         gridSize = manager.getHumanPlayer().getMyField().getMyShipsLocation().length;
         initGridLayout(myGridLayout, manager.getHumanPlayer());
         initGridLayout(enemyGridLayout, manager.getPcPlayer());
-        locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         beginService();
         accelometerText = (TextView) findViewById(R.id.accelometer_text);
     }
@@ -188,7 +197,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     }
                     // PCPlayer begins to attack :
                     // Decision to make : if the screen was rotated 'too much' - PCPlayer attacks TWICE?
-                    int numberOfPCTurns=1;
+                    int numberOfPCTurns = 1;
                     if (isScreenMoved) { // Human gets Penalty - PC has 2 attacks!
                         Log.d(TAG, "onClick: inside isScreenMoved");
                         numberOfPCTurns = 2;
@@ -197,7 +206,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     }
                     Random r = new Random();
                     final Handler handler = new Handler();
-                    for (int i=0;i<numberOfPCTurns;i++) {
+                    for (int i = 0; i < numberOfPCTurns; i++) {
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -208,7 +217,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                                 changeArrowImageByTurn(true);
 
                             }
-                        }, 50+r.nextInt(50));
+                        }, 50 + r.nextInt(50));
 
                     }
                     //changeArrowImageByTurn(true);
@@ -259,69 +268,110 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_TEXT);
 
+        if(!isAllowedToUseLocation) {
+            requestLocationPermissionsIfNeeded(false);
+        }
+        //LatLong = getLocation();
+
         new AlertDialog.Builder(this)
                 .setView(input)
                 .setMessage("Congratulations,\nyou WON the game!!!")
                 .setCancelable(false)
                 .setPositiveButton("Rematch", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        String name=
-                                input.getText()==null?"John Doe":input.getText().toString();
-                        double coordinates [] = getLocation();
-                        dbHelper.put(name, score, manager.getDifficulty(),coordinates[0],coordinates[1]);
-                        Intent arrangeBattleFieldActivity = new Intent(GameActivity.this, arrangeBattleFieldActivity.class);
-                        arrangeBattleFieldActivity.putExtra("gameDifficulty", manager.getDifficulty());
-                        arrangeBattleFieldActivity.putExtra("isSound", isSound);
-                        GameActivity.super.onBackPressed();
-                        startActivity(arrangeBattleFieldActivity);
+                        String name = input.getText() == null ? "John Doe" : input.getText().toString();
+
+                            if (isPermissionForLocationServicesGranted()) {
+                                LatLong = getLocation();
+                                dbHelper.put(name, score, manager.getDifficulty(), LatLong[0], LatLong[1]);
+                            } else {
+                                Toast.makeText(getApplicationContext(), "You will not be added to our database :(", Toast.LENGTH_SHORT).show();
+                            }
+
+                            Intent arrangeBattleFieldActivity = new Intent(GameActivity.this, arrangeBattleFieldActivity.class);
+                            arrangeBattleFieldActivity.putExtra("gameDifficulty", manager.getDifficulty());
+                            arrangeBattleFieldActivity.putExtra("isSound", isSound);
+                            GameActivity.super.onBackPressed();
+                            startActivity(arrangeBattleFieldActivity);
+
                     }
                 })
                 .setNegativeButton("Back to menu", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
 
-                        double coordinates [] = getLocation();
-                        String name=input.getText()==null?"John Doe":input.getText().toString();
-                        dbHelper.put(name, score, manager.getDifficulty(),coordinates[0],coordinates[1]);
+                        String name= input.getText() == null ? "John Doe" : input.getText().toString();
+                        if (isPermissionForLocationServicesGranted()) {
+                            LatLong = getLocation();
+                            dbHelper.put(name, score, manager.getDifficulty(), LatLong[0], LatLong[1]);
+                        }
+                        else{
+                            Toast.makeText(getApplicationContext(), "You will not be added to our database :(", Toast.LENGTH_SHORT).show();
+                        }
                         arrangeBattleFieldActivity.shouldDie = true;
                         GameActivity.super.onBackPressed();
-
                     }
                 })
                 .show();
         //Log.d(TAG, "gameOver: input text="+input.toString());
     }
 
-    public double[] getLocation() {
+    private boolean isPermissionForLocationServicesGranted() {
+        return android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.M ||
+                (!(checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                        checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED));
 
+    }
+
+    @SuppressLint("MissingPermission")
+    public double[] getLocation() {
+        Log.d(TAG, "gameOver: inside");
         Location location;
-        double latitude=-1,longitude=-1;
+        double latitude = -1, longitude = -1;
 
 
         // checking if user have the necessary permissions , if not we are asking him to allow those permissions
-            if(ActivityCompat.checkSelfPermission
-                (this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission
-                (this,Manifest.permission.ACCESS_COARSE_LOCATION) !=PackageManager.PERMISSION_GRANTED ){
-                //get the users permission to location
-            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},LOCATION_PERMISSION_REQUEST_CODE);
-        }
-        if (currentLocation == null) {
-            // get current location
-            currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        }
+        if (isPermissionForLocationServicesGranted()) {
+            if (currentLocation == null) {
+                // get current location
+                currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            }
 
-        float metersToUpdate = 1;
-        long intervalMilliseconds = 1000;
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, intervalMilliseconds, metersToUpdate, this);
-
-        if(currentLocation != null){
-            latitude = currentLocation.getLatitude();
-            Log.d(TAG, "getLocation: latitude: "+latitude);
-            longitude = currentLocation.getLongitude();
-            Log.d(TAG, "getLocation: longitude: "+longitude);
+            float metersToUpdate = 1;
+            long intervalMilliseconds = 1000;
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, intervalMilliseconds, metersToUpdate, this);
         }
+            if (currentLocation != null) {
+                latitude = currentLocation.getLatitude();
+                Log.d(TAG, "getLocation: latitude: " + latitude);
+                longitude = currentLocation.getLongitude();
+                Log.d(TAG, "getLocation: longitude: " + longitude);
+            }
 
         return new double[]{latitude,longitude};
+    }
+
+    private boolean requestLocationPermissionsIfNeeded(boolean byUserAction) {
+        boolean isAccessGranted;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            String fineLocationPermission = android.Manifest.permission.ACCESS_FINE_LOCATION;
+            String coarseLocationPermission = android.Manifest.permission.ACCESS_COARSE_LOCATION;
+            isAccessGranted = getApplicationContext().checkSelfPermission(fineLocationPermission) == PackageManager.PERMISSION_GRANTED &&
+                    getApplicationContext().checkSelfPermission(coarseLocationPermission) == PackageManager.PERMISSION_GRANTED;
+            if (!isAccessGranted) { // The user blocked the location services of THIS app / not yet approved
+
+                if (!didAlreadyRequestLocationPermission || byUserAction) {
+                    didAlreadyRequestLocationPermission = true;
+                    String[] permissionsToAsk = new String[]{fineLocationPermission, coarseLocationPermission};
+                    // IllegalArgumentException: Can only use lower 16 bits for requestCode
+                    ActivityCompat.requestPermissions(this, permissionsToAsk, LOCATION_PERMISSION_REQUEST_CODE);
+                }
+            }
+        } else {
+            // Because the user's permissions started only from Android M and on...
+            isAccessGranted = true;
+        }
+        return isAccessGranted;
     }
 
     @Override
@@ -348,7 +398,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         switch(requestCode){
             case LOCATION_PERMISSION_REQUEST_CODE:
-                getLocation();
+                isAllowedToUseLocation = true;
                 break;
         }
     }
