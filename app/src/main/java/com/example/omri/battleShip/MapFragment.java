@@ -123,6 +123,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback ,Locatio
         if (requestLocationPermissionsIfNeeded(false)) {
             boolean isAllowedToUseLocation = isPermissionForLocationServicesGranted();
             if (isAllowedToUseLocation) {
+                Log.d(TAG, "onMapReady: Im here");
                 double LatLong[] = getLocation();
                 CameraPosition currentLocation = CameraPosition.builder().target(new LatLng(LatLong[0],LatLong[1])).zoom(12).bearing(0).tilt(45).build();
                 mGoogleMap.moveCamera(CameraUpdateFactory.newCameraPosition(currentLocation));
@@ -232,7 +233,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback ,Locatio
 
         switch(requestCode){
             case LOCATION_PERMISSION_REQUEST_CODE:
-                getLocation();
+                //Log.d(TAG, "onMapReady: Im there");
+                //getLocation();
                 break;
         }
     }

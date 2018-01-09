@@ -55,7 +55,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private Location currentLocation = null;
     private LocationManager locationManager;
     private boolean didAlreadyRequestLocationPermission;
-    private boolean isAllowedToUseLocation;
     private shipsOpenHelper dbHelper;
 
 
@@ -268,7 +267,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_TEXT);
 
-        if(!isAllowedToUseLocation) {
+        if(!isPermissionForLocationServicesGranted()) {
+            Log.d(TAG, "gameOver: inside hereeeeee");
             requestLocationPermissionsIfNeeded(false);
         }
         //LatLong = getLocation();
@@ -324,7 +324,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     @SuppressLint("MissingPermission")
     public double[] getLocation() {
-        Log.d(TAG, "gameOver: inside");
         Location location;
         double latitude = -1, longitude = -1;
 
@@ -398,7 +397,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         switch(requestCode){
             case LOCATION_PERMISSION_REQUEST_CODE:
-                isAllowedToUseLocation = true;
                 break;
         }
     }
