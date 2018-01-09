@@ -33,7 +33,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 
 public class MapFragment extends Fragment implements OnMapReadyCallback ,LocationListener {
@@ -51,6 +53,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback ,Locatio
     private SQLiteDatabase db ;
     private HashMap <Marker,Integer> markersMap;
 
+    private final ArrayList<FragmentListener> mListeners
+            = new ArrayList<>();
 
     private GoogleMap mGoogleMap;
     private MapView mMapView;
@@ -58,9 +62,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback ,Locatio
 
 
 
-    public MapFragment(){
-
-    }
+//    public MapFragment(){
+//
+//    }
 
 
 
@@ -233,8 +237,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback ,Locatio
         }
     }
 
-    private void showMarkers(String difficulty) {
-
+    public void showMarkers(String difficulty) {
+        mGoogleMap.clear();
+        db =dbHelper.getReadableDatabase();
         db.beginTransaction();
 
         String selectQuery = "SELECT * FROM "+shipsOpenHelper.SCORES_TABLE+" WHERE difficulty='"+difficulty+"' ORDER BY score ASC LIMIT 10";
@@ -264,6 +269,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback ,Locatio
                           marker.showInfoWindow();
 
                           int id = markersMap.get(marker).intValue();
+                          sendUpdateToActivity(id);
                           Log.d(TAG, "onMarkerClick: id="+id);
                       }
 
@@ -290,7 +296,31 @@ public class MapFragment extends Fragment implements OnMapReadyCallback ,Locatio
 
     }
 
+    // need to copy this code to the Map Fragment aswell!!!
+    public void registerListener(FragmentListener listener) {
+        mListeners.add(listener);
+    }
+
+    public void unregisterListener(FragmentListener listener) {
+        mListeners.remove(listener);
+    }
+
+    private void sendUpdateToActivity(int id) {
+        for (int i=mListeners.size()-1; i>=0; i--) {
+            mListeners.get(i).sendUpdate(id,false); // true = I come from tableFragment
+        }
+    }
 
 
+    public void selectMarker(int id) {
+        for (Map.Entry<Marker,Integer> entry : markersMap.entrySet()){
+            if (entry.getValue()==id) { // it's this marker i want to show
+                LatLng latLng = entry.getKey().getPosition();
+                CameraPosition cp = CameraPosition.builder().target(latLng).zoom(12).bearing(0).tilt(45).build();
+                mGoogleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cp));
+                break;
+            }
+        }
+    }
 
 }
