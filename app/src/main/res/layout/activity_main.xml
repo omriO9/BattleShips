@@ -14,7 +14,7 @@
         android:layout_height="@dimen/play_button_height"
         android:layout_below="@+id/soundSwitch"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="67dp"
+        android:layout_marginTop="47dp"
         android:background="@drawable/button_shape"
         android:onClick="startArrangeBattleFieldActivity"
         android:shadowColor="#A8A8A8"

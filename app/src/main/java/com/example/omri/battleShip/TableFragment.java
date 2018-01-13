@@ -4,7 +4,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -101,16 +100,11 @@ public class TableFragment extends Fragment {
                     tr.setOnClickListener(new View.OnClickListener(){
                         @Override
                         public void onClick(View v) {
+
                             Log.d(TAG, "TableRow clicked: "+rowNumber+" #id="+tr.getId());
                             highLightSelectedRow(tr);
-//                            if (selectedRow!=null) { // there was a row selected - let's repaint it to it's original color.
-//                               selectedRow.setBackgroundColor(selectedRowColor);
-//                               // selectedRow.setBackgroundColor(getResources().getColor(R.color.backgroundColor));
-//                            }
-//                            selectedRow=tr;
-//                            ColorDrawable currentColorDrawable = (ColorDrawable) tr.getBackground();
-//                            selectedRowColor = currentColorDrawable.getColor();
-//                            tr.setBackgroundColor(Color.WHITE);
+                       tr.setBackgroundColor(Color.WHITE);
+                            tr.setAlpha(0.4f);
                             sendUpdateToActivity(tr.getId());
                         }
                     });
