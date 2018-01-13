@@ -1,7 +1,6 @@
 package com.example.omri.battleShip;
 
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -50,7 +49,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback ,Locatio
 
     private String difficulty;
     private shipsOpenHelper dbHelper;
-    private SQLiteDatabase db ;
+    private SQLiteDatabase db;
     private HashMap <Marker,Integer> markersMap;
 
     private final ArrayList<FragmentListener> mListeners
@@ -243,6 +242,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback ,Locatio
         mGoogleMap.clear();
         db =dbHelper.getReadableDatabase();
         db.beginTransaction();
+        Log.d(TAG, "showMarkers: difficulty="+difficulty);
 
         String selectQuery = "SELECT * FROM "+shipsOpenHelper.SCORES_TABLE+" WHERE difficulty='"+difficulty+"' ORDER BY score ASC LIMIT 10";
         Cursor cursor = db.rawQuery(selectQuery,null);
@@ -252,6 +252,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback ,Locatio
             while (cursor.moveToNext()) {
 
                 String name = cursor.getString(1);
+                Log.d(TAG, "showMarkers: name="+name);
                 double latitude = cursor.getDouble(4);
                 double longitude = cursor.getDouble(5);
 
@@ -279,12 +280,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback ,Locatio
                   return true;
                   }
                 });
-
-
-
             }
-
-
         }
             db.setTransactionSuccessful();
         }catch (SQLiteException e) {
@@ -317,6 +313,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback ,Locatio
     public void selectMarker(int id) {
         for (Map.Entry<Marker,Integer> entry : markersMap.entrySet()){
             if (entry.getValue()==id) { // it's this marker i want to show
+                Log.d(TAG, "selectMarker: found marker");
+                entry.getKey().showInfoWindow();
                 LatLng latLng = entry.getKey().getPosition();
                 CameraPosition cp = CameraPosition.builder().target(latLng).zoom(12).bearing(0).tilt(45).build();
                 mGoogleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cp));

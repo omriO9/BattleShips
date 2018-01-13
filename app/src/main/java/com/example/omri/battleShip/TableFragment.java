@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.omri.battleShip.Data.shipsOpenHelper;
 
@@ -33,6 +33,10 @@ public class TableFragment extends Fragment {
     private LayoutInflater inflater;
     private ViewGroup container;
     private TableLayout table;
+
+    /**Last selected row+it's color**/
+    private TableRow selectedRow;
+    private int selectedRowColor;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,7 +66,6 @@ public class TableFragment extends Fragment {
 
     public View inflateTable(String difficulty) {
         Log.d(TAG, "inflateTable: difficulty="+difficulty);
-        Toast.makeText(getContext(), "diff"+difficulty, Toast.LENGTH_SHORT).show();
         View view =inflater.inflate(R.layout.fragment_table, container, false);
         table = (TableLayout)view.findViewById(R.id.table_layout);
 
@@ -99,6 +102,15 @@ public class TableFragment extends Fragment {
                         @Override
                         public void onClick(View v) {
                             Log.d(TAG, "TableRow clicked: "+rowNumber+" #id="+tr.getId());
+                            highLightSelectedRow(tr);
+//                            if (selectedRow!=null) { // there was a row selected - let's repaint it to it's original color.
+//                               selectedRow.setBackgroundColor(selectedRowColor);
+//                               // selectedRow.setBackgroundColor(getResources().getColor(R.color.backgroundColor));
+//                            }
+//                            selectedRow=tr;
+//                            ColorDrawable currentColorDrawable = (ColorDrawable) tr.getBackground();
+//                            selectedRowColor = currentColorDrawable.getColor();
+//                            tr.setBackgroundColor(Color.WHITE);
                             sendUpdateToActivity(tr.getId());
                         }
                     });
@@ -135,11 +147,25 @@ public class TableFragment extends Fragment {
         for (int i = 0; i < table.getChildCount(); i++) {
             View tableRow = table.getChildAt(i);
                 if (tableRow.getId()==id){
-                    tableRow.setBackgroundColor(Color.MAGENTA);
+                    highLightSelectedRow(tableRow);
+                    //tableRow.setBackgroundColor(Color.WHITE);
                     break;
                 }
             }
         }
+
+    public void highLightSelectedRow(View tableRow){
+
+        tableRow.requestFocus();
+        if (selectedRow!=null) { // there was a row selected - let's repaint it to it's original color.
+            selectedRow.setBackgroundColor(selectedRowColor);
+            // selectedRow.setBackgroundColor(getResources().getColor(R.color.backgroundColor));
+        }
+        selectedRow= (TableRow) tableRow;
+        ColorDrawable currentColorDrawable = (ColorDrawable) tableRow.getBackground();
+        selectedRowColor = currentColorDrawable.getColor();
+        tableRow.setBackgroundColor(Color.WHITE);
+    }
     }
 
 

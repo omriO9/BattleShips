@@ -31,6 +31,17 @@ public class MainActivity extends AppCompatActivity {
 
         // DB - tryouts
         //shipsOpenHelper dbHelper = new shipsOpenHelper(this);
+        //this.deleteDatabase(dbHelper.getDatabaseName());
+//        SQLiteDatabase db =dbHelper.getReadableDatabase();
+//        db.execSQL("delete from "+ shipsOpenHelper.SCORES_TABLE);
+        //        db.beginTransaction();
+        //        String selectQuery = "DELETE * FROM "+shipsOpenHelper.SCORES_TABLE;
+        //        Cursor cursor = db.rawQuery(selectQuery,null);
+        //        db.setTransactionSuccessful();
+        //        db.endTransaction();
+        //        // End the transaction.
+        //        db.close();
+
         //this.deleteDatabase(dbHelper.getDatabaseName()); // // delete a db
         // finish DB tryouts
 

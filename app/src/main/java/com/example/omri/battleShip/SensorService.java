@@ -42,7 +42,7 @@ public class SensorService extends Service implements SensorEventListener {
     @Override
     public void onCreate() {
         super.onCreate();
-
+        Log.d(TAG, "onCreate: of sensorserivece");
         values= new float[3];
         sensorThread = new HandlerThread(SensorService.class.getSimpleName());
         sensorThread.start();
@@ -69,7 +69,7 @@ public class SensorService extends Service implements SensorEventListener {
         values[0] = event.values[0];
         values[1] = event.values[1];
         values[2] = event.values[2];
-        //Log.d(TAG, "onSensorChanged: ["+x+","+y+","+z+"]");
+        Log.d(TAG, "onSensorChanged: TYPE_ACCELEROMETER");
         }
         sendUpdate(values);
     }
@@ -101,11 +101,12 @@ public class SensorService extends Service implements SensorEventListener {
     }
     @Override
     public boolean onUnbind(Intent intent) { // perry's code.
+        Log.d(TAG, "onUnbind: im here");
         if (sensorManager != null) {
             sensorManager.unregisterListener(this);
             sensorManager = null;
         }
-
+        stopSelf();
         return super.onUnbind(intent);
     }
 

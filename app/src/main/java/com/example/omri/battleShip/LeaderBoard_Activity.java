@@ -108,4 +108,11 @@ public class LeaderBoard_Activity extends AppCompatActivity implements FragmentL
         }
     }
 
+    @Override
+    public boolean onSupportNavigateUp(){
+        //finish();
+        LeaderBoard_Activity.super.onBackPressed();
+        return true;
+    }
+
 }

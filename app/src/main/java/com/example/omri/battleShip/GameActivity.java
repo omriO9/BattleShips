@@ -1,6 +1,5 @@
 package com.example.omri.battleShip;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ComponentName;
@@ -9,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
-import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -26,10 +24,10 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.omri.battleShip.Data.shipsOpenHelper;
@@ -61,11 +59,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     private boolean isServiceConnected;
     public SensorService.MyBinder binder;
-    private TextView accelometerText;
 
-    private SensorManager sensorManager;
+
     HandlerThread sensorThread;
-    private Handler sensorHandler;
 
     private float[] currXYZ;
     private boolean isXYZinitialized;
@@ -79,7 +75,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
-
+        Log.d(TAG, "onCreate: start creating gameactivity");
         currXYZ = new float[3];
         isXYZinitialized = false;
         isScreenMoved = false;
@@ -98,15 +94,13 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         initGridLayout(myGridLayout, manager.getHumanPlayer());
         initGridLayout(enemyGridLayout, manager.getPcPlayer());
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
         beginService();
-        accelometerText = (TextView) findViewById(R.id.accelometer_text);
     }
 
     private void beginService() {
         Log.d(TAG, "beginService: start");
-        Intent intent = new Intent(this,
-                SensorService.class);
-        // intent.putExtra(PATH_KEY, getPathToImage());
+        Intent intent = new Intent(this,SensorService.class);
 
         startService(intent); // starts the service...
         if (!isServiceConnected) {
@@ -115,10 +109,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
         sensorThread = new HandlerThread(SensorService.class.getSimpleName());
         sensorThread.start();
-        sensorHandler = new Handler(sensorThread.getLooper());
-
-        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-
     }
 
     private void paintGridLayout(GridLayout grid, Player p) {
@@ -184,9 +174,16 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     gridButton.setAvailability(GridButton.State.INUSE);
                     Coordinate target = new Coordinate(gridButton.getPositionX(), gridButton.getPositionY());
                     BattleField.shotState shotResult = manager.manageGame(target);
-                    if ((shotResult == BattleField.shotState.HIT || shotResult == BattleField.shotState.SUNK) && isSound) {
-                        MediaPlayer hitSound = MediaPlayer.create(this, R.raw.hit);
-                        hitSound.start();
+                    if ((shotResult == BattleField.shotState.HIT || shotResult == BattleField.shotState.SUNK)){
+                        if (isSound){
+                            MediaPlayer hitSound = MediaPlayer.create(this, R.raw.hit);
+                            hitSound.start();
+                        }
+                        // need to play animation...
+                        gridButton.startAnimation(AnimationUtils.loadAnimation(this,R.anim.hit_animation));
+                    }
+                    else { // I missed - animate a miss
+                        gridButton.startAnimation(AnimationUtils.loadAnimation(this,R.anim.rotate_animation));
                     }
                     paintAttack(enemyGridLayout, target, shotResult, manager.getPcPlayer());
                     changeArrowImageByTurn(false);// true means its PC's turn
@@ -216,7 +213,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                                 changeArrowImageByTurn(true);
 
                             }
-                        }, 50 + r.nextInt(50));
+                        }, 1300 + r.nextInt(700));
 
                     }
                     //changeArrowImageByTurn(true);
@@ -246,33 +243,65 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     public void gameOver(Player p) {
         if (isSound) {
             MediaPlayer gameOverSound;
-            if (p instanceof HumanPlayer)
+            if (p instanceof HumanPlayer) {
                 gameOverSound = MediaPlayer.create(this, R.raw.game_won);
-            else
+                animateGameWon();
+                gameOverSound.start();
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(!isPermissionForLocationServicesGranted()) {
+                            requestLocationPermissionsIfNeeded(false);
+                        }
+                        if (isPermissionForLocationServicesGranted()) {
+                            score = (float) (manager.getHumanPlayer().getNumOfAttempts()) / manager.getNumOfCells();
+                            String scoreString = String.format("%.2f", score);
+                            score = Float.parseFloat(scoreString);
+                            alertDialogWithLocation();
+                        } else
+                            alertDialogWithoutLocation();
+                    }
+                }, 1750);
+
+            }
+            else {
                 gameOverSound = MediaPlayer.create(this, R.raw.game_lost);
-            gameOverSound.start();
+                gameOverSound.start();
+            }
         }
-        //String name = p.getPlayerName();
+    }
 
-        score = (float) (manager.getHumanPlayer().getNumOfAttempts()) / manager.getNumOfCells();
-        String scoreString = String.format("%.2f", score);
-        score = Float.parseFloat(scoreString);
+    private void animateGameWon() {
+        MyAnimationUtils myAnimationUtils = new MyAnimationUtils(this,enemyGridLayout);
+        myAnimationUtils.explodeGrid();
+    }
 
-        Log.d(TAG, "gameOver: shots=" + manager.getHumanPlayer().getNumOfAttempts() +
-                "\nnumOfCells=" + manager.getNumOfCells() +
-                "\nscore=" + score);
-        //dbHelper.put(name, score, manager.getDifficulty());
+    private void alertDialogWithoutLocation() {
+        new AlertDialog.Builder(this)
+                .setMessage("Congratulations,\nyou WON the game!!!")
+                .setCancelable(false)
+                .setPositiveButton("Rematch", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Intent arrangeBattleFieldActivity = new Intent(GameActivity.this, arrangeBattleFieldActivity.class);
+                        arrangeBattleFieldActivity.putExtra("gameDifficulty", manager.getDifficulty());
+                        arrangeBattleFieldActivity.putExtra("isSound", isSound);
+                        GameActivity.super.onBackPressed();
+                        startActivity(arrangeBattleFieldActivity);
+                    }
+                })
+                .setNegativeButton("Back to menu", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        arrangeBattleFieldActivity.shouldDie = true;
+                        GameActivity.super.onBackPressed();
+                    }
+                })
+                .show();
+    }
 
-        //View viewInflated = LayoutInflater.from(this.inflate(R.layout.text_input_password, (ViewGroup) getView(), false);
+    private void alertDialogWithLocation() {
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_TEXT);
-
-        if(!isPermissionForLocationServicesGranted()) {
-            Log.d(TAG, "gameOver: inside hereeeeee");
-            requestLocationPermissionsIfNeeded(false);
-        }
-        //LatLong = getLocation();
-
         new AlertDialog.Builder(this)
                 .setView(input)
                 .setMessage("Congratulations,\nyou WON the game!!!")
@@ -280,27 +309,22 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 .setPositiveButton("Rematch", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         String name = input.getText() == null ? "John Doe" : input.getText().toString();
-
-                            if (isPermissionForLocationServicesGranted()) {
-                                LatLong = getLocation();
-                                dbHelper.put(name, score, manager.getDifficulty(), LatLong[0], LatLong[1]);
-                            } else {
-                                Toast.makeText(getApplicationContext(), "You will not be added to our database :(", Toast.LENGTH_SHORT).show();
-                            }
-
-                            Intent arrangeBattleFieldActivity = new Intent(GameActivity.this, arrangeBattleFieldActivity.class);
-                            arrangeBattleFieldActivity.putExtra("gameDifficulty", manager.getDifficulty());
-                            arrangeBattleFieldActivity.putExtra("isSound", isSound);
-                            GameActivity.super.onBackPressed();
-                            startActivity(arrangeBattleFieldActivity);
+                            LatLong = getLocation();
+                            dbHelper.put(name, score, manager.getDifficulty(), LatLong[0], LatLong[1]);
+                        Intent arrangeBattleFieldActivity = new Intent(GameActivity.this, arrangeBattleFieldActivity.class);
+                        arrangeBattleFieldActivity.putExtra("gameDifficulty", manager.getDifficulty());
+                        arrangeBattleFieldActivity.putExtra("isSound", isSound);
+                        GameActivity.super.onBackPressed();
+                        startActivity(arrangeBattleFieldActivity);
 
                     }
                 })
                 .setNegativeButton("Back to menu", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
 
-                        String name= input.getText() == null ? "John Doe" : input.getText().toString();
-                        if (isPermissionForLocationServicesGranted()) {
+                        String name= input.getText() == null ? "" : input.getText().toString();
+                        if (isPermissionForLocationServicesGranted() && !name.equals("")) {
+                            Log.d(TAG, "onClick: name=|"+name+"|");
                             LatLong = getLocation();
                             dbHelper.put(name, score, manager.getDifficulty(), LatLong[0], LatLong[1]);
                         }
@@ -312,7 +336,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 })
                 .show();
-        //Log.d(TAG, "gameOver: input text="+input.toString());
     }
 
     private boolean isPermissionForLocationServicesGranted() {
@@ -397,6 +420,15 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         switch(requestCode){
             case LOCATION_PERMISSION_REQUEST_CODE:
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    alertDialogWithLocation();
+                    Log.d(TAG, "onRequestPermissionsResult: request accepted");
+                }
+                else {
+                    Log.d(TAG, "onRequestPermissionsResult: request denied");
+                    alertDialogWithoutLocation();
+                }
                 break;
         }
     }
@@ -435,6 +467,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 })
                 .setNegativeButton("No", null)
                 .show();
+        if (boundService!=null)
+            unbindService(boundService);
+        isServiceConnected = false;
+        boundService = null;
+        sensorThread=null;
         return true;
     }
 
@@ -478,14 +515,16 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     protected void onStop() {
         super.onStop();
         // gotta make sure it's a right code...
-        unbindService(boundService);
+        if (boundService!=null)
+         unbindService(boundService);
         isServiceConnected = false;
         boundService = null;
+        sensorThread=null;
     }
 
     @Override
     public void onUpdate(float[] value) {
-        //Log.d(TAG, "onUpdate: inside");
+        Log.d(TAG, "onUpdate: inside");
         if (!isXYZinitialized) {
             isXYZinitialized = true;
             initialXYZ = new float[3];
@@ -502,7 +541,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void run() {
                 Log.d(TAG, "run: before setting text");
-                accelometerText.setText("[X,Y,Z]= [" + String.format("%.2f", currXYZ[0]) + "," + String.format("%.2f", currXYZ[1]) + "," + String.format("%.2f", currXYZ[2]) + "]");
+
             }
         });
 

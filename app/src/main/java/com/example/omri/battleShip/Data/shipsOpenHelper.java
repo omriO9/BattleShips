@@ -18,13 +18,12 @@ public class shipsOpenHelper extends SQLiteOpenHelper {
     private static final String TAG = shipsOpenHelper.class.getSimpleName();
 
     private static final int DATABASE_VERSION = 1;
-    public static final String SCORES_TABLE = "scores";
+    public static final String SCORES_TABLE = "HighScores";
     public static final String COL_1 = "name";
     public static final String COL_2 = "score";
     public static final String COL_3 = "difficulty";
     private static final String COL_4 = "latitude";
     private static final String COL_5 = "longitude";
-    private SQLiteDatabase dataBase;
 
     public shipsOpenHelper(Context context) {
         // The reason of passing null is you want the standard SQLiteCursor behaviour
@@ -38,7 +37,7 @@ public class shipsOpenHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SCORES_TABLE_CREATE(COL_1,COL_2,COL_3,COL_4,COL_5));
-        this.dataBase = db;
+        SQLiteDatabase dataBase = db;
     }
 
     @Override
