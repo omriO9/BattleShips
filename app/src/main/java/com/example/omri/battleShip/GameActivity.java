@@ -1,6 +1,7 @@
 package com.example.omri.battleShip;
 
 import android.Manifest;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ComponentName;
@@ -23,9 +24,13 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.WindowManager;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.ImageView;
@@ -57,7 +62,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private boolean didAlreadyRequestLocationPermission;
     private shipsOpenHelper dbHelper;
 
-
+    private DisplayMetrics _metrics;
 
     private boolean isServiceConnected;
     public SensorService.MyBinder binder;
@@ -187,6 +192,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     if ((shotResult == BattleField.shotState.HIT || shotResult == BattleField.shotState.SUNK) && isSound) {
                         MediaPlayer hitSound = MediaPlayer.create(this, R.raw.hit);
                         hitSound.start();
+                        Log.d(TAG, "onClick: inside if");
+
                     }
                     paintAttack(enemyGridLayout, target, shotResult, manager.getPcPlayer());
                     changeArrowImageByTurn(false);// true means its PC's turn
@@ -226,6 +233,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     }
+
+
+
 
     private void changeArrowImageByTurn(boolean b) {
         ImageView img;
@@ -438,6 +448,20 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         return true;
     }
 
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setMessage("Are you sure you want to exit this game?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        arrangeBattleFieldActivity.shouldDie = true;
+                        GameActivity.super.onBackPressed();
+                    }
+                })
+                .setNegativeButton("No", null)
+                .show();
+    }
 
     private ServiceConnection boundService = new ServiceConnection() {
         @Override

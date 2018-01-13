@@ -108,9 +108,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback ,Locatio
             mMapView.onResume();
             mMapView.getMapAsync(this);
         }
-
-
-
     }
 
     @Override

@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import java.util.List;
 
+
 public class arrangeBattleFieldActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = arrangeBattleFieldActivity.class.getSimpleName();
@@ -67,6 +68,8 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
         ship3.setOnClickListener(this);
         ship3_2.setOnClickListener(this);
         ship2.setOnClickListener(this);
+
+
 
         if(shipAmount >= GameManager.MEDIUM_SHIPS_AMOUNT) {
             ship4 = (ImageButton) findViewById(R.id.ship4);
@@ -229,7 +232,25 @@ public class arrangeBattleFieldActivity extends AppCompatActivity implements Vie
                 .show();
         return true;
     }
+
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setMessage("Your positioning will be reseted,\n are you sure you want exit?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        arrangeBattleFieldActivity.super.onBackPressed();
+                    }
+                })
+                .setNegativeButton("No", null)
+                .show();
+    }
 }
+
+
+
+
 
 
 

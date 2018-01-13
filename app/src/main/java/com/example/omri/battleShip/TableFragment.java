@@ -98,7 +98,9 @@ public class TableFragment extends Fragment {
                     tr.setOnClickListener(new View.OnClickListener(){
                         @Override
                         public void onClick(View v) {
+
                             Log.d(TAG, "TableRow clicked: "+rowNumber+" #id="+tr.getId());
+                            tr.setAlpha(0.4f);
                             sendUpdateToActivity(tr.getId());
                         }
                     });
