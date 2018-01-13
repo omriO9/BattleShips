@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -119,7 +120,6 @@ public class TableFragment extends Fragment {
             db.close();
             // Close database
         }
-        // for testing - selectRow(1);
         return view;
     }
 

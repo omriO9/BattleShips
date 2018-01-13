@@ -9,7 +9,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
-import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -30,7 +29,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.omri.battleShip.Data.shipsOpenHelper;
@@ -120,7 +118,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         for (int row = 0; row < playerField.length; row++) {
             for (int col = 0; col < playerField.length; col++) {
                 View btn = (grid.getChildAt(row + col * gridSize));
-                if (playerField[row][col] != null) { //&& (p instanceof HumanPlayer)) {
+                if (playerField[row][col] != null && (p instanceof HumanPlayer)) {
                     btn.setBackgroundResource(playerField[row][col].getImg());
                 } else
                     btn.setBackgroundResource(R.drawable.cell_border);
@@ -248,7 +246,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             MediaPlayer gameOverSound;
             if (p instanceof HumanPlayer) {
                 gameOverSound = MediaPlayer.create(this, R.raw.game_won);
-                animateGameWon();
+                animateGameFinished(enemyGridLayout);
                 gameOverSound.start();
                 final Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -263,26 +261,28 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                             score = Float.parseFloat(scoreString);
                             alertDialogWithLocation();
                         } else
-                            alertDialogWithoutLocation();
+                            alertDialogWithoutLocation("Congratulations, you WON the game!!!");
                     }
                 }, 1750);
 
             }
             else {
+                animateGameFinished(myGridLayout);
                 gameOverSound = MediaPlayer.create(this, R.raw.game_lost);
                 gameOverSound.start();
+                alertDialogWithoutLocation("You lost, Better luck next time!");
             }
         }
     }
 
-    private void animateGameWon() {
-        MyAnimationUtils myAnimationUtils = new MyAnimationUtils(this,enemyGridLayout);
+    private void animateGameFinished(GridLayout gridLayout) {
+        MyAnimationUtils myAnimationUtils = new MyAnimationUtils(this,gridLayout);
         myAnimationUtils.explodeGrid();
     }
 
-    private void alertDialogWithoutLocation() {
+    private void alertDialogWithoutLocation(String message) {
         new AlertDialog.Builder(this)
-                .setMessage("Congratulations,\nyou WON the game!!!")
+                .setMessage(message)
                 .setCancelable(false)
                 .setPositiveButton("Rematch", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -430,7 +430,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 else {
                     Log.d(TAG, "onRequestPermissionsResult: request denied");
-                    alertDialogWithoutLocation();
+                    alertDialogWithoutLocation("Congratulations, you WON the game!!!");
                 }
                 break;
         }
